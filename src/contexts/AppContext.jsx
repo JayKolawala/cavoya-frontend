@@ -1,174 +1,181 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer } from "react";
 
 const AppContext = createContext();
 
 const initialState = {
-  currentPage: 'home',
+  currentPage: "home",
   cartItems: [
     {
       id: 1,
-      name: 'Silk Cami Blouse',
-      price: 65.00,
-      color: 'Charcoal',
-      size: 'S',
+      name: "Silk Cami Blouse",
+      price: 6500,
+      color: "Charcoal",
+      size: "S",
       quantity: 1,
-      image: 'https://placehold.co/100x150/D9E3D3/5C5C5C?text=Blouse'
+      image: "https://placehold.co/100x150/D9E3D3/5C5C5C?text=Blouse",
     },
     {
       id: 2,
-      name: 'Linen Midi Dress',
-      price: 89.99,
-      color: 'Blush',
-      size: 'M',
+      name: "Linen Midi Dress",
+      price: 8999,
+      color: "Blush",
+      size: "M",
       quantity: 1,
-      image: 'https://placehold.co/100x150/F8E7E4/5C5C5C?text=Dress'
-    }
+      image: "https://placehold.co/100x150/F8E7E4/5C5C5C?text=Dress",
+    },
   ],
   wishlist: [],
   user: null,
   showAlert: false,
-  alertMessage: '',
-  searchQuery: '',
-  selectedCategory: 'all',
-  sortBy: 'featured',
+  alertMessage: "",
+  searchQuery: "",
+  selectedCategory: "all",
+  sortBy: "featured",
   showMobileMenu: false,
   products: [
     {
       id: 1,
-      name: 'Linen Midi Dress',
-      price: 89.99,
-      originalPrice: 119.99,
-      category: 'dresses',
+      name: "Linen Midi Dress",
+      price: 8999,
+      originalPrice: 11999,
+      category: "dresses",
       rating: 4.8,
       reviews: 124,
-      colors: ['blush', 'navy', 'sage'],
-      sizes: ['XS', 'S', 'M', 'L', 'XL'],
-      image: 'https://placehold.co/600x800/F8E7E4/5C5C5C?text=Linen+Dress',
+      colors: ["blush", "navy", "sage"],
+      sizes: ["XS", "S", "M", "L", "XL"],
+      image: "https://placehold.co/600x800/F8E7E4/5C5C5C?text=Linen+Dress",
       isNew: true,
-      isSale: true
+      isSale: true,
     },
     {
       id: 2,
-      name: 'Silk Cami Blouse',
-      price: 65.00,
-      originalPrice: 65.00,
-      category: 'tops',
+      name: "Silk Cami Blouse",
+      price: 6500,
+      originalPrice: 6500,
+      category: "tops",
       rating: 4.9,
       reviews: 89,
-      colors: ['pink', 'charcoal', 'sage'],
-      sizes: ['XS', 'S', 'M', 'L'],
-      image: 'https://placehold.co/600x800/D9E3D3/5C5C5C?text=Silk+Blouse',
+      colors: ["pink", "charcoal", "sage"],
+      sizes: ["XS", "S", "M", "L"],
+      image: "https://placehold.co/600x800/D9E3D3/5C5C5C?text=Silk+Blouse",
       isNew: false,
-      isSale: false
+      isSale: false,
     },
     {
       id: 3,
-      name: 'Wide Leg Trousers',
-      price: 75.50,
-      originalPrice: 75.50,
-      category: 'bottoms',
+      name: "Wide Leg Trousers",
+      price: 7550,
+      originalPrice: 7550,
+      category: "bottoms",
       rating: 4.6,
       reviews: 67,
-      colors: ['black', 'navy', 'cream'],
-      sizes: ['XS', 'S', 'M', 'L', 'XL'],
-      image: 'https://placehold.co/600x800/E5E8F0/5C5C5C?text=Wide+Leg+Pants',
+      colors: ["black", "navy", "cream"],
+      sizes: ["XS", "S", "M", "L", "XL"],
+      image: "https://placehold.co/600x800/E5E8F0/5C5C5C?text=Wide+Leg+Pants",
       isNew: false,
-      isSale: false
+      isSale: false,
     },
     {
       id: 4,
-      name: 'Chunky Knit Sweater',
-      price: 95.00,
-      originalPrice: 120.00,
-      category: 'tops',
+      name: "Chunky Knit Sweater",
+      price: 9500,
+      originalPrice: 12000,
+      category: "tops",
       rating: 4.7,
       reviews: 156,
-      colors: ['cream', 'camel', 'forest'],
-      sizes: ['S', 'M', 'L', 'XL'],
-      image: 'https://placehold.co/600x800/F0E5D9/5C5C5C?text=Knitted+Sweater',
+      colors: ["cream", "camel", "forest"],
+      sizes: ["S", "M", "L", "XL"],
+      image: "https://placehold.co/600x800/F0E5D9/5C5C5C?text=Knitted+Sweater",
       isNew: true,
-      isSale: true
-    }
-  ]
+      isSale: true,
+    },
+  ],
 };
 
 function appReducer(state, action) {
   switch (action.type) {
-    case 'SET_PAGE':
+    case "SET_PAGE":
       return { ...state, currentPage: action.payload, showMobileMenu: false };
-      
-    case 'ADD_TO_CART':
-      const existingItem = state.cartItems.find(item => 
-        item.productId === action.payload.productId && 
-        item.color === action.payload.color && 
-        item.size === action.payload.size
+
+    case "ADD_TO_CART":
+      const existingItem = state.cartItems.find(
+        (item) =>
+          item.productId === action.payload.productId &&
+          item.color === action.payload.color &&
+          item.size === action.payload.size
       );
-      
+
       if (existingItem) {
         return {
           ...state,
-          cartItems: state.cartItems.map(item =>
+          cartItems: state.cartItems.map((item) =>
             item.id === existingItem.id
               ? { ...item, quantity: item.quantity + 1 }
               : item
-          )
+          ),
         };
       } else {
         return {
           ...state,
-          cartItems: [...state.cartItems, { ...action.payload, id: Date.now() }]
+          cartItems: [
+            ...state.cartItems,
+            { ...action.payload, id: Date.now() },
+          ],
         };
       }
-      
-    case 'UPDATE_CART_QUANTITY':
+
+    case "UPDATE_CART_QUANTITY":
       return {
         ...state,
-        cartItems: state.cartItems.map(item =>
+        cartItems: state.cartItems.map((item) =>
           item.id === action.payload.id
-            ? { ...item, quantity: Math.max(1, item.quantity + action.payload.change) }
+            ? {
+                ...item,
+                quantity: Math.max(1, item.quantity + action.payload.change),
+              }
             : item
-        )
+        ),
       };
-      
-    case 'REMOVE_FROM_CART':
+
+    case "REMOVE_FROM_CART":
       return {
         ...state,
-        cartItems: state.cartItems.filter(item => item.id !== action.payload)
+        cartItems: state.cartItems.filter((item) => item.id !== action.payload),
       };
-      
-    case 'TOGGLE_WISHLIST':
+
+    case "TOGGLE_WISHLIST":
       const productId = action.payload;
       return {
         ...state,
         wishlist: state.wishlist.includes(productId)
-          ? state.wishlist.filter(id => id !== productId)
-          : [...state.wishlist, productId]
+          ? state.wishlist.filter((id) => id !== productId)
+          : [...state.wishlist, productId],
       };
-      
-    case 'SET_USER':
+
+    case "SET_USER":
       return { ...state, user: action.payload };
-      
-    case 'SHOW_ALERT':
+
+    case "SHOW_ALERT":
       return { ...state, showAlert: true, alertMessage: action.payload };
-      
-    case 'HIDE_ALERT':
-      return { ...state, showAlert: false, alertMessage: '' };
-      
-    case 'SET_SEARCH_QUERY':
+
+    case "HIDE_ALERT":
+      return { ...state, showAlert: false, alertMessage: "" };
+
+    case "SET_SEARCH_QUERY":
       return { ...state, searchQuery: action.payload };
-      
-    case 'SET_CATEGORY':
+
+    case "SET_CATEGORY":
       return { ...state, selectedCategory: action.payload };
-      
-    case 'SET_SORT_BY':
+
+    case "SET_SORT_BY":
       return { ...state, sortBy: action.payload };
-      
-    case 'TOGGLE_MOBILE_MENU':
+
+    case "TOGGLE_MOBILE_MENU":
       return { ...state, showMobileMenu: !state.showMobileMenu };
-      
-    case 'SET_MOBILE_MENU':
+
+    case "SET_MOBILE_MENU":
       return { ...state, showMobileMenu: action.payload };
-      
+
     default:
       return state;
   }
@@ -177,16 +184,11 @@ function appReducer(state, action) {
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  // Helper functions
-  const navigate = (page) => {
-    dispatch({ type: 'SET_PAGE', payload: page });
-  };
-
   const showCustomAlert = (message, callback) => {
-    dispatch({ type: 'SHOW_ALERT', payload: message });
+    dispatch({ type: "SHOW_ALERT", payload: message });
     if (callback) {
       setTimeout(() => {
-        dispatch({ type: 'HIDE_ALERT' });
+        dispatch({ type: "HIDE_ALERT" });
         callback();
       }, 2000);
     }
@@ -200,55 +202,67 @@ export function AppProvider({ children }) {
       color: selectedColor,
       size: selectedSize,
       quantity: 1,
-      image: product.image
+      image: product.image,
     };
-    dispatch({ type: 'ADD_TO_CART', payload: cartItem });
-    showCustomAlert('Item added to cart successfully!');
+    dispatch({ type: "ADD_TO_CART", payload: cartItem });
+    showCustomAlert("Item added to cart successfully!");
   };
 
   const updateCartQuantity = (id, change) => {
-    dispatch({ type: 'UPDATE_CART_QUANTITY', payload: { id, change } });
+    dispatch({ type: "UPDATE_CART_QUANTITY", payload: { id, change } });
   };
 
   const removeFromCart = (id) => {
-    dispatch({ type: 'REMOVE_FROM_CART', payload: id });
-    showCustomAlert('Item removed from cart');
+    dispatch({ type: "REMOVE_FROM_CART", payload: id });
+    showCustomAlert("Item removed from cart");
   };
 
   const toggleWishlist = (productId) => {
-    dispatch({ type: 'TOGGLE_WISHLIST', payload: productId });
+    dispatch({ type: "TOGGLE_WISHLIST", payload: productId });
     const isInWishlist = state.wishlist.includes(productId);
-    showCustomAlert(isInWishlist ? 'Removed from wishlist' : 'Added to wishlist');
+    showCustomAlert(
+      isInWishlist ? "Removed from wishlist" : "Added to wishlist"
+    );
   };
 
   const getTotalPrice = () => {
-    return state.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2);
+    return state.cartItems
+      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .toFixed(2);
   };
 
   const getCartItemsCount = () => {
     return state.cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
-  const filteredProducts = state.products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(state.searchQuery.toLowerCase());
-    const matchesCategory = state.selectedCategory === 'all' || product.category === state.selectedCategory;
+  const filteredProducts = state.products.filter((product) => {
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(state.searchQuery.toLowerCase());
+    const matchesCategory =
+      state.selectedCategory === "all" ||
+      product.category === state.selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (state.sortBy) {
-      case 'price-low': return a.price - b.price;
-      case 'price-high': return b.price - a.price;
-      case 'rating': return b.rating - a.rating;
-      case 'newest': return b.isNew - a.isNew;
-      default: return 0;
+      case "price-low":
+        return a.price - b.price;
+      case "price-high":
+        return b.price - a.price;
+      case "rating":
+        return b.rating - a.rating;
+      case "newest":
+        return b.isNew - a.isNew;
+      default:
+        return 0;
     }
   });
 
   const value = {
     ...state,
     dispatch,
-    navigate,
     showCustomAlert,
     addToCart,
     updateCartQuantity,
@@ -257,25 +271,25 @@ export function AppProvider({ children }) {
     getTotalPrice,
     getCartItemsCount,
     sortedProducts,
-    setSearchQuery: (query) => dispatch({ type: 'SET_SEARCH_QUERY', payload: query }),
-    setSelectedCategory: (category) => dispatch({ type: 'SET_CATEGORY', payload: category }),
-    setSortBy: (sortBy) => dispatch({ type: 'SET_SORT_BY', payload: sortBy }),
-    setShowMobileMenu: (show) => dispatch({ type: 'SET_MOBILE_MENU', payload: show }),
-    setUser: (user) => dispatch({ type: 'SET_USER', payload: user }),
-    setShowAlert: (show) => dispatch({ type: show ? 'SHOW_ALERT' : 'HIDE_ALERT', payload: show })
+    setSearchQuery: (query) =>
+      dispatch({ type: "SET_SEARCH_QUERY", payload: query }),
+    setSelectedCategory: (category) =>
+      dispatch({ type: "SET_CATEGORY", payload: category }),
+    setSortBy: (sortBy) => dispatch({ type: "SET_SORT_BY", payload: sortBy }),
+    setShowMobileMenu: (show) =>
+      dispatch({ type: "SET_MOBILE_MENU", payload: show }),
+    setUser: (user) => dispatch({ type: "SET_USER", payload: user }),
+    setShowAlert: (show) =>
+      dispatch({ type: show ? "SHOW_ALERT" : "HIDE_ALERT", payload: show }),
   };
 
-  return (
-    <AppContext.Provider value={value}>
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 
 export const useAppContext = () => {
   const context = useContext(AppContext);
   if (!context) {
-    throw new Error('useAppContext must be used within AppProvider');
+    throw new Error("useAppContext must be used within AppProvider");
   }
   return context;
 };
