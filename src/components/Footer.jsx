@@ -1,8 +1,8 @@
 import React from "react";
-import { useAppContext } from "../contexts/AppContext";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
-  const { navigate } = useAppContext();
+  const navigate = useNavigate();
 
   return (
     <footer className="bg-gray-900 text-white mt-16">
@@ -17,7 +17,7 @@ const Footer = () => {
             <ul className="space-y-2 text-gray-300">
               <li>
                 <button
-                  onClick={() => navigate("products")}
+                  onClick={() => navigate("/products")}
                   className="hover:text-pink-400 transition-colors"
                 >
                   New Arrivals
@@ -25,7 +25,7 @@ const Footer = () => {
               </li>
               <li>
                 <button
-                  onClick={() => navigate("products")}
+                  onClick={() => navigate("/products")}
                   className="hover:text-pink-400 transition-colors"
                 >
                   Dresses
@@ -33,7 +33,7 @@ const Footer = () => {
               </li>
               <li>
                 <button
-                  onClick={() => navigate("products")}
+                  onClick={() => navigate("/products")}
                   className="hover:text-pink-400 transition-colors"
                 >
                   Sale
@@ -66,7 +66,7 @@ const Footer = () => {
             <ul className="space-y-2 text-gray-300">
               <li>
                 <button
-                  onClick={() => navigate("about")}
+                  onClick={() => navigate("/about")}
                   className="hover:text-pink-400 transition-colors"
                 >
                   About Us

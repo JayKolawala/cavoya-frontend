@@ -30,7 +30,7 @@ const HomePage = () => {
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
         <div className="relative z-10 animate-pulse">
           <h1 className="text-4xl md:text-6xl font-extralight tracking-wide mb-4">
-            The Ethereal Collection
+            The Cavoya Collection
           </h1>
           <p className="text-lg md:text-xl font-light mb-8">
             Elegance in every stitch.

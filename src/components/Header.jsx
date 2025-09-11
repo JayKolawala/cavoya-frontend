@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useAppContext } from "../contexts/AppContext";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../../src/assets/cavoya.svg";
 
 const Header = () => {
   const {
@@ -50,9 +51,16 @@ const Header = () => {
 
         {/* Main header */}
         <nav className="flex justify-between items-center py-4">
-          <Link to="/" className="text-2xl font-bold text-gray-600">
-            Cavoya
-          </Link>
+          <div
+            className="text-2xl font-bold text-gray-600"
+            onClick={() => navigate("/")}
+          >
+            <img
+              src={logo}
+              alt="cavoya-logo"
+              className="h-10 w-40 rounded-full object-cover cursor-pointer"
+            />
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8">
