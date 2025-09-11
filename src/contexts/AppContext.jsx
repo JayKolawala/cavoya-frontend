@@ -90,6 +90,20 @@ const initialState = {
       isSale: true,
     },
   ],
+  shippingInfo: {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    address1: "",
+    address2: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "India",
+  },
+  paymentMethod: "card",
+  orderConfirmed: false,
 };
 
 function appReducer(state, action) {
@@ -176,6 +190,28 @@ function appReducer(state, action) {
     case "SET_MOBILE_MENU":
       return { ...state, showMobileMenu: action.payload };
 
+      case 'SET_SHIPPING_INFO':
+  return { ...state, shippingInfo: { ...state.shippingInfo, ...action.payload } };
+  
+case 'SET_PAYMENT_METHOD':
+  return { ...state, paymentMethod: action.payload };
+  
+case 'CONFIRM_ORDER':
+  return { 
+    ...state, 
+    orderConfirmed: true,
+    cartItems: [],
+    // You might want to save the order to an orders array
+  };
+  
+case 'RESET_CHECKOUT':
+  return { 
+    ...state, 
+    shippingInfo: initialState.shippingInfo,
+    paymentMethod: "card",
+    orderConfirmed: false 
+  };
+
     default:
       return state;
   }
@@ -260,6 +296,23 @@ export function AppProvider({ children }) {
     }
   });
 
+  const setShippingInfo = (info) => {
+  dispatch({ type: 'SET_SHIPPING_INFO', payload: info });
+};
+
+const setPaymentMethod = (method) => {
+  dispatch({ type: 'SET_PAYMENT_METHOD', payload: method });
+};
+
+const confirmOrder = () => {
+  dispatch({ type: 'CONFIRM_ORDER' });
+  showCustomAlert('Order confirmed successfully!');
+};
+
+const resetCheckout = () => {
+  dispatch({ type: 'RESET_CHECKOUT' });
+};
+
   const value = {
     ...state,
     dispatch,
@@ -271,6 +324,10 @@ export function AppProvider({ children }) {
     getTotalPrice,
     getCartItemsCount,
     sortedProducts,
+     setShippingInfo,
+  setPaymentMethod,
+  confirmOrder,
+  resetCheckout,
     setSearchQuery: (query) =>
       dispatch({ type: "SET_SEARCH_QUERY", payload: query }),
     setSelectedCategory: (category) =>
@@ -288,6 +345,7 @@ export function AppProvider({ children }) {
 
 export const useAppContext = () => {
   const context = useContext(AppContext);
+  
   if (!context) {
     throw new Error("useAppContext must be used within AppProvider");
   }

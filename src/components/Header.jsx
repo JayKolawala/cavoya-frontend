@@ -10,7 +10,7 @@ import {
   Shield,
 } from "lucide-react";
 import { useAppContext } from "../contexts/AppContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation} from "react-router-dom";
 import logo from "../../src/assets/cavoya.svg";
 
 const Header = () => {
@@ -23,7 +23,9 @@ const Header = () => {
   } = useAppContext();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const isProductsPage = location.pathname === "/products";
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4">
@@ -85,6 +87,7 @@ const Header = () => {
           </div>
 
           {/* Search Bar */}
+          {isProductsPage && 
           <div className="hidden md:flex relative">
             <input
               type="text"
@@ -95,6 +98,8 @@ const Header = () => {
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           </div>
+          }
+          
 
           {/* Icons */}
           <div className="flex items-center space-x-4">

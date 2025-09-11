@@ -1,6 +1,7 @@
 import React from "react";
 import { useAppContext } from "../contexts/AppContext";
 import { ShoppingCart, Minus, Plus, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const {
@@ -8,9 +9,10 @@ const CartPage = () => {
     updateCartQuantity,
     removeFromCart,
     getTotalPrice,
-    navigate,
   } = useAppContext();
 
+  const navigate = useNavigate();
+  
   if (cartItems.length === 0) {
     return (
       <section className="container mx-auto px-4 py-16 text-center">
@@ -115,13 +117,13 @@ const CartPage = () => {
               </div>
             </div>
             <button
-              onClick={() => navigate("checkout")}
+              onClick={() => navigate("/checkout")}
               className="w-full mt-6 py-3 bg-pink-500 text-white font-bold rounded-lg hover:bg-pink-600 transition-colors"
             >
               Proceed to Checkout
             </button>
             <button
-              onClick={() => navigate("products")}
+              onClick={() => navigate("/products")}
               className="w-full mt-3 py-3 border border-pink-500 text-pink-500 font-bold rounded-lg hover:bg-pink-50 transition-colors"
             >
               Continue Shopping
