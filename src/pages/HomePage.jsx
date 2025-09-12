@@ -49,7 +49,7 @@ const HomePage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
           <div className="p-6">
             <Truck className="h-12 w-12 mx-auto mb-4 text-pink-500" />
-            <h3 className="text-xl font-medium mb-2">Free Shipping</h3>
+            <p className="text-xl font-medium mb-2">Free Shipping</p>
             <p className="text-gray-600">Free shipping on orders over ₹999</p>
           </div>
           <div className="p-6">
@@ -95,3 +95,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
