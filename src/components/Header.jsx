@@ -10,7 +10,7 @@ import {
   Shield,
 } from "lucide-react";
 import { useAppContext } from "../contexts/AppContext";
-import { Link, useNavigate, useLocation} from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "../../src/assets/cavoya.svg";
 
 const Header = () => {
@@ -87,31 +87,32 @@ const Header = () => {
           </div>
 
           {/* Search Bar */}
-          {isProductsPage && 
-          <div className="hidden md:flex relative">
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-pink-300"
-            />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          </div>
-          }
-          
+          {isProductsPage && (
+            <div className="hidden md:flex relative">
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-pink-300"
+              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            </div>
+          )}
 
           {/* Icons */}
           <div className="flex items-center space-x-4">
             <button
               onClick={() => navigate("/wishlist")}
               className="hover:text-pink-400 transition-colors relative"
+              aria-label="Wishlist"
             >
               <Heart className="h-6 w-6" />
             </button>
             <button
               onClick={() => navigate("/cart")}
               className="hover:text-pink-400 transition-colors relative"
+              aria-label="Cart"
             >
               <ShoppingCart className="h-6 w-6" />
               {getCartItemsCount() > 0 && (
@@ -123,12 +124,14 @@ const Header = () => {
             <button
               onClick={() => navigate("/login")}
               className="hover:text-pink-400 transition-colors"
+              aria-label="Login"
             >
               <User className="h-6 w-6" />
             </button>
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="md:hidden hover:text-pink-400 transition-colors"
+              aria-label="Menu"
             >
               <Menu className="h-6 w-6" />
             </button>
