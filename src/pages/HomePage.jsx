@@ -54,12 +54,12 @@ const HomePage = () => {
           </div>
           <div className="p-6">
             <RefreshCw className="h-12 w-12 mx-auto mb-4 text-pink-500" />
-            <h3 className="text-xl font-medium mb-2">Easy Returns</h3>
+            <p className="text-xl font-medium mb-2">Easy Returns</p>
             <p className="text-gray-600">30-day return policy for all items</p>
           </div>
           <div className="p-6">
             <Shield className="h-12 w-12 mx-auto mb-4 text-pink-500" />
-            <h3 className="text-xl font-medium mb-2">Secure Payment</h3>
+            <p className="text-xl font-medium mb-2">Secure Payment</p>
             <p className="text-gray-600">
               Your payment information is safe with us
             </p>
@@ -95,4 +95,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
