@@ -17,6 +17,8 @@ const ProductCard = ({ product, onProductClick }) => {
         />
         <button
           onClick={() => toggleWishlist(product.id)}
+          aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+          title={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
           className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <Heart
@@ -73,3 +75,4 @@ const ProductCard = ({ product, onProductClick }) => {
 };
 
 export default ProductCard;
+
