@@ -1,9 +1,16 @@
 // pages/ProductPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Star, Truck, RefreshCw, Shield } from "lucide-react";
+import {
+  Star,
+  Truck,
+  RefreshCw,
+  Shield,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { useAppContext } from "../contexts/AppContext";
-import LoadingSpinner from "../components/LoadingSpinner"; // Import your loading spinner
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -13,6 +20,7 @@ const ProductPage = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [activeAccordion, setActiveAccordion] = useState(null);
 
   useEffect(() => {
     // Find the product by ID from the URL
@@ -24,6 +32,54 @@ const ProductPage = () => {
     }
     setLoading(false);
   }, [id, products]);
+
+  const toggleAccordion = (section) => {
+    setActiveAccordion(activeAccordion === section ? null : section);
+  };
+
+  // Data array for dynamic rendering
+  const productDetails = {
+    description: {
+      text: "This elegant silk cami blouse is a timeless piece for any wardrobe. Made from 100% pure mulberry silk, it offers a luxurious feel and a beautiful drape. Perfect for both casual and formal occasions.",
+      styleTip: {
+        title: "Style Tip:",
+        content:
+          "Pair this shirt with fitted jeans for a casually cool look. Add sneakers for a laid-back vibe or dress it up with loafers for a touch of sophistication.",
+      },
+      features: [
+        "Luxurious mulberry silk construction",
+        "Versatile design for multiple occasions",
+        "Natural temperature regulation",
+        "Hypoallergenic and gentle on skin",
+      ],
+      additionalInfo:
+        "The premium silk fabric ensures breathability and comfort throughout the day, while the elegant design makes it suitable for both professional and casual settings. The natural silk fibers provide excellent temperature regulation, keeping you cool in summer and warm in winter.",
+    },
+    details: {
+      material: "100% Pure Mulberry Silk",
+      care: "Dry clean only",
+      fit: "Relaxed fit",
+      origin: "Made in India",
+      modelInfo: "The model is 5'7\" and wearing size M",
+      skuPrefix: "SK-SILK-CAMI",
+    },
+    artist: {
+      name: "Priya Sharma",
+      title: "Senior Textile Designer",
+      experience: "15+ years experience",
+      collection: "Contemporary Silk Series 2024",
+      philosophy:
+        "Each garment is carefully crafted using traditional weaving techniques combined with modern design sensibilities. Priya believes in creating pieces that honor India's textile heritage while meeting contemporary style needs.",
+      quote:
+        "Fashion should be timeless, comfortable, and celebrate the beauty of craftsmanship.",
+      initials: "PS",
+    },
+    services: [
+      { icon: Truck, text: "Free Shipping" },
+      { icon: RefreshCw, text: "Easy Returns" },
+      { icon: Shield, text: "Secure Payment" },
+    ],
+  };
 
   // Show loading spinner while product is being fetched
   if (loading) {
@@ -56,11 +112,34 @@ const ProductPage = () => {
     `https://placehold.co/800x1200/E5E8F0/543C42?text=Detail+3`,
   ];
 
+  const AccordionSection = ({ title, isOpen, onToggle, children }) => (
+    <div className="border-b border-gray-200">
+      <button
+        onClick={onToggle}
+        className="w-full py-4 px-0 flex justify-between items-center text-left hover:bg-gray-50 transition-colors rounded-none"
+      >
+        <span className="text-gray-700 font-medium">{title}</span>
+        {isOpen ? (
+          <ChevronUp className="h-5 w-5 text-gray-500" />
+        ) : (
+          <ChevronDown className="h-5 w-5 text-gray-500" />
+        )}
+      </button>
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+          isOpen ? "max-h-96 pb-4" : "max-h-0"
+        }`}
+      >
+        <div className="text-gray-600 text-sm leading-relaxed">{children}</div>
+      </div>
+    </div>
+  );
+
   return (
     <section className="container mx-auto px-4 py-16">
       <div className="flex flex-col lg:flex-row gap-12">
         <div className="lg:w-1/2">
-          <div className="w-full h-[600px] bg-gray-100 rounded-lg overflow-hidden mb-4">
+          <div className="w-full h-[500px] bg-gray-100 rounded-lg overflow-hidden mb-4">
             <img
               src={productImages[activeImageIndex]}
               alt="Product Main Image"
@@ -116,9 +195,7 @@ const ProductPage = () => {
           </div>
 
           <p className="text-gray-600 mb-6">
-            This elegant silk cami blouse is a timeless piece for any wardrobe.
-            Made from 100% pure mulberry silk, it offers a luxurious feel and a
-            beautiful drape. Perfect for both casual and formal occasions.
+            {productDetails.description.text}
           </p>
 
           <div className="mb-6">
@@ -166,20 +243,138 @@ const ProductPage = () => {
             Add to Cart
           </button>
 
-          <div className="grid grid-cols-3 gap-4 text-center text-sm text-gray-600">
-            <div className="flex flex-col items-center">
-              <Truck className="h-5 w-5 mb-1" />
-              <span>Free Shipping</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <RefreshCw className="h-5 w-5 mb-1" />
-              <span>Easy Returns</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <Shield className="h-5 w-5 mb-1" />
-              <span>Secure Payment</span>
-            </div>
+          {/* Accordion Sections */}
+          <div className="border-t border-gray-200 bg-white rounded-lg">
+            <AccordionSection
+              title="Product Details"
+              isOpen={activeAccordion === "details"}
+              onToggle={() => toggleAccordion("details")}
+            >
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="font-semibold text-gray-800">Material:</p>
+                    <p>{productDetails.details.material}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-800">Care:</p>
+                    <p>{productDetails.details.care}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-800">Fit:</p>
+                    <p>{productDetails.details.fit}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-800">Origin:</p>
+                    <p>{productDetails.details.origin}</p>
+                  </div>
+                </div>
+                <div className="pt-2">
+                  <p className="font-semibold text-gray-800">
+                    Model Information:
+                  </p>
+                  <p>{productDetails.details.modelInfo}</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-800">SKU:</p>
+                  <p className="text-gray-500">
+                    {selectedProduct.id}
+                    {productDetails.details.skuPrefix}
+                  </p>
+                </div>
+              </div>
+            </AccordionSection>
+
+            <AccordionSection
+              title="Product Description"
+              isOpen={activeAccordion === "description"}
+              onToggle={() => toggleAccordion("description")}
+            >
+              <div className="space-y-4">
+                <p>{productDetails.description.additionalInfo}</p>
+                <div className="bg-pink-50 p-3 rounded-md border-l-4 border-pink-300">
+                  <p className="font-semibold text-pink-800 mb-1">
+                    {productDetails.description.styleTip.title}
+                  </p>
+                  <p className="text-pink-700">
+                    {productDetails.description.styleTip.content}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-800 mb-2">
+                    Key Features:
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-gray-600">
+                    {productDetails.description.features.map(
+                      (feature, index) => (
+                        <li key={index}>{feature}</li>
+                      )
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </AccordionSection>
+
+            <AccordionSection
+              title="Artist's Details"
+              isOpen={activeAccordion === "artist"}
+              onToggle={() => toggleAccordion("artist")}
+            >
+              <div className="space-y-4">
+                <div className="flex items-start space-x-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-pink-200 to-pink-300 rounded-full flex items-center justify-center">
+                    <span className="text-pink-800 font-bold text-lg">
+                      {productDetails.artist.initials}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-800 text-lg">
+                      {productDetails.artist.name}
+                    </p>
+                    <p className="text-gray-600">
+                      {productDetails.artist.title}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {productDetails.artist.experience}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="font-semibold text-gray-800 mb-2">
+                    Collection:
+                  </p>
+                  <p className="text-gray-700">
+                    {productDetails.artist.collection}
+                  </p>
+                </div>
+
+                <p className="text-gray-600">
+                  {productDetails.artist.philosophy}
+                </p>
+
+                <div className="text-center pt-3">
+                  <p className="text-xs text-gray-500 italic">
+                    "{productDetails.artist.quote}"
+                    <br />- {productDetails.artist.name}
+                  </p>
+                </div>
+              </div>
+            </AccordionSection>
           </div>
+
+          {/* Services Section (commented out in original) */}
+          {/* <div className="grid grid-cols-3 gap-4 text-center text-sm text-gray-600 mt-4">
+            {productDetails.services.map((service, index) => {
+              const IconComponent = service.icon;
+              return (
+                <div key={index} className="flex flex-col items-center">
+                  <IconComponent className="h-5 w-5 mb-1" />
+                  <span>{service.text}</span>
+                </div>
+              );
+            })}
+          </div> */}
         </div>
       </div>
     </section>

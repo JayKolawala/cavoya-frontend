@@ -27,6 +27,7 @@ const ProductCard = ({ product, onProductClick }) => {
             }`}
           />
         </button>
+
         {product.isNew && (
           <span className="absolute top-4 left-4 bg-green-500 text-white px-2 py-1 text-xs rounded">
             NEW
@@ -75,4 +76,3 @@ const ProductCard = ({ product, onProductClick }) => {
 };
 
 export default ProductCard;
-
