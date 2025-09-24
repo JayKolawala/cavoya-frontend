@@ -25,6 +25,8 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProductManagement from "./pages/admin/ProductManagement";
 import AdminLayout from "./pages/admin/AdminLayout";
+import OrderManager from "./pages/admin/OrderManager";
+import CustomerManager from "./pages/admin/CustomerManager";
 
 // Admin Route Protection Component
 const ProtectedAdminRoute = ({ children }) => {
@@ -62,12 +64,9 @@ function App() {
                 >
                   <Route path="dashboard" element={<AdminDashboard />} />
                   <Route path="products" element={<ProductManagement />} />
-                  <Route path="orders" element={<div>Orders Management</div>} />
-                  <Route
-                    path="customers"
-                    element={<div>Customer Management</div>}
-                  />
-                  <Route path="settings" element={<div>Settings</div>} />
+                  <Route path="orders" element={<OrderManager />} />
+                  <Route path="customers" element={<CustomerManager />} />
+                  {/* <Route path="settings" element={<div>Settings</div>} /> */}
                 </Route>
 
                 {/* Public Routes with Header/Footer */}

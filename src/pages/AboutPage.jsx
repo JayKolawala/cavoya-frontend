@@ -1,5 +1,6 @@
-import React from "react";
+import React, { use, useEffect } from "react";
 import { Heart, RefreshCw, Star } from "lucide-react";
+import AOS from "aos";
 
 const AboutPage = () => {
   // Data array for dynamic rendering
@@ -47,18 +48,22 @@ const AboutPage = () => {
     ],
   };
 
+  useEffect(() => {
+    AOS.init({ duration: 800 });
+  }, []);
+
   return (
     <section className="container mx-auto px-4 py-16">
       <div className="max-w-4xl mx-auto">
         {/* Header Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 " data-aos="fade-down">
           <h1 className="text-5xl font-light mb-6">{aboutData.header.title}</h1>
           <p className="text-xl text-gray-600">{aboutData.header.tagline}</p>
         </div>
 
         {/* Story Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-          <div>
+          <div data-aos="fade-right">
             <h2 className="text-3xl font-light mb-6">
               {aboutData.story.title}
             </h2>
@@ -68,7 +73,10 @@ const AboutPage = () => {
               </p>
             ))}
           </div>
-          <div className="bg-gray-200 rounded-lg h-96 flex items-center justify-center">
+          <div
+            className="bg-gray-200 rounded-lg h-96 flex items-center justify-center"
+            data-aos="fade-left"
+          >
             <img
               src={aboutData.story.image.src}
               alt={aboutData.story.image.alt}

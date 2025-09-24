@@ -1,13 +1,21 @@
-import React from "react";
+import React, { use, useEffect } from "react";
 import { useAppContext } from "../contexts/AppContext";
 import { Heart, Star } from "lucide-react";
+import AOS from "aos";
 
 const ProductCard = ({ product, onProductClick }) => {
   const { toggleWishlist, wishlist } = useAppContext();
   const isInWishlist = wishlist.includes(product.id);
 
+  useEffect(() => {
+    AOS.init({ duration: 500 });
+  }, []);
+
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group">
+    <div
+      className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group"
+      data-aos="zoom-in"
+    >
       <div className="relative">
         <img
           src={product.image}
