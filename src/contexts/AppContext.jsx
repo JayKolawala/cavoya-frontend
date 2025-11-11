@@ -235,6 +235,26 @@ export function AppProvider({ children }) {
     }
   };
 
+  // Helper function to transform product data
+  const transformProduct = (product) => ({
+    id: product._id,
+    _id: product._id,
+    name: product.name,
+    price: product.price,
+    originalPrice: product.originalPrice || product.price,
+    category: product.category,
+    rating: product.rating || 4.5,
+    reviews: product.reviews || 0,
+    colors: product.colors || [],
+    sizes: product.sizes || [],
+    image: product.image,
+    isNew: false,
+    isSale: product.isSale || false,
+    description: product.description,
+    inventory: product.inventory,
+    isFeatured: product.isFeatured || false,
+  });
+
   // Fetch products from API
   const fetchProducts = async () => {
     try {
@@ -242,29 +262,26 @@ export function AppProvider({ children }) {
       const response = await apiRequest("/products");
 
       // Transform backend data to match frontend structure
-      const transformedProducts = response.data.map((product) => ({
-        id: product._id,
-        _id: product._id,
-        name: product.name,
-        price: product.price,
-        originalPrice: product.originalPrice || product.price,
-        category: product.category,
-        rating: product.rating || 4.5,
-        reviews: product.reviews || 0,
-        colors: product.colors || [],
-        sizes: product.sizes || [],
-        image: product.image,
-        isNew: false,
-        isSale: product.isSale || false,
-        description: product.description,
-        inventory: product.inventory,
-        isFeatured: product.isFeatured || false,
-      }));
+      const transformedProducts = response.data.map(transformProduct);
 
       dispatch({ type: "SET_PRODUCTS", payload: transformedProducts });
     } catch (error) {
       dispatch({ type: "SET_PRODUCTS_ERROR", payload: error.message });
       console.error("Error fetching products:", error);
+    }
+  };
+
+  // Fetch single product by ID from API
+  const fetchProductById = async (productId) => {
+    try {
+      const response = await apiRequest(`/products/${productId}`);
+      if (response.success && response.data) {
+        return transformProduct(response.data);
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching product:", error);
+      return null;
     }
   };
 
@@ -303,22 +320,8 @@ export function AppProvider({ children }) {
 
       // Transform the response to match frontend structure
       const newProduct = {
-        id: response.data._id,
-        _id: response.data._id,
-        name: response.data.name,
-        price: response.data.price,
-        originalPrice: response.data.originalPrice || response.data.price,
-        category: response.data.category,
-        rating: response.data.rating || 4.5,
-        reviews: response.data.reviews || 0,
-        colors: response.data.colors,
-        sizes: response.data.sizes,
-        image: response.data.image,
+        ...transformProduct(response.data),
         isNew: true,
-        isSale: response.data.isSale || false,
-        description: response.data.description,
-        inventory: response.data.inventory,
-        isFeatured: response.data.isFeatured || false,
       };
 
       dispatch({ type: "ADD_PRODUCT", payload: newProduct });
@@ -364,24 +367,7 @@ export function AppProvider({ children }) {
       });
 
       // Transform the response to match frontend structure
-      const updatedProduct = {
-        id: response.data._id,
-        _id: response.data._id,
-        name: response.data.name,
-        price: response.data.price,
-        originalPrice: response.data.originalPrice || response.data.price,
-        category: response.data.category,
-        rating: response.data.rating || 4.5,
-        reviews: response.data.reviews || 0,
-        colors: response.data.colors,
-        sizes: response.data.sizes,
-        image: response.data.image,
-        isNew: false,
-        isSale: response.data.isSale || false,
-        description: response.data.description,
-        inventory: response.data.inventory,
-        isFeatured: response.data.isFeatured || false,
-      };
+      const updatedProduct = transformProduct(response.data);
 
       dispatch({ type: "UPDATE_PRODUCT", payload: updatedProduct });
       showCustomAlert("Product updated successfully!");
@@ -525,6 +511,7 @@ export function AppProvider({ children }) {
     confirmOrder,
     resetCheckout,
     fetchProducts,
+    fetchProductById,
     addProduct,
     updateProduct,
     deleteProduct,

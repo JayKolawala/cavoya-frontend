@@ -122,7 +122,7 @@ const Header = () => {
               )}
             </button>
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/admin/login")}
               className="hover:text-pink-400 transition-colors"
               aria-label="Login"
             >

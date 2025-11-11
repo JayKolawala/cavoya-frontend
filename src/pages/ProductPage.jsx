@@ -14,7 +14,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 const ProductPage = () => {
   const { id } = useParams();
-  const { addToCart, products } = useAppContext();
+  const { addToCart, products, fetchProductById } = useAppContext();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
@@ -23,15 +23,29 @@ const ProductPage = () => {
   const [activeAccordion, setActiveAccordion] = useState(null);
 
   useEffect(() => {
-    // Find the product by ID from the URL
-    const product = products.find((p) => p.id === parseInt(id));
-    if (product) {
-      setSelectedProduct(product);
-      setSelectedColor(product.colors[0]);
-      setSelectedSize(product.sizes[1]);
-    }
-    setLoading(false);
-  }, [id, products]);
+    const loadProduct = async () => {
+      setLoading(true);
+      
+      // First, try to find the product in the loaded products array
+      // MongoDB _id is a string, so compare as strings, not numbers
+      let product = products.find((p) => p.id === id || p._id === id);
+      
+      // If product not found in array, fetch it directly from API
+      if (!product && id && fetchProductById) {
+        product = await fetchProductById(id);
+      }
+      
+      if (product) {
+        setSelectedProduct(product);
+        setSelectedColor(product.colors && product.colors.length > 0 ? product.colors[0] : "");
+        setSelectedSize(product.sizes && product.sizes.length > 1 ? product.sizes[1] : (product.sizes && product.sizes.length > 0 ? product.sizes[0] : ""));
+      }
+      
+      setLoading(false);
+    };
+
+    loadProduct();
+  }, [id, products, fetchProductById]);
 
   const toggleAccordion = (section) => {
     setActiveAccordion(activeAccordion === section ? null : section);
