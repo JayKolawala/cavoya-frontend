@@ -66,7 +66,6 @@ function App() {
                   <Route path="products" element={<ProductManagement />} />
                   <Route path="orders" element={<OrderManager />} />
                   <Route path="customers" element={<CustomerManager />} />
-                  {/* <Route path="settings" element={<div>Settings</div>} /> */}
                 </Route>
 
                 {/* Public Routes with Header/Footer */}
