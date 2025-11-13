@@ -5,24 +5,7 @@ const AppContext = createContext();
 const initialState = {
   currentPage: "home",
   cartItems: [
-    {
-      id: 1,
-      name: "Silk Cami Blouse",
-      price: 6500,
-      color: "Charcoal",
-      size: "S",
-      quantity: 1,
-      image: "https://placehold.co/100x150/D9E3D3/5C5C5C?text=Blouse",
-    },
-    {
-      id: 2,
-      name: "Linen Midi Dress",
-      price: 8999,
-      color: "Blush",
-      size: "M",
-      quantity: 1,
-      image: "https://placehold.co/100x150/F8E7E4/5C5C5C?text=Dress",
-    },
+    
   ],
   wishlist: [],
   user: null,
