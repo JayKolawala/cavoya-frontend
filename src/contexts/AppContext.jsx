@@ -205,8 +205,7 @@ export function AppProvider({ children }) {
 
   // API Base URL
   const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL ||
-    "https://cavoya-backend.onrender.com/api";
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
   // API request helper
   const apiRequest = async (endpoint, options = {}) => {
@@ -219,6 +218,11 @@ export function AppProvider({ children }) {
       },
       ...options,
     };
+
+    // Remove Content-Type header for FormData (browser will set it automatically with boundary)
+    if (options.body instanceof FormData) {
+      delete config.headers["Content-Type"];
+    }
 
     try {
       const response = await fetch(url, config);
@@ -285,37 +289,57 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Add product - simplified to match API schema exactly
+  // Add product - using FormData for file uploads with multiple images/videos
   const addProduct = async (productData) => {
     try {
-      // Only send fields that API expects
-      const apiPayload = {
-        name: productData.name,
-        description: productData.description || "",
-        price: Number(productData.price),
-        image: productData.image,
-        colors: productData.colors || [],
-        sizes: productData.sizes || [],
-        category: productData.category || "Uncategorized",
-        inventory: {
+      const formData = new FormData();
+
+      // Add text fields
+      formData.append("name", productData.name);
+      formData.append("description", productData.description || "");
+      formData.append("price", Number(productData.price));
+      formData.append("category", productData.category || "Uncategorized");
+
+      // Add colors and sizes as JSON strings
+      formData.append("colors", JSON.stringify(productData.colors || []));
+      formData.append("sizes", JSON.stringify(productData.sizes || []));
+
+      // Add inventory as JSON string
+      formData.append(
+        "inventory",
+        JSON.stringify({
           stock: Number(productData.inventory?.stock) || 0,
           trackQuantity: true,
-        },
-      };
+        })
+      );
 
-      // Only add optional fields if they have values
+      // Add optional fields
       if (productData.originalPrice) {
-        apiPayload.originalPrice = Number(productData.originalPrice);
+        formData.append("originalPrice", Number(productData.originalPrice));
       }
       if (productData.isFeatured !== undefined) {
-        apiPayload.isFeatured = productData.isFeatured;
+        formData.append("isFeatured", productData.isFeatured);
       }
 
-      console.log("Sending to API:", apiPayload);
+      // Add multiple image/video files
+      if (productData.imageFiles && productData.imageFiles.length > 0) {
+        // First file is the main image
+        formData.append("image", productData.imageFiles[0]);
+
+        // Additional files as additionalImages
+        for (let i = 1; i < productData.imageFiles.length; i++) {
+          formData.append("additionalImages", productData.imageFiles[i]);
+        }
+      } else if (productData.image && productData.image.trim()) {
+        // If no files but there's an image URL
+        formData.append("imageUrl", productData.image);
+      }
+
+      console.log("Sending FormData to API with multiple files");
 
       const response = await apiRequest("/products", {
         method: "POST",
-        body: JSON.stringify(apiPayload),
+        body: formData,
       });
 
       // Transform the response to match frontend structure
@@ -333,37 +357,70 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Update product - simplified to match API schema
+  // Update product - using FormData for file uploads with multiple images/videos
   const updateProduct = async (id, productData) => {
     try {
-      // Only send fields that API expects
-      const apiPayload = {
-        name: productData.name,
-        description: productData.description || "",
-        price: Number(productData.price),
-        image: productData.image,
-        colors: productData.colors || [],
-        sizes: productData.sizes || [],
-        category: productData.category || "Uncategorized",
-        inventory: {
+      const formData = new FormData();
+
+      // Add text fields
+      formData.append("name", productData.name);
+      formData.append("description", productData.description || "");
+      formData.append("price", Number(productData.price));
+      formData.append("category", productData.category || "Uncategorized");
+
+      // Add colors and sizes as JSON strings
+      formData.append("colors", JSON.stringify(productData.colors || []));
+      formData.append("sizes", JSON.stringify(productData.sizes || []));
+
+      // Add inventory as JSON string
+      formData.append(
+        "inventory",
+        JSON.stringify({
           stock: Number(productData.inventory?.stock) || 0,
           trackQuantity: true,
-        },
-      };
+        })
+      );
 
-      // Only add optional fields if they have values
+      // Add optional fields
       if (productData.originalPrice) {
-        apiPayload.originalPrice = Number(productData.originalPrice);
+        formData.append("originalPrice", Number(productData.originalPrice));
       }
       if (productData.isFeatured !== undefined) {
-        apiPayload.isFeatured = productData.isFeatured;
+        formData.append("isFeatured", productData.isFeatured);
       }
 
-      console.log("Updating product:", apiPayload);
+      // Handle images - if new files uploaded, they replace existing ones
+      if (productData.imageFiles && productData.imageFiles.length > 0) {
+        // First file is the main image
+        formData.append("image", productData.imageFiles[0]);
+
+        // Additional files as additionalImages
+        for (let i = 1; i < productData.imageFiles.length; i++) {
+          formData.append("additionalImages", productData.imageFiles[i]);
+        }
+      } else {
+        // No new files - keep existing images
+        if (productData.image && productData.image.trim()) {
+          formData.append("imageUrl", productData.image);
+        }
+
+        // Keep existing additional images
+        if (
+          productData.existingImages &&
+          productData.existingImages.length > 0
+        ) {
+          formData.append(
+            "existingImages",
+            JSON.stringify(productData.existingImages)
+          );
+        }
+      }
+
+      console.log("Updating product with FormData");
 
       const response = await apiRequest(`/products/${id}`, {
         method: "PUT",
-        body: JSON.stringify(apiPayload),
+        body: formData,
       });
 
       // Transform the response to match frontend structure
