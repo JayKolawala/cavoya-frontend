@@ -28,7 +28,7 @@ const Header = () => {
   const isProductsPage = location.pathname === "/products";
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-2 md:px-4">
         {/* Top bar */}
         <div className="hidden w-full md:flex justify-between items-center py-2 text-sm text-gray-600 border-b">
           <div className="flex w-full justify-between items-center space-x-4">
@@ -189,3 +189,4 @@ const Header = () => {
 };
 
 export default Header;
+
