@@ -188,7 +188,7 @@ const ProductPage = () => {
             {productMedia[activeMediaIndex].type === "video" ? (
               <video
                 src={productMedia[activeMediaIndex].url}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 controls
                 autoPlay
                 muted
@@ -198,7 +198,7 @@ const ProductPage = () => {
               <img
                 src={productMedia[activeMediaIndex].url}
                 alt={productMedia[activeMediaIndex].alt}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             )}
           </div>
@@ -483,3 +483,4 @@ const ProductPage = () => {
 };
 
 export default ProductPage;
+
