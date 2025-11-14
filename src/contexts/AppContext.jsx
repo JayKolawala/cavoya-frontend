@@ -188,7 +188,7 @@ export function AppProvider({ children }) {
 
   // API Base URL
   const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+    import.meta.env.VITE_API_BASE_URL || "https://cavoya-backend.onrender.com/api";
 
   // API request helper
   const apiRequest = async (endpoint, options = {}) => {
