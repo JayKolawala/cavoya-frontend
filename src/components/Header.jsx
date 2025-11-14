@@ -53,6 +53,13 @@ const Header = () => {
 
         {/* Main header */}
         <nav className="flex justify-between items-center py-4">
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="md:hidden hover:text-pink-400 transition-colors"
+            aria-label="Menu"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
           <div
             className="text-2xl font-bold text-gray-600"
             onClick={() => navigate("/")}
@@ -127,13 +134,6 @@ const Header = () => {
               aria-label="Login"
             >
               <User className="h-6 w-6" />
-            </button>
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="md:hidden hover:text-pink-400 transition-colors"
-              aria-label="Menu"
-            >
-              <Menu className="h-6 w-6" />
             </button>
           </div>
         </nav>
