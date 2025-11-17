@@ -26,7 +26,7 @@ const HomePage = () => {
   return (
     <div className="animate-fade-in">
       {/* Hero Section */}
-      <div className="hero-section text-white flex items-center justify-center h-[60vh] md:h-[80vh] text-center bg-cover bg-center relative bg-[#E8D2C5]">
+      <div className="hero-section text-white flex items-center justify-center min-h-screen text-center bg-cover bg-center relative bg-[#E8D2C5]">
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
         <div className="relative z-10 animate-pulse">
           <h1 className="text-4xl md:text-6xl font-extralight tracking-wide mb-4">

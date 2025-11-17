@@ -1,9 +1,11 @@
 import React from "react";
 import { useAppContext } from "../contexts/AppContext";
 import { Heart, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const WishlistPage = () => {
-  const { wishlist, products, navigate, toggleWishlist } = useAppContext();
+  const navigate = useNavigate();
+  const { wishlist, products, toggleWishlist } = useAppContext();
 
   const wishlistProducts = products.filter((product) =>
     wishlist.includes(product.id)
@@ -11,13 +13,13 @@ const WishlistPage = () => {
 
   if (wishlistProducts.length === 0) {
     return (
-      <section className="container mx-auto px-4 py-16 text-center">
+      <section className="container mx-auto px-4 pt-28 text-center">
         <div className="max-w-md mx-auto">
           <Heart className="h-24 w-24 mx-auto mb-6 text-gray-300" />
           <h2 className="text-2xl font-light mb-4">Your wishlist is empty</h2>
           <p className="text-gray-600 mb-8">Save items you love for later!</p>
           <button
-            onClick={() => navigate("products")}
+            onClick={() => navigate("/products")}
             className="px-8 py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors"
           >
             Start Shopping
@@ -28,8 +30,8 @@ const WishlistPage = () => {
   }
 
   return (
-    <section className="container mx-auto px-4 py-16">
-      <h1 className="text-4xl font-light mb-8">
+    <section className="container mx-auto px-4 pt-24">
+      <h1 className="text-3xl font-light mb-8">
         Your Wishlist ({wishlistProducts.length} items)
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">

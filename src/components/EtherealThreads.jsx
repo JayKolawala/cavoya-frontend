@@ -69,7 +69,7 @@ const EtherealThreads = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col text-gray-800 bg-gray-50">
+    <div className="min-h-screen flex flex-col text-gray-800">
       <Header />
       <main className="flex-grow">{renderPage()}</main>
       <Footer />

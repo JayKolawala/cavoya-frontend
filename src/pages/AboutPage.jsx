@@ -53,11 +53,11 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <section className="container mx-auto px-4 py-16">
+    <section className="container mx-auto px-4 pt-24">
       <div className="max-w-4xl mx-auto">
         {/* Header Section */}
-        <div className="text-center mb-16 " data-aos="fade-down">
-          <h1 className="text-5xl font-light mb-6">{aboutData.header.title}</h1>
+        <div className="text-center mb-10 " data-aos="fade-down">
+          <h1 className="text-4xl font-light mb-2">{aboutData.header.title}</h1>
           <p className="text-xl text-gray-600">{aboutData.header.tagline}</p>
         </div>
 

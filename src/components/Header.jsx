@@ -27,6 +27,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const isProductsPage = location.pathname === "/products";
+  const isHomePage = location.pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,29 +48,52 @@ const Header = () => {
     };
   }, []);
 
+  // Add resize event listener to close mobile menu when going below 768px
+  useEffect(() => {
+    const handleResize = () => {
+      // Close mobile menu only when screen width is below 768px (mobile breakpoint)
+      if (window.innerWidth > 768) {
+        setShowMobileMenu(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Clean up the event listener
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [setShowMobileMenu]);
+
   return (
     <header
-      className={`transition duration-300 ease-in-out fixed top-0 z-50 w-full ${
-        isScrolled ? "bg-white shadow-sm" : "bg-transparent text-black"
+      className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${
+        isScrolled || !isHomePage
+          ? "bg-white shadow-lg shadow-black/20"
+          : "bg-transparent text-black"
       }`}
     >
       <div
         className={`${
           showMobileMenu
-            ? "bg-black/50 h-screen fixed top-0 w-full transition duration-300 ease-in-out"
+            ? "max-md:bg-black/50 min-h-screen fixed top-0 w-full transition duration-300 ease-linear"
             : "h-full "
         }`}
         onClick={() => setShowMobileMenu(false)}
       >
         <div
-          className={`transition duration-300 ease-in-out ${
-            showMobileMenu ? "bg-white " : ""
+          className={`transition duration-300 ease-linear ${
+            showMobileMenu ? "" : "h-[72px]"
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="container mx-auto px-2 md:px-4">
+          <div className="w-full mx-auto">
             {/* Main header */}
-            <nav className="flex justify-between items-center py-4">
+            <nav
+              className={`flex justify-between items-center py-4 px-2 md:px-4 z-10 relative ${
+                showMobileMenu || isScrolled ? "bg-white" : ""
+              }`}
+            >
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
                 className="md:hidden hover:text-pink-400 transition-colors"
@@ -159,50 +183,52 @@ const Header = () => {
             </nav>
 
             {/* Mobile Menu */}
-            {showMobileMenu && (
-              <div className="md:hidden py-4 border-t">
-                <div className="flex flex-col space-y-4">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search products..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-pink-300"
-                    />
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  </div>
-                  <Link
-                    to="/"
-                    className="text-left text-black hover:text-pink-400"
-                    onClick={() => setShowMobileMenu(false)}
-                  >
-                    New Arrivals
-                  </Link>
-                  <Link
-                    to="/products"
-                    className="text-left text-black hover:text-pink-400"
-                    onClick={() => setShowMobileMenu(false)}
-                  >
-                    Shop All
-                  </Link>
-                  <Link
-                    to="/products"
-                    className="text-left text-black hover:text-pink-400"
-                    onClick={() => setShowMobileMenu(false)}
-                  >
-                    Sale
-                  </Link>
-                  <Link
-                    to="/about"
-                    className="text-left text-black hover:text-pink-400"
-                    onClick={() => setShowMobileMenu(false)}
-                  >
-                    About
-                  </Link>
+            <div
+              className={`p-4 pb-7 md:hidden border-t transition duration-500 ease-in-linear bg-white ${
+                showMobileMenu ? "translate-y-0" : "h-fit -translate-y-[150%]"
+              }`}
+            >
+              <div className="flex flex-col space-y-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-pink-300"
+                  />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
+                <Link
+                  to="/"
+                  className="text-left text-black hover:text-pink-400"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  New Arrivals
+                </Link>
+                <Link
+                  to="/products"
+                  className="text-left text-black hover:text-pink-400"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  Shop All
+                </Link>
+                <Link
+                  to="/products"
+                  className="text-left text-black hover:text-pink-400"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  Sale
+                </Link>
+                <Link
+                  to="/about"
+                  className="text-left text-black hover:text-pink-400"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  About
+                </Link>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

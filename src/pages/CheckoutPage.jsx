@@ -17,12 +17,24 @@ const CheckoutPage = () => {
       <section className="container mx-auto px-4 py-16 text-center">
         <div className="max-w-md mx-auto">
           <div className="h-24 w-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-            <svg className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            <svg
+              className="h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+              />
             </svg>
           </div>
           <h2 className="text-2xl font-light mb-4">Your cart is empty</h2>
-          <p className="text-gray-600 mb-8">Add some items to proceed to checkout</p>
+          <p className="text-gray-600 mb-8">
+            Add some items to proceed to checkout
+          </p>
           <button
             onClick={() => navigate("/products")}
             className="px-8 py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors"
@@ -37,7 +49,7 @@ const CheckoutPage = () => {
   const total = (parseFloat(getTotalPrice()) * 1.18).toFixed(2);
 
   return (
-    <section className="container mx-auto px-4 py-8">
+    <section className="container mx-auto px-4 pt-24">
       {/* Progress Steps */}
       <div className="max-w-4xl mx-auto mb-12">
         <div className="flex justify-between items-center mb-8">
@@ -74,21 +86,23 @@ const CheckoutPage = () => {
         {/* Step Content */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <ScrollToTop key={currentStep}>
-          {currentStep === 1 && <CheckoutStep1 onNext={() => setCurrentStep(2)} />}
-          {currentStep === 2 && (
-            <CheckoutStep2
-              onNext={() => setCurrentStep(3)}
-              onBack={() => setCurrentStep(1)}
-            />
-          )}
-          {currentStep === 3 && (
-            <CheckoutStep3
-              onNext={() => setCurrentStep(4)}
-              onBack={() => setCurrentStep(2)}
-              total={total}
-            />
-          )}
-          {currentStep === 4 && <CheckoutStep4 total={total} />}
+            {currentStep === 1 && (
+              <CheckoutStep1 onNext={() => setCurrentStep(2)} />
+            )}
+            {currentStep === 2 && (
+              <CheckoutStep2
+                onNext={() => setCurrentStep(3)}
+                onBack={() => setCurrentStep(1)}
+              />
+            )}
+            {currentStep === 3 && (
+              <CheckoutStep3
+                onNext={() => setCurrentStep(4)}
+                onBack={() => setCurrentStep(2)}
+                total={total}
+              />
+            )}
+            {currentStep === 4 && <CheckoutStep4 total={total} />}
           </ScrollToTop>
         </div>
       </div>

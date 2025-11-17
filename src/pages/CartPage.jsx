@@ -4,18 +4,14 @@ import { ShoppingCart, Minus, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
-  const {
-    cartItems,
-    updateCartQuantity,
-    removeFromCart,
-    getTotalPrice,
-  } = useAppContext();
+  const { cartItems, updateCartQuantity, removeFromCart, getTotalPrice } =
+    useAppContext();
 
   const navigate = useNavigate();
-  
+
   if (cartItems.length === 0) {
     return (
-      <section className="container mx-auto px-4 py-16 text-center">
+      <section className="container mx-auto px-4 pt-24 text-center">
         <div className="max-w-md mx-auto">
           <ShoppingCart className="h-24 w-24 mx-auto mb-6 text-gray-300" />
           <h2 className="text-2xl font-light mb-4">Your cart is empty</h2>
@@ -34,8 +30,8 @@ const CartPage = () => {
   }
 
   return (
-    <section className="container mx-auto px-4 py-16">
-      <h1 className="text-4xl font-light mb-8">
+    <section className="container mx-auto px-4 pt-24">
+      <h1 className="text-3xl font-light mb-8">
         Your Shopping Cart ({cartItems.length} items)
       </h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

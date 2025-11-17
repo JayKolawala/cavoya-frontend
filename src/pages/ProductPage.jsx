@@ -130,8 +130,6 @@ const ProductPage = () => {
     });
   }
 
-  console.log("Product Media Array:", productMedia); // Debug log to verify
-
   const AccordionSection = ({ title, isOpen, onToggle, children }) => (
     <div className="border-b border-gray-200">
       <button
@@ -180,7 +178,7 @@ const ProductPage = () => {
   };
 
   return (
-    <section className="container mx-auto px-4 py-16">
+    <section className="container mx-auto px-4 pt-24">
       <div className="flex flex-col lg:flex-row gap-12">
         {/* Media Gallery */}
         <div className="lg:w-1/2">
@@ -483,4 +481,3 @@ const ProductPage = () => {
 };
 
 export default ProductPage;
-

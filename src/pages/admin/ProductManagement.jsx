@@ -328,10 +328,7 @@ const ProductManagement = () => {
                           {editingProduct
                             ? "Current & New Images"
                             : "Selected Files"}{" "}
-                          ({imagePreviews.length}
-                          {selectedFiles.length > 0 &&
-                            ` + ${selectedFiles.length} new`}
-                          ):
+                          ( ):
                         </p>
                         <div className="grid grid-cols-4 gap-4">
                           {imagePreviews.map((preview, index) => (

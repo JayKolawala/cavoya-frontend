@@ -46,7 +46,7 @@ function App() {
       <AdminProvider>
         <Router>
           <ScrollToTop>
-            <div className="min-h-screen flex flex-col text-gray-800 bg-gray-50">
+            <div className="min-h-screen flex flex-col text-gray-800">
               <Routes>
                 {/* Public Routes without Header/Footer */}
                 <Route path="/login" element={<LoginPage />} />
@@ -73,7 +73,6 @@ function App() {
                   path="*"
                   element={
                     <>
-                      
                       <main className="flex-grow">
                         <Header />
                         <Routes>
@@ -92,7 +91,7 @@ function App() {
                             path="/checkout"
                             element={
                               // <ProtectedUserRoute>
-                                <CheckoutPage />
+                              <CheckoutPage />
                               // </ProtectedUserRoute>
                             }
                           />
