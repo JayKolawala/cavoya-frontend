@@ -4,9 +4,11 @@ import { Truck, RefreshCw, Shield, Star } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import { useAppContext } from "../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const HomePage = () => {
-  const { products } = useAppContext();
+  const { products, loading } = useAppContext();
+
   const [_selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
 
@@ -68,19 +70,28 @@ const HomePage = () => {
       </section>
 
       {/* Featured Products */}
+      {/* Featured Products */}
       <section className="container mx-auto px-4 mb-16">
         <h2 className="text-3xl md:text-4xl text-center mb-12">
           Featured Styles
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {products.slice(0, 4).map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onProductClick={handleProductClick}
-            />
-          ))}
-        </div>
+
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <LoadingSpinner />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {products.slice(0, 4).map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onProductClick={handleProductClick}
+              />
+            ))}
+          </div>
+        )}
+
         <div className="text-center mt-12">
           <button
             onClick={handleViewAllClick}

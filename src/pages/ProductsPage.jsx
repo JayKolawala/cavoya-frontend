@@ -3,9 +3,10 @@ import { useAppContext } from "../contexts/AppContext";
 import ProductFilters from "../components/ProductFilters";
 import ProductCard from "../components/ProductCard";
 import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const ProductsPage = () => {
-  const { sortedProducts } = useAppContext();
+  const { sortedProducts, productsLoading } = useAppContext();
   const [_selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
 
@@ -17,17 +18,26 @@ const ProductsPage = () => {
   return (
     <section className="container mx-auto px-4 pt-24">
       <h1 className="text-3xl font-light mb-8">Shop All Products</h1>
+
       <ProductFilters />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {sortedProducts.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onProductClick={handleProductClick}
-          />
-        ))}
-      </div>
-      {sortedProducts.length === 0 && (
+      {/* 🔹 SHOW LOADING SPINNER WHILE FETCHING */}
+      {productsLoading && <LoadingSpinner />}
+
+      {/* 🔹 SHOW PRODUCTS WHEN LOADED */}
+      {!productsLoading && sortedProducts.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {sortedProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onProductClick={handleProductClick}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* 🔹 SHOW EMPTY STATE AFTER LOADING */}
+      {!productsLoading && sortedProducts.length === 0 && (
         <div className="text-center py-16">
           <p className="text-gray-500 text-lg">
             No products found matching your criteria.

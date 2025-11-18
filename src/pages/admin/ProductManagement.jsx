@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Plus, Edit, Trash2, Search, X } from "lucide-react";
 import { useAppContext } from "../../contexts/AppContext";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const ProductManagement = () => {
   const {
@@ -676,9 +677,10 @@ const ProductManagement = () => {
                 </td>
               </tr>
             ))}
+
             {productsLoading && !submitLoading && (
-              <div className="mb-4 p-4 bg-blue-50 text-blue-700 rounded-md">
-                Loading products...
+              <div className="flex justify-center items-center w-full mx-auto">
+                <LoadingSpinner />
               </div>
             )}
 
