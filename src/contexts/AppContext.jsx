@@ -30,6 +30,7 @@ const initialState = {
   },
   paymentMethod: "card",
   orderConfirmed: false,
+  orderNumber: null,
 };
 
 function appReducer(state, action) {
@@ -70,9 +71,9 @@ function appReducer(state, action) {
         cartItems: state.cartItems.map((item) =>
           item.id === action.payload.id
             ? {
-                ...item,
-                quantity: Math.max(1, item.quantity + action.payload.change),
-              }
+              ...item,
+              quantity: Math.max(1, item.quantity + action.payload.change),
+            }
             : item
         ),
       };
@@ -132,12 +133,16 @@ function appReducer(state, action) {
         cartItems: [],
       };
 
+    case "SET_ORDER_NUMBER":
+      return { ...state, orderNumber: action.payload };
+
     case "RESET_CHECKOUT":
       return {
         ...state,
         shippingInfo: initialState.shippingInfo,
         paymentMethod: "card",
         orderConfirmed: false,
+        orderNumber: null,
       };
 
     case "SET_PRODUCTS_LOADING":
@@ -525,7 +530,82 @@ export function AppProvider({ children }) {
     dispatch({ type: "SET_PAYMENT_METHOD", payload: method });
   };
 
-  const confirmOrder = () => {
+  // Create order via API
+  const createOrder = async (paymentInfo = null) => {
+    try {
+      // Transform cart items to API format
+      const items = state.cartItems.map((item) => ({
+        product: item.productId,
+        name: item.name,
+        image: item.image,
+        price: item.price,
+        quantity: item.quantity,
+        color: item.color || "Default",
+        size: item.size || "Default",
+        subtotal: item.price * item.quantity,
+      }));
+
+      // Calculate pricing
+      const subtotal = parseFloat(getTotalPrice());
+      const shippingCost = 0; // Free shipping
+      const taxRate = 0.18; // 18% GST
+      const tax = subtotal * taxRate;
+      const total = subtotal + shippingCost + tax;
+
+      // Prepare order data
+      const orderData = {
+        customer: {
+          name: `${state.shippingInfo.firstName} ${state.shippingInfo.lastName}`,
+          email: state.shippingInfo.email,
+          phone: state.shippingInfo.phone,
+        },
+        shippingAddress: {
+          street: state.shippingInfo.address2
+            ? `${state.shippingInfo.address1}, ${state.shippingInfo.address2}`
+            : state.shippingInfo.address1,
+          city: state.shippingInfo.city,
+          state: state.shippingInfo.state,
+          postalCode: state.shippingInfo.zipCode,
+          country: state.shippingInfo.country || "India",
+        },
+        items,
+        payment: {
+          method: state.paymentMethod,
+          status: paymentInfo ? "paid" : "pending",
+          ...(paymentInfo && { transactionId: paymentInfo.paymentId }),
+        },
+        pricing: {
+          subtotal: parseFloat(subtotal.toFixed(2)),
+          shippingCost: parseFloat(shippingCost.toFixed(2)),
+          tax: parseFloat(tax.toFixed(2)),
+          discount: 0,
+          total: parseFloat(total.toFixed(2)),
+        },
+      };
+
+      console.log("Creating order:", orderData);
+
+      const response = await apiRequest("/orders", {
+        method: "POST",
+        body: JSON.stringify(orderData),
+      });
+
+      if (response.success && response.data) {
+        console.log("Order created successfully:", response.data);
+        return response.data;
+      }
+
+      throw new Error("Failed to create order");
+    } catch (error) {
+      console.error("Error creating order:", error);
+      throw error;
+    }
+  };
+
+  const confirmOrder = (orderNumber = null) => {
+    if (orderNumber) {
+      dispatch({ type: "SET_ORDER_NUMBER", payload: orderNumber });
+    }
     dispatch({ type: "CONFIRM_ORDER" });
     showCustomAlert("Order confirmed successfully!");
   };
@@ -547,6 +627,7 @@ export function AppProvider({ children }) {
     sortedProducts,
     setShippingInfo,
     setPaymentMethod,
+    createOrder,
     confirmOrder,
     resetCheckout,
     fetchProducts,

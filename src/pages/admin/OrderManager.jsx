@@ -1,69 +1,67 @@
 // src/pages/admin/OrderManager.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ORDER_STATUSES } from "../../utils/constants";
 import OrderFilters from "../../components/admin/orders/OrderFilters";
 import OrderTable from "../../components/admin/orders/OrderTable";
-import OrderStats from "../../components/admin/orders/OrderStats"; // Add this import
-
-// Import your existing order data (or replace with API call)
-const SAMPLE_ORDERS = [
-  {
-    id: "ORD-2025-001",
-    customerName: "Priya Sharma",
-    customerEmail: "priya.sharma@gmail.com",
-    customerPhone: "+91 98765 43210",
-    orderDate: "2025-09-20",
-    status: "pending",
-    totalAmount: 2499,
-    paymentMethod: "UPI",
-    paymentStatus: "paid",
-    shippingAddress: {
-      street: "123 MG Road",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400001",
-      country: "India",
-    },
-    billingAddress: {
-      street: "123 MG Road",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400001",
-      country: "India",
-    },
-    items: [
-      {
-        id: 1,
-        name: "Floral Summer Dress",
-        price: 1299,
-        quantity: 1,
-        size: "M",
-        color: "Pink",
-        image:
-          "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=300",
-      },
-      {
-        id: 2,
-        name: "Casual Cotton Kurti",
-        price: 899,
-        quantity: 1,
-        size: "L",
-        color: "Blue",
-        image:
-          "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?w=300",
-      },
-    ],
-    trackingNumber: "",
-    estimatedDelivery: "2025-09-25",
-    notes: "",
-  },
-  // Add more sample orders here or replace with your existing data
-];
+import OrderStats from "../../components/admin/orders/OrderStats";
+import useApi from "../../hooks/useApi";
 
 const OrderManager = () => {
-  const [orders, setOrders] = useState(SAMPLE_ORDERS);
+  const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  const { loading, error, get, patch } = useApi();
+
+  // Fetch orders from API
+  const fetchOrders = async () => {
+    try {
+      const response = await get('/orders');
+      if (response.success && response.data) {
+        // Transform API response to match the component's expected format
+        const transformedOrders = response.data.map((order) => ({
+          _id: order._id, // ← CRITICAL: Keep MongoDB _id for API calls
+          id: order.orderNumber, // Display ID
+          customerName: order.customer.name,
+          customerEmail: order.customer.email,
+          customerPhone: order.customer.phone,
+          orderDate: new Date(order.createdAt).toISOString().split('T')[0],
+          status: order.status,
+          totalAmount: order.pricing.total,
+          paymentMethod: order.payment.method,
+          paymentStatus: order.payment.status,
+          shippingAddress: {
+            street: order.shippingAddress.street,
+            city: order.shippingAddress.city,
+            state: order.shippingAddress.state,
+            pincode: order.shippingAddress.postalCode,
+            country: order.shippingAddress.country,
+          },
+          billingAddress: order.billingAddress || order.shippingAddress,
+          items: order.items.map((item) => ({
+            id: item._id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            size: item.size,
+            color: item.color,
+            image: item.image,
+          })),
+          trackingNumber: order.trackingNumber || "",
+          estimatedDelivery: order.estimatedDelivery || "",
+          notes: order.statusHistory?.[order.statusHistory.length - 1]?.note || "",
+        }));
+        setOrders(transformedOrders);
+      }
+    } catch (err) {
+      console.error('Failed to fetch orders:', err);
+    }
+  };
+
+  // Fetch orders on component mount
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   // Filter orders based on search and status
   const filteredOrders = orders.filter((order) => {
@@ -78,24 +76,66 @@ const OrderManager = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const handleOrderUpdate = (
+  const handleOrderUpdate = async (
     orderId,
     newStatus,
     trackingNumber = "",
     notes = ""
   ) => {
-    setOrders(
-      orders.map((order) =>
-        order.id === orderId
-          ? {
-              ...order,
-              status: newStatus,
-              trackingNumber: trackingNumber || order.trackingNumber,
-              notes: notes || order.notes,
-            }
-          : order
-      )
-    );
+    try {
+      // Find the order to get its MongoDB _id
+      const order = orders.find(o => o.id === orderId);
+
+      if (!order || !order._id) {
+        console.error('Order not found or missing _id:', orderId);
+        alert('Failed to update order: Order not found');
+        return;
+      }
+
+      // Debug logging
+      console.log('Updating order:', {
+        displayId: orderId,
+        mongoId: order._id,
+        endpoint: `/orders/${order._id}/status`,
+        payload: {
+          status: newStatus,
+          note: notes || `Status changed to ${newStatus}`,
+        }
+      });
+
+      // Call API to update order status using MongoDB _id
+      const response = await patch(`/orders/${order._id}/status`, {
+        status: newStatus,
+        note: notes || `Status changed to ${newStatus}`,
+      });
+
+      console.log('Update response:', response);
+
+      if (response.success) {
+        // Update local state optimistically
+        setOrders(
+          orders.map((o) =>
+            o.id === orderId
+              ? {
+                ...o,
+                status: newStatus,
+                trackingNumber: trackingNumber || o.trackingNumber,
+                notes: notes || o.notes,
+              }
+              : o
+          )
+        );
+
+        // Show success message
+        console.log('Order updated successfully');
+
+        // Optionally refetch to ensure sync with server
+        // await fetchOrders();
+      }
+    } catch (err) {
+      console.error('Failed to update order status:', err);
+      alert('Failed to update order status. Please try again.');
+    }
   };
 
   return (
@@ -108,20 +148,40 @@ const OrderManager = () => {
         </div>
       </div>
 
-      {/* Order Statistics */}
-      {/* FIXED: Changed ORDER_STATUSES to OrderStats */}
-      <OrderStats orders={orders} />
+      {/* Loading State */}
+      {loading && (
+        <div className="text-center py-8">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <p className="mt-2 text-gray-600">Loading orders...</p>
+        </div>
+      )}
 
-      {/* Filters */}
-      <OrderFilters
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
-      />
+      {/* Error State */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+          <p className="font-bold">Error</p>
+          <p>{error}</p>
+        </div>
+      )}
 
-      {/* Orders Table */}
-      <OrderTable orders={filteredOrders} onOrderUpdate={handleOrderUpdate} />
+      {/* Orders Content */}
+      {!loading && !error && (
+        <>
+          {/* Order Statistics */}
+          <OrderStats orders={orders} />
+
+          {/* Filters */}
+          <OrderFilters
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            statusFilter={statusFilter}
+            onStatusFilterChange={setStatusFilter}
+          />
+
+          {/* Orders Table */}
+          <OrderTable orders={filteredOrders} onOrderUpdate={handleOrderUpdate} />
+        </>
+      )}
     </div>
   );
 };

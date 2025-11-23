@@ -4,7 +4,11 @@ import { useAppContext } from "../../contexts/AppContext";
 import { CheckCircle, Truck, Mail } from "lucide-react";
 
 const CheckoutStep4 = ({ total }) => {
-  const { confirmOrder, shippingInfo, orderNumber = `CAVOYA-${Date.now()}` } = useAppContext();
+  const {
+    confirmOrder,
+    shippingInfo,
+    orderNumber,
+  } = useAppContext();
   const navigate = useNavigate();
 
   const handleContinueShopping = () => {
@@ -18,7 +22,9 @@ const CheckoutStep4 = ({ total }) => {
         <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
         <h2 className="text-2xl font-light mb-2">Order Confirmed!</h2>
         <p className="text-gray-600 mb-4">Thank you for your purchase</p>
-        <p className="text-sm text-gray-500">Order #: {orderNumber}</p>
+        <p className="text-sm text-gray-500">
+          Order #: {orderNumber || `CAVOYA-${Date.now()}`}
+        </p>
       </div>
 
       <div className="bg-gray-50 rounded-lg p-6 mb-6 text-left">
