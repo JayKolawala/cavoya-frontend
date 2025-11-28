@@ -1,98 +1,30 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../contexts/AppContext";
 import { Truck, Shield, RefreshCw } from "lucide-react";
-import {
-  processRazorpayPayment,
-  calculateOrderPricing,
-} from "../../utils/paymentService";
 
 const CheckoutStep3 = ({ onNext, onBack, total }) => {
+  const navigate = useNavigate();
   const {
     cartItems,
     shippingInfo,
     paymentMethod,
     getTotalPrice,
-    createOrder,
-    confirmOrder,
   } = useAppContext();
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState(null);
 
   const handleConfirmOrder = async (e) => {
     e.preventDefault();
-    setError(null);
     setIsProcessing(true);
-
-    try {
-      // For COD, create order directly
-      if (paymentMethod === "cod") {
-        console.log("Processing COD order...");
-        const orderData = await createOrder(null);
-
-        if (orderData && orderData.orderNumber) {
-          confirmOrder(orderData.orderNumber);
-          onNext();
-        } else {
-          throw new Error("Failed to create order");
-        }
-      }
-      // For online payment (Card/UPI), process payment first
-      else {
-        console.log("Processing online payment...");
-        const pricing = calculateOrderPricing(getTotalPrice());
-
-        await processRazorpayPayment({
-          amount: pricing.total,
-          customerName: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
-          customerEmail: shippingInfo.email,
-          customerPhone: shippingInfo.phone,
-          onSuccess: async (paymentInfo) => {
-            try {
-              console.log("Payment successful, creating order...");
-              // Create order after successful payment
-              const orderData = await createOrder(paymentInfo);
-
-              if (orderData && orderData.orderNumber) {
-                confirmOrder(orderData.orderNumber);
-                setIsProcessing(false);
-                onNext();
-              } else {
-                throw new Error("Failed to create order after payment");
-              }
-            } catch (err) {
-              setIsProcessing(false);
-              setError(
-                `Payment successful but order creation failed: ${err.message}. Please contact support with your payment details.`
-              );
-              console.error("Order creation error:", err);
-            }
-          },
-          onFailure: (err) => {
-            setIsProcessing(false);
-            setError(err.message || "Payment failed. Please try again.");
-            console.error("Payment error:", err);
-          },
-        });
-      }
-    } catch (err) {
-      setIsProcessing(false);
-      setError(err.message || "An error occurred. Please try again.");
-      console.error("Order processing error:", err);
-    }
+    
+    // Redirect to payment page for processing
+    navigate("/payment");
   };
 
   return (
     <div>
       <h2 className="text-2xl font-light mb-6">Order Review</h2>
-
-      {/* Error Message */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
-          <p className="font-bold">Error</p>
-          <p>{error}</p>
-        </div>
-      )}
 
       {/* Order Summary */}
       <div className="bg-gray-50 rounded-lg p-6 mb-6">
@@ -171,11 +103,9 @@ const CheckoutStep3 = ({ onNext, onBack, total }) => {
           {paymentMethod === "upi" && "UPI Payment"}
           {paymentMethod === "cod" && "Cash on Delivery"}
         </p>
-        {paymentMethod !== "cod" && (
-          <p className="text-sm text-gray-500 mt-2">
-            You will be redirected to Razorpay for secure payment
-          </p>
-        )}
+        <p className="text-sm text-gray-500 mt-2">
+          You will be redirected to a secure payment page
+        </p>
       </div>
 
       {/* Trust Badges */}
@@ -212,10 +142,10 @@ const CheckoutStep3 = ({ onNext, onBack, total }) => {
           {isProcessing ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              {paymentMethod === "cod" ? "Processing..." : "Opening Payment..."}
+              Redirecting...
             </>
           ) : (
-            "Confirm Order"
+            "Proceed to Payment"
           )}
         </button>
       </div>

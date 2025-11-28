@@ -14,6 +14,7 @@ import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
 import WishlistPage from "./pages/WishlistPage";
 import CheckoutPage from "./pages/CheckoutPage";
+import PaymentPage from "./pages/PaymentPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AboutPage from "./pages/AboutPage";
@@ -92,6 +93,14 @@ function App() {
                             element={
                               // <ProtectedUserRoute>
                               <CheckoutPage />
+                              // </ProtectedUserRoute>
+                            }
+                          />
+                          <Route
+                            path="/payment"
+                            element={
+                              // <ProtectedUserRoute>
+                              <PaymentPage />
                               // </ProtectedUserRoute>
                             }
                           />

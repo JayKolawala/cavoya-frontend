@@ -198,9 +198,13 @@ export function AppProvider({ children }) {
   const apiRequest = async (endpoint, options = {}) => {
     const url = `${API_BASE_URL}${endpoint}`;
 
+    // Get authentication token from localStorage
+    const token = localStorage.getItem("token");
+
     const config = {
       headers: {
         "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }), // Add auth token if available
         ...options.headers,
       },
       ...options,
@@ -228,8 +232,8 @@ export function AppProvider({ children }) {
 
   // Helper function to transform product data
   const transformProduct = (product) => ({
-    id: product._id,
-    _id: product._id,
+    id: product._id || product.id,
+    _id: product._id || product.id,
     name: product.name,
     price: product.price,
     originalPrice: product.originalPrice || product.price,
@@ -457,8 +461,14 @@ export function AppProvider({ children }) {
   };
 
   const addToCart = (product, selectedColor, selectedSize) => {
+    if (!product.id && !product._id) {
+      console.error("Cannot add to cart: Product ID is missing", product);
+      showCustomAlert("Error: Product data is incomplete");
+      return;
+    }
+
     const cartItem = {
-      productId: product.id,
+      productId: product.id || product._id,
       name: product.name,
       price: product.price,
       color: selectedColor,
@@ -534,16 +544,27 @@ export function AppProvider({ children }) {
   const createOrder = async (paymentInfo = null) => {
     try {
       // Transform cart items to API format
-      const items = state.cartItems.map((item) => ({
-        product: item.productId,
-        name: item.name,
-        image: item.image,
-        price: item.price,
-        quantity: item.quantity,
-        color: item.color || "Default",
-        size: item.size || "Default",
-        subtotal: item.price * item.quantity,
-      }));
+      const items = state.cartItems.map((item) => {
+        if (!item.productId) {
+          console.error("Missing product ID for item:", item);
+        }
+        return {
+          productId: item.productId, // Changed from product to productId based on user request
+          name: item.name,
+          image: item.image,
+          price: item.price,
+          quantity: item.quantity,
+          color: item.color || "Default",
+          size: item.size || "Default",
+          subtotal: item.price * item.quantity,
+        };
+      });
+
+      // Validate items
+      const invalidItems = items.filter(item => !item.productId);
+      if (invalidItems.length > 0) {
+        throw new Error(`Cannot create order: ${invalidItems.length} items have missing product IDs`);
+      }
 
       // Calculate pricing
       const subtotal = parseFloat(getTotalPrice());

@@ -1,5 +1,5 @@
 import React from "react";
-import { CreditCard, Smartphone, Truck } from "lucide-react";
+import { CreditCard, Smartphone } from "lucide-react";
 import { useAppContext } from "../../contexts/AppContext";
 
 const CheckoutStep2 = ({ onNext, onBack }) => {
@@ -39,19 +39,6 @@ const CheckoutStep2 = ({ onNext, onBack }) => {
             />
             <Smartphone className="h-5 w-5 mr-2" />
             <span>UPI Payment</span>
-          </label>
-
-          <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:border-pink-300 transition-colors">
-            <input
-              type="radio"
-              name="payment"
-              value="cod"
-              checked={paymentMethod === "cod"}
-              onChange={() => setPaymentMethod("cod")}
-              className="text-pink-500 mr-3"
-            />
-            <Truck className="h-5 w-5 mr-2" />
-            <span>Cash on Delivery</span>
           </label>
         </div>
 
