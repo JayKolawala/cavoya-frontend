@@ -198,12 +198,13 @@ const ProductManagement = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Product Management</h1>
+    <div className="p-4 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Product Management</h1>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600"
+          className="flex items-center justify-center px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg hover:from-pink-600 hover:to-rose-600 shadow-md transition-all duration-200 w-full sm:w-auto"
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Product
@@ -216,7 +217,7 @@ const ProductManagement = () => {
         <input
           type="text"
           placeholder="Search products..."
-          className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
+          className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -224,23 +225,23 @@ const ProductManagement = () => {
 
       {/* Product Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-          <div className="relative bg-white rounded-lg  w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4 ">
-            <div className="flex justify-between items-center p-6 sticky top-0 bg-white border-b">
-              <h2 className="text-2xl font-bold">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="relative bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex justify-between items-center p-4 sm:p-6 sticky top-0 bg-white border-b z-10 rounded-t-xl">
+              <h2 className="text-lg sm:text-2xl font-bold text-gray-800">
                 {editingProduct ? "Edit Product" : "Add New Product"}
               </h2>
               <button
                 onClick={resetForm}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-lg transition-colors"
               >
-                <X className="h-6 w-6" />
+                <X className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6 ">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {/* Product Name */}
-              <div className="px-6 py-4 space-y-6">
+              <div className="px-4 sm:px-6 py-4 space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Product Name *
@@ -495,9 +496,8 @@ const ProductManagement = () => {
                         onChange={(e) =>
                           handleColorChange(index, e.target.value)
                         }
-                        placeholder={`Color ${
-                          index + 1
-                        } (e.g., pink, white, black)`}
+                        placeholder={`Color ${index + 1
+                          } (e.g., pink, white, black)`}
                       />
                       <button
                         type="button"
@@ -521,11 +521,10 @@ const ProductManagement = () => {
                         key={size}
                         type="button"
                         onClick={() => handleSizeToggle(size)}
-                        className={`px-4 py-2 border rounded-md ${
-                          formData.sizes.includes(size)
-                            ? "bg-pink-500 text-white border-pink-500"
-                            : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
-                        }`}
+                        className={`px-4 py-2 border rounded-md ${formData.sizes.includes(size)
+                          ? "bg-pink-500 text-white border-pink-500"
+                          : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
+                          }`}
                       >
                         {size}
                       </button>
@@ -555,25 +554,25 @@ const ProductManagement = () => {
               </div>
 
               {/* Form Actions */}
-              <div className="flex justify-end space-x-4 !mt-0 p-6 border-t sticky bottom-0 bg-white">
+              <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 !mt-0 p-4 sm:p-6 border-t sticky bottom-0 bg-white rounded-b-xl">
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors w-full sm:w-auto"
                   disabled={submitLoading}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg hover:from-pink-600 hover:to-rose-600 focus:outline-none focus:ring-2 focus:ring-pink-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md w-full sm:w-auto"
                   disabled={submitLoading}
                 >
                   {submitLoading
                     ? "Saving..."
                     : editingProduct
-                    ? "Update Product"
-                    : "Add Product"}
+                      ? "Update Product"
+                      : "Add Product"}
                 </button>
               </div>
             </form>
@@ -582,119 +581,136 @@ const ProductManagement = () => {
       )}
 
       {/* Products Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Product
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Category
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Price
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Stock
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredProducts.map((product) => (
-              <tr key={product._id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="h-10 w-10 flex-shrink-0">
-                      <img
-                        className="h-10 w-10 rounded-full object-cover"
-                        src={product.image}
-                        alt={product.name}
-                      />
-                    </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
-                        {product.name}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gradient-to-r from-pink-50 via-rose-50 to-pink-50">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
+                  Product
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
+                  Category
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
+                  Price
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
+                  Stock
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-100">
+              {filteredProducts.map((product) => (
+                <tr key={product._id} className="hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 flex-shrink-0">
+                        <img
+                          className="h-10 w-10 rounded-lg object-cover ring-2 ring-pink-100"
+                          src={product.image}
+                          alt={product.name}
+                        />
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">
+                          {product.name}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {product.category}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  ₹{product.price}
-                  {product.originalPrice &&
-                    product.originalPrice > product.price && (
-                      <span className="ml-2 text-xs text-gray-500 line-through">
-                        ₹{product.originalPrice}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {product.category}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="text-sm font-bold text-pink-600">₹{product.price}</span>
+                    {product.originalPrice &&
+                      product.originalPrice > product.price && (
+                        <span className="ml-2 text-xs text-gray-500 line-through">
+                          ₹{product.originalPrice}
+                        </span>
+                      )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {product.inventory?.stock || 0}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {product.isFeatured && (
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                        Featured
                       </span>
                     )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {product.inventory?.stock || 0}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {product.isFeatured && (
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
-                      Featured
-                    </span>
-                  )}
-                  {product.originalPrice &&
-                    product.originalPrice > product.price && (
-                      <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        On Sale
-                      </span>
-                    )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button
-                    onClick={() => handleEdit(product)}
-                    className="text-indigo-600 hover:text-indigo-900 mr-3"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (
-                        window.confirm(
-                          "Are you sure you want to delete this product?"
-                        )
-                      ) {
-                        deleteProduct(product._id);
-                      }
-                    }}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </td>
-              </tr>
-            ))}
+                    {product.originalPrice &&
+                      product.originalPrice > product.price && (
+                        <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                          On Sale
+                        </span>
+                      )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleEdit(product)}
+                        className="p-2 text-pink-600 hover:text-pink-700 hover:bg-pink-100 rounded-lg transition-all duration-200"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              "Are you sure you want to delete this product?"
+                            )
+                          ) {
+                            deleteProduct(product._id);
+                          }
+                        }}
+                        className="p-2 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-lg transition-all duration-200"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
 
-            {productsLoading && !submitLoading && (
-              <div className="flex justify-center items-center w-full mx-auto">
-                <LoadingSpinner />
-              </div>
-            )}
+              {productsLoading && !submitLoading && (
+                <tr>
+                  <td colSpan="6" className="text-center py-8">
+                    <div className="flex justify-center items-center">
+                      <LoadingSpinner />
+                    </div>
+                  </td>
+                </tr>
+              )}
 
-            {productsError && (
-              <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-md">
-                Error: {productsError}
-              </div>
-            )}
-          </tbody>
-        </table>
+              {productsError && (
+                <tr>
+                  <td colSpan="6" className="p-4">
+                    <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg text-center">
+                      Error: {productsError}
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {filteredProducts.length === 0 && !productsLoading && (
-          <div className="text-center py-8">
-            <p className="text-gray-500">No products found</p>
+          <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-pink-50/30">
+            <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+            <p className="text-gray-500 text-sm">No products found</p>
           </div>
         )}
       </div>

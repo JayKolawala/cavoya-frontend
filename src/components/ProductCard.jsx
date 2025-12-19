@@ -30,26 +30,25 @@ const ProductCard = ({ product, onProductClick }) => {
           className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <Heart
-            className={`h-4 w-4 ${
-              isInWishlist ? "fill-pink-500 text-pink-500" : "text-gray-400"
-            }`}
+            className={`h-4 w-4 ${isInWishlist ? "fill-blush-500 text-blush-500" : "text-gray-400"
+              }`}
           />
         </button>
 
         {product.isNew && (
-          <span className="absolute top-4 left-4 bg-green-500 text-white px-2 py-1 text-xs rounded">
+          <span className="absolute top-4 left-4 bg-matcha-500 text-white px-2 py-1 text-xs rounded">
             NEW
           </span>
         )}
         {product.isSale && (
-          <span className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 text-xs rounded mt-8">
+          <span className="absolute top-4 left-4 bg-tangerine-500 text-white px-2 py-1 text-xs rounded mt-8">
             SALE
           </span>
         )}
       </div>
       <div className="p-4 text-center">
         <h3
-          className="text-xl font-medium cursor-pointer hover:text-pink-500"
+          className="text-xl font-medium cursor-pointer hover:text-tangerine-500 transition-colors"
           onClick={() => onProductClick(product)}
         >
           {product.name}
@@ -61,7 +60,7 @@ const ProductCard = ({ product, onProductClick }) => {
           </span>
         </div>
         <div className="flex items-center justify-center space-x-2 mt-2">
-          <span className="text-lg font-semibold text-pink-500">
+          <span className="text-lg font-semibold text-blush-600">
             ₹{product.price}
           </span>
           {product.isSale && (

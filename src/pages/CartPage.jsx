@@ -20,7 +20,7 @@ const CartPage = () => {
           </p>
           <button
             onClick={() => navigate("products")}
-            className="px-8 py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors"
+            className="px-8 py-3 bg-blush-500 text-white rounded-lg hover:bg-blush-600 transition-colors"
           >
             Continue Shopping
           </button>
@@ -97,7 +97,7 @@ const CartPage = () => {
               </div>
               <div className="flex justify-between">
                 <span>Shipping:</span>
-                <span className="text-green-600">Free</span>
+                <span className="text-matcha-600">Free</span>
               </div>
               <div className="flex justify-between">
                 <span>Tax:</span>
@@ -114,13 +114,13 @@ const CartPage = () => {
             </div>
             <button
               onClick={() => navigate("/checkout")}
-              className="w-full mt-6 py-3 bg-pink-500 text-white font-bold rounded-lg hover:bg-pink-600 transition-colors"
+              className="w-full mt-6 py-3 bg-blush-500 text-white font-bold rounded-lg hover:bg-blush-600 transition-colors"
             >
               Proceed to Checkout
             </button>
             <button
               onClick={() => navigate("/products")}
-              className="w-full mt-3 py-3 border border-pink-500 text-pink-500 font-bold rounded-lg hover:bg-pink-50 transition-colors"
+              className="w-full mt-3 py-3 border border-blush-500 text-blush-600 font-bold rounded-lg hover:bg-blush-50 transition-colors"
             >
               Continue Shopping
             </button>

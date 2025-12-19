@@ -34,7 +34,7 @@ h3 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(75deg, #ec4899, #fffdd0);
+  background: linear-gradient(75deg, #E36999, #F2D88F);
   border-radius: 4px;
   transition-property: color, background-color, border-color,
     text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
@@ -44,7 +44,7 @@ h3 {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(75deg, #aa2166, #ddda99);
+  background: linear-gradient(75deg, #C33968, #D4A93D);
 }
 
 .scrollbar-hidden::-webkit-scrollbar-thumb {

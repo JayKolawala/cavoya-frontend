@@ -24,24 +24,24 @@ const AboutPage = () => {
     values: [
       {
         icon: Heart,
-        iconColor: "text-pink-500",
-        bgColor: "bg-pink-100",
+        iconColor: "text-blush-500",
+        bgColor: "bg-blush-100",
         title: "Crafted with Love",
         description:
           "Every piece is made with attention to detail and genuine care",
       },
       {
         icon: RefreshCw,
-        iconColor: "text-green-500",
-        bgColor: "bg-green-100",
+        iconColor: "text-matcha-500",
+        bgColor: "bg-matcha-100",
         title: "Sustainable Fashion",
         description:
           "Committed to ethical practices and environmental responsibility",
       },
       {
         icon: Star,
-        iconColor: "text-blue-500",
-        bgColor: "bg-blue-100",
+        iconColor: "text-sea-500",
+        bgColor: "bg-sea-100",
         title: "Premium Quality",
         description: "Using only the finest materials and expert craftsmanship",
       },
@@ -53,7 +53,7 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <section className="container mx-auto px-4 pt-24">
+    <section className="container mx-auto px-4 pt-24 bg-gradient-to-b from-butter-50 to-white">
       <div className="max-w-4xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-10 " data-aos="fade-down">
@@ -90,9 +90,9 @@ const AboutPage = () => {
           {aboutData.values.map((value, index) => {
             const IconComponent = value.icon;
             return (
-              <div key={index} className="text-center p-6">
+              <div key={index} className="text-center p-6 hover:bg-white rounded-lg transition-all hover:shadow-lg">
                 <div
-                  className={`${value.bgColor} rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4`}
+                  className={`${value.bgColor} rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 transition-transform hover:scale-110`}
                 >
                   <IconComponent className={`h-8 w-8 ${value.iconColor}`} />
                 </div>

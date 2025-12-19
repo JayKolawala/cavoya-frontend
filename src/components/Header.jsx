@@ -67,36 +67,32 @@ const Header = () => {
 
   return (
     <header
-      className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${
-        isScrolled || !isHomePage
+      className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${isScrolled || !isHomePage
           ? "bg-white shadow-lg shadow-black/20"
           : "bg-transparent text-black"
-      }`}
+        }`}
     >
       <div
-        className={`${
-          showMobileMenu
+        className={`${showMobileMenu
             ? "max-md:bg-black/50 min-h-screen fixed top-0 w-full transition duration-300 ease-linear"
             : "h-full "
-        }`}
+          }`}
         onClick={() => setShowMobileMenu(false)}
       >
         <div
-          className={`transition duration-300 ease-linear ${
-            showMobileMenu ? "" : "h-[72px]"
-          }`}
+          className={`transition duration-300 ease-linear ${showMobileMenu ? "" : "h-[72px]"
+            }`}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="w-full mx-auto">
             {/* Main header */}
             <nav
-              className={`flex justify-between items-center py-4 px-2 md:px-4 z-10 relative ${
-                showMobileMenu || isScrolled ? "bg-white" : ""
-              }`}
+              className={`flex justify-between items-center py-4 px-2 md:px-4 z-10 relative ${showMobileMenu || isScrolled ? "bg-white" : ""
+                }`}
             >
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="md:hidden hover:text-pink-400 transition-colors"
+                className="md:hidden hover:text-tangerine-500 transition-colors"
                 aria-label="Menu"
               >
                 <Menu className="h-6 w-6 text-black" />
@@ -114,24 +110,24 @@ const Header = () => {
 
               {/* Desktop Navigation */}
               <div className="hidden md:flex space-x-8">
-                <Link to="/" className="hover:text-pink-400 transition-colors">
+                <Link to="/" className="hover:text-tangerine-500 transition-colors">
                   New Arrivals
                 </Link>
                 <Link
                   to="/products"
-                  className="hover:text-pink-400 transition-colors"
+                  className="hover:text-tangerine-500 transition-colors"
                 >
                   Shop All
                 </Link>
                 <Link
                   to="/products"
-                  className="hover:text-pink-400 transition-colors"
+                  className="hover:text-tangerine-500 transition-colors"
                 >
                   Sale
                 </Link>
                 <Link
                   to="/about"
-                  className="hover:text-pink-400 transition-colors"
+                  className="hover:text-tangerine-500 transition-colors"
                 >
                   About
                 </Link>
@@ -145,7 +141,7 @@ const Header = () => {
                     placeholder="Search products..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-pink-300"
+                    className="pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blush-300"
                   />
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
@@ -155,26 +151,26 @@ const Header = () => {
               <div className="flex items-center space-x-4 text-black">
                 <button
                   onClick={() => navigate("/wishlist")}
-                  className="hover:text-pink-400 transition-colors relative"
+                  className="hover:text-tangerine-500 transition-colors relative"
                   aria-label="Wishlist"
                 >
                   <Heart className="h-6 w-6" />
                 </button>
                 <button
                   onClick={() => navigate("/cart")}
-                  className="hover:text-pink-400 transition-colors relative"
+                  className="hover:text-tangerine-500 transition-colors relative"
                   aria-label="Cart"
                 >
                   <ShoppingCart className="h-6 w-6" />
                   {getCartItemsCount() > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-pink-500 text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-2 -right-2 bg-tangerine-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                       {getCartItemsCount()}
                     </span>
                   )}
                 </button>
                 <button
                   onClick={() => navigate("/admin/login")}
-                  className="hover:text-pink-400 transition-colors"
+                  className="hover:text-tangerine-500 transition-colors"
                   aria-label="Login"
                 >
                   <User className="h-6 w-6" />
@@ -184,9 +180,8 @@ const Header = () => {
 
             {/* Mobile Menu */}
             <div
-              className={`p-4 pb-7 md:hidden border-t transition duration-500 ease-in-linear bg-white ${
-                showMobileMenu ? "translate-y-0" : "h-fit -translate-y-[150%]"
-              }`}
+              className={`p-4 pb-7 md:hidden border-t transition duration-500 ease-in-linear bg-white ${showMobileMenu ? "translate-y-0" : "h-fit -translate-y-[150%]"
+                }`}
             >
               <div className="flex flex-col space-y-4">
                 <div className="relative">
@@ -195,34 +190,34 @@ const Header = () => {
                     placeholder="Search products..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-pink-300"
+                    className="w-full pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blush-300"
                   />
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
                 <Link
                   to="/"
-                  className="text-left text-black hover:text-pink-400"
+                  className="text-left text-black hover:text-tangerine-500"
                   onClick={() => setShowMobileMenu(false)}
                 >
                   New Arrivals
                 </Link>
                 <Link
                   to="/products"
-                  className="text-left text-black hover:text-pink-400"
+                  className="text-left text-black hover:text-tangerine-500"
                   onClick={() => setShowMobileMenu(false)}
                 >
                   Shop All
                 </Link>
                 <Link
                   to="/products"
-                  className="text-left text-black hover:text-pink-400"
+                  className="text-left text-black hover:text-tangerine-500"
                   onClick={() => setShowMobileMenu(false)}
                 >
                   Sale
                 </Link>
                 <Link
                   to="/about"
-                  className="text-left text-black hover:text-pink-400"
+                  className="text-left text-black hover:text-tangerine-500"
                   onClick={() => setShowMobileMenu(false)}
                 >
                   About

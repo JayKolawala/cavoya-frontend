@@ -13,7 +13,7 @@ import { useAppContext } from "../contexts/AppContext";
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blush-500"></div>
   </div>
 );
 
@@ -74,7 +74,7 @@ const ProductPage = () => {
         </p>
         <button
           onClick={() => window.history.back()}
-          className="px-6 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition-colors"
+          className="px-6 py-2 bg-blush-500 text-white rounded-md hover:bg-blush-600 transition-colors"
         >
           Go Back
         </button>
@@ -144,9 +144,8 @@ const ProductPage = () => {
         )}
       </button>
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-[600px] pb-4" : "max-h-0"
-        }`}
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-[600px] pb-4" : "max-h-0"
+          }`}
       >
         <div className="text-gray-600 text-sm leading-relaxed">{children}</div>
       </div>
@@ -206,11 +205,10 @@ const ProductPage = () => {
             {productMedia.map((media, index) => (
               <div
                 key={index}
-                className={`relative w-full h-24 rounded-lg cursor-pointer transition-all ${
-                  activeMediaIndex === index
-                    ? "ring-2 ring-pink-500"
+                className={`relative w-full h-24 rounded-lg cursor-pointer transition-all ${activeMediaIndex === index
+                    ? "ring-2 ring-blush-500"
                     : "hover:opacity-80"
-                }`}
+                  }`}
                 onClick={() => setActiveMediaIndex(index)}
               >
                 {media.type === "video" ? (
@@ -246,11 +244,10 @@ const ProductPage = () => {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`h-4 w-4 ${
-                    i < Math.floor(selectedProduct.rating || 0)
+                  className={`h-4 w-4 ${i < Math.floor(selectedProduct.rating || 0)
                       ? "fill-yellow-400 text-yellow-400"
                       : "text-gray-300"
-                  }`}
+                    }`}
                 />
               ))}
             </div>
@@ -261,7 +258,7 @@ const ProductPage = () => {
 
           {/* Price */}
           <div className="flex items-center space-x-4 mb-6">
-            <span className="text-3xl font-bold text-pink-500">
+            <span className="text-3xl font-bold text-blush-600">
               ₹{selectedProduct.price}
             </span>
             {selectedProduct.originalPrice &&
@@ -271,7 +268,7 @@ const ProductPage = () => {
                 </span>
               )}
             {selectedProduct.isSale && (
-              <span className="bg-red-500 text-white px-2 py-1 text-sm rounded">
+              <span className="bg-tangerine-500 text-white px-2 py-1 text-sm rounded">
                 SALE
               </span>
             )}
@@ -285,11 +282,10 @@ const ProductPage = () => {
           {/* Stock Status */}
           <div className="mb-6">
             <p
-              className={`text-sm font-medium ${
-                selectedProduct.inventory?.stock > 0
+              className={`text-sm font-medium ${selectedProduct.inventory?.stock > 0
                   ? "text-green-600"
                   : "text-red-600"
-              }`}
+                }`}
             >
               {selectedProduct.inventory?.stock > 0
                 ? `In Stock (${selectedProduct.inventory.stock} available)`
@@ -312,11 +308,10 @@ const ProductPage = () => {
                     key={color}
                     className={`w-10 h-10 rounded-full ${getColorClasses(
                       color
-                    )} border-2 transition-all ${
-                      selectedColor === color
-                        ? "border-gray-800 scale-110 ring-2 ring-pink-300"
+                    )} border-2 transition-all ${selectedColor === color
+                        ? "border-gray-800 scale-110 ring-2 ring-blush-300"
                         : "border-gray-300 hover:scale-105"
-                    }`}
+                      }`}
                     onClick={() => setSelectedColor(color)}
                     title={color}
                   />
@@ -338,11 +333,10 @@ const ProductPage = () => {
                 {selectedProduct.sizes.map((size) => (
                   <button
                     key={size}
-                    className={`px-4 py-2 border rounded-md transition-colors ${
-                      selectedSize === size
-                        ? "border-pink-500 bg-pink-50 text-pink-600"
-                        : "border-gray-300 hover:border-pink-300"
-                    }`}
+                    className={`px-4 py-2 border rounded-md transition-colors ${selectedSize === size
+                        ? "border-blush-500 bg-blush-50 text-blush-600"
+                        : "border-gray-300 hover:border-blush-300"
+                      }`}
                     onClick={() => setSelectedSize(size)}
                   >
                     {size}
@@ -358,11 +352,10 @@ const ProductPage = () => {
               addToCart(selectedProduct, selectedColor, selectedSize)
             }
             disabled={selectedProduct.inventory?.stock <= 0}
-            className={`w-full py-4 rounded-lg font-bold transition-transform transform ${
-              selectedProduct.inventory?.stock > 0
-                ? "bg-pink-500 text-white hover:scale-[1.01] hover:bg-pink-600"
+            className={`w-full py-4 rounded-lg font-bold transition-transform transform ${selectedProduct.inventory?.stock > 0
+                ? "bg-blush-500 text-white hover:scale-[1.01] hover:bg-blush-600"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            } mb-4`}
+              } mb-4`}
           >
             {selectedProduct.inventory?.stock > 0
               ? "Add to Cart"
@@ -445,14 +438,14 @@ const ProductPage = () => {
             >
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
-                  <Truck className="h-5 w-5 text-pink-500 mt-1" />
+                  <Truck className="h-5 w-5 text-tangerine-500 mt-1" />
                   <div>
                     <p className="font-semibold text-gray-800">Free Shipping</p>
                     <p className="text-sm">Free delivery on orders over ₹999</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <RefreshCw className="h-5 w-5 text-pink-500 mt-1" />
+                  <RefreshCw className="h-5 w-5 text-sea-500 mt-1" />
                   <div>
                     <p className="font-semibold text-gray-800">Easy Returns</p>
                     <p className="text-sm">
@@ -461,7 +454,7 @@ const ProductPage = () => {
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <Shield className="h-5 w-5 text-pink-500 mt-1" />
+                  <Shield className="h-5 w-5 text-matcha-500 mt-1" />
                   <div>
                     <p className="font-semibold text-gray-800">
                       Secure Payment

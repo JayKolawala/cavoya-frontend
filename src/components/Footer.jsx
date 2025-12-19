@@ -18,7 +18,7 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => navigate("/products")}
-                  className="hover:text-pink-400 transition-colors"
+                  className="hover:text-tangerine-400 transition-colors"
                 >
                   New Arrivals
                 </button>
@@ -26,7 +26,7 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => navigate("/products")}
-                  className="hover:text-pink-400 transition-colors"
+                  className="hover:text-tangerine-400 transition-colors"
                 >
                   Dresses
                 </button>
@@ -34,7 +34,7 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => navigate("/products")}
-                  className="hover:text-pink-400 transition-colors"
+                  className="hover:text-tangerine-400 transition-colors"
                 >
                   Sale
                 </button>
@@ -45,17 +45,17 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Customer Care</h4>
             <ul className="space-y-2 text-gray-300">
               <li>
-                <a href="#" className="hover:text-pink-400 transition-colors">
+                <a href="#" className="hover:text-tangerine-400 transition-colors">
                   Contact Us
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-pink-400 transition-colors">
+                <a href="#" className="hover:text-tangerine-400 transition-colors">
                   Shipping Info
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-pink-400 transition-colors">
+                <a href="#" className="hover:text-tangerine-400 transition-colors">
                   Returns
                 </a>
               </li>
@@ -67,13 +67,13 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => navigate("/about")}
-                  className="hover:text-pink-400 transition-colors"
+                  className="hover:text-tangerine-400 transition-colors"
                 >
                   About Us
                 </button>
               </li>
               <li>
-                <a href="#" className="hover:text-pink-400 transition-colors">
+                <a href="#" className="hover:text-tangerine-400 transition-colors">
                   Careers
                 </a>
               </li>
@@ -87,13 +87,13 @@ const Footer = () => {
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a
               href="#"
-              className="text-gray-300 hover:text-pink-400 transition-colors text-sm"
+              className="text-gray-300 hover:text-tangerine-400 transition-colors text-sm"
             >
               Privacy Policy
             </a>
             <a
               href="#"
-              className="text-gray-300 hover:text-pink-400 transition-colors text-sm"
+              className="text-gray-300 hover:text-tangerine-400 transition-colors text-sm"
             >
               Terms of Service
             </a>

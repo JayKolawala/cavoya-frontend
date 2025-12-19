@@ -139,26 +139,27 @@ const OrderManager = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Order Management</h1>
-        <div className="text-sm text-gray-600">
-          Total Orders: {orders.length}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Order Management</h1>
+        <div className="text-sm text-gray-600 bg-gradient-to-r from-pink-50 to-rose-50 px-4 py-2 rounded-lg border border-pink-100">
+          <span className="font-medium text-pink-900">Total Orders:</span>{" "}
+          <span className="font-bold text-pink-600">{orders.length}</span>
         </div>
       </div>
 
       {/* Loading State */}
       {loading && (
         <div className="text-center py-8">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
           <p className="mt-2 text-gray-600">Loading orders...</p>
         </div>
       )}
 
       {/* Error State */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
           <p className="font-bold">Error</p>
           <p>{error}</p>
         </div>

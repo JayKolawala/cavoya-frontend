@@ -28,9 +28,9 @@ const HomePage = () => {
   return (
     <div className="animate-fade-in">
       {/* Hero Section */}
-      <div className="hero-section text-white flex items-center justify-center min-h-screen text-center bg-cover bg-center relative bg-[#E8D2C5]">
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-        <div className="relative z-10 animate-pulse">
+      <div className="hero-section text-white flex items-center justify-center min-h-screen text-center bg-cover bg-center relative bg-gradient-to-br from-butter-300 via-butter-400 to-tangerine-300">
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div className="relative z-10">
           <h1 className="text-4xl md:text-6xl font-extralight tracking-wide mb-4">
             The Cavoya Collection
           </h1>
@@ -39,7 +39,7 @@ const HomePage = () => {
           </p>
           <button
             onClick={handleShopNowClick}
-            className="px-8 py-3 bg-white text-gray-800 font-medium rounded-full hover:bg-gray-100 transition-transform transform hover:scale-105"
+            className="px-8 py-3 bg-white text-gray-800 font-medium rounded-full hover:bg-tangerine-500 hover:text-white transition-all transform hover:scale-105 shadow-lg"
           >
             Shop Now
           </button>
@@ -49,18 +49,18 @@ const HomePage = () => {
       {/* Features Section */}
       <section className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          <div className="p-6">
-            <Truck className="h-12 w-12 mx-auto mb-4 text-pink-500" />
+          <div className="p-6 hover:bg-butter-50 rounded-lg transition-colors">
+            <Truck className="h-12 w-12 mx-auto mb-4 text-tangerine-500" />
             <p className="text-xl font-medium mb-2">Free Shipping</p>
             <p className="text-gray-600">Free shipping on orders over ₹999</p>
           </div>
-          <div className="p-6">
-            <RefreshCw className="h-12 w-12 mx-auto mb-4 text-pink-500" />
+          <div className="p-6 hover:bg-sea-50 rounded-lg transition-colors">
+            <RefreshCw className="h-12 w-12 mx-auto mb-4 text-sea-500" />
             <p className="text-xl font-medium mb-2">Easy Returns</p>
             <p className="text-gray-600">30-day return policy for all items</p>
           </div>
-          <div className="p-6">
-            <Shield className="h-12 w-12 mx-auto mb-4 text-pink-500" />
+          <div className="p-6 hover:bg-matcha-50 rounded-lg transition-colors">
+            <Shield className="h-12 w-12 mx-auto mb-4 text-matcha-500" />
             <p className="text-xl font-medium mb-2">Secure Payment</p>
             <p className="text-gray-600">
               Your payment information is safe with us
@@ -95,7 +95,7 @@ const HomePage = () => {
         <div className="text-center mt-12">
           <button
             onClick={handleViewAllClick}
-            className="px-8 py-3 border-2 border-pink-500 text-pink-500 rounded-full hover:bg-pink-500 hover:text-white transition-colors"
+            className="px-8 py-3 border-2 border-blush-500 text-blush-600 rounded-full hover:bg-blush-500 hover:text-white transition-all transform hover:scale-105 shadow-md hover:shadow-lg"
           >
             View All Products
           </button>
