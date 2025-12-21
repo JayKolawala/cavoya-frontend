@@ -37,7 +37,7 @@ const CheckoutStep1 = ({ onNext }) => {
             required
           />
         </div>
-        
+
         <input
           type="email"
           name="email"
@@ -47,7 +47,7 @@ const CheckoutStep1 = ({ onNext }) => {
           className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-300"
           required
         />
-        
+
         <input
           type="tel"
           name="phone"
@@ -57,7 +57,7 @@ const CheckoutStep1 = ({ onNext }) => {
           className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-300"
           required
         />
-        
+
         <input
           type="text"
           name="address1"
@@ -67,7 +67,7 @@ const CheckoutStep1 = ({ onNext }) => {
           className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-300"
           required
         />
-        
+
         <input
           type="text"
           name="address2"
@@ -76,7 +76,7 @@ const CheckoutStep1 = ({ onNext }) => {
           onChange={handleInputChange}
           className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-300"
         />
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <input
             type="text"
@@ -106,7 +106,7 @@ const CheckoutStep1 = ({ onNext }) => {
             required
           />
         </div>
-        
+
         <div className="flex justify-end">
           <button
             type="submit"

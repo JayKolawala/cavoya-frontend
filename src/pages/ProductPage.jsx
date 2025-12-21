@@ -177,11 +177,11 @@ const ProductPage = () => {
   };
 
   return (
-    <section className="container mx-auto px-4 pt-24">
+    <section className="container mx-auto px-4 pt-24 pb-16">
       <div className="flex flex-col lg:flex-row gap-12">
-        {/* Media Gallery */}
+        {/* Enhanced Media Gallery */}
         <div className="lg:w-1/2">
-          <div className="w-full h-[500px] bg-gray-100 rounded-lg overflow-hidden mb-4 relative">
+          <div className="w-full h-[500px] bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden mb-6 relative shadow-xl">
             {productMedia[activeMediaIndex].type === "video" ? (
               <video
                 src={productMedia[activeMediaIndex].url}
@@ -195,19 +195,19 @@ const ProductPage = () => {
               <img
                 src={productMedia[activeMediaIndex].url}
                 alt={productMedia[activeMediaIndex].alt}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain transition-transform duration-300 hover:scale-105"
               />
             )}
           </div>
 
-          {/* Thumbnails */}
+          {/* Enhanced Thumbnails */}
           <div className="grid grid-cols-4 gap-4">
             {productMedia.map((media, index) => (
               <div
                 key={index}
-                className={`relative w-full h-24 rounded-lg cursor-pointer transition-all ${activeMediaIndex === index
-                    ? "ring-2 ring-blush-500"
-                    : "hover:opacity-80"
+                className={`relative w-full h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${activeMediaIndex === index
+                  ? "ring-4 ring-blush-500 shadow-lg scale-105"
+                  : "hover:opacity-80 hover:scale-105 shadow-md"
                   }`}
                 onClick={() => setActiveMediaIndex(index)}
               >
@@ -215,18 +215,18 @@ const ProductPage = () => {
                   <>
                     <video
                       src={media.url}
-                      className="w-full h-full object-cover rounded-lg"
+                      className="w-full h-full object-cover"
                       muted
                     />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-lg">
-                      <Play className="h-8 w-8 text-white" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+                      <Play className="h-8 w-8 text-white drop-shadow-lg" />
                     </div>
                   </>
                 ) : (
                   <img
                     src={media.url}
                     alt={`Thumbnail ${index + 1}`}
-                    className="w-full h-full object-cover rounded-lg"
+                    className="w-full h-full object-cover"
                   />
                 )}
               </div>
@@ -234,31 +234,33 @@ const ProductPage = () => {
           </div>
         </div>
 
-        {/* Product Details */}
+        {/* Enhanced Product Details */}
         <div className="lg:w-1/2">
-          <h1 className="text-4xl font-light mb-2">{selectedProduct.name}</h1>
+          <h1 className="text-4xl md:text-5xl font-light mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            {selectedProduct.name}
+          </h1>
 
-          {/* Rating */}
-          <div className="flex items-center mb-4">
+          {/* Enhanced Rating */}
+          <div className="flex items-center mb-6">
             <div className="flex items-center">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`h-4 w-4 ${i < Math.floor(selectedProduct.rating || 0)
-                      ? "fill-yellow-400 text-yellow-400"
-                      : "text-gray-300"
+                  className={`h-5 w-5 ${i < Math.floor(selectedProduct.rating || 0)
+                    ? "fill-yellow-400 text-yellow-400"
+                    : "text-gray-300"
                     }`}
                 />
               ))}
             </div>
-            <span className="ml-2 text-gray-600">
-              ({selectedProduct.reviews || 0} reviews)
+            <span className="ml-3 text-gray-600 font-medium">
+              {selectedProduct.rating?.toFixed(1) || "0.0"} ({selectedProduct.reviews || 0} reviews)
             </span>
           </div>
 
-          {/* Price */}
-          <div className="flex items-center space-x-4 mb-6">
-            <span className="text-3xl font-bold text-blush-600">
+          {/* Enhanced Price */}
+          <div className="flex items-center space-x-4 mb-8">
+            <span className="text-4xl font-bold bg-gradient-to-r from-blush-600 to-blush-500 bg-clip-text text-transparent">
               ₹{selectedProduct.price}
             </span>
             {selectedProduct.originalPrice &&
@@ -268,23 +270,25 @@ const ProductPage = () => {
                 </span>
               )}
             {selectedProduct.isSale && (
-              <span className="bg-tangerine-500 text-white px-2 py-1 text-sm rounded">
+              <span className="bg-gradient-to-r from-tangerine-500 to-tangerine-600 text-white px-3 py-1.5 text-sm font-semibold rounded-full shadow-md">
                 SALE
               </span>
             )}
           </div>
 
-          {/* Description */}
-          <p className="text-gray-600 mb-6">
-            {selectedProduct.description || "No description available."}
-          </p>
+          {/* Enhanced Description */}
+          <div className="bg-gray-50 rounded-2xl p-6 mb-6">
+            <p className="text-gray-700 leading-relaxed">
+              {selectedProduct.description || "No description available."}
+            </p>
+          </div>
 
           {/* Stock Status */}
           <div className="mb-6">
             <p
               className={`text-sm font-medium ${selectedProduct.inventory?.stock > 0
-                  ? "text-green-600"
-                  : "text-red-600"
+                ? "text-green-600"
+                : "text-red-600"
                 }`}
             >
               {selectedProduct.inventory?.stock > 0
@@ -294,7 +298,7 @@ const ProductPage = () => {
           </div>
 
           {/* Color Selection */}
-          {selectedProduct.colors && selectedProduct.colors.length > 0 && (
+          {/* {selectedProduct.colors && selectedProduct.colors.length > 0 && (
             <div className="mb-6">
               <h4 className="font-medium text-lg mb-3">
                 Color:{" "}
@@ -309,8 +313,8 @@ const ProductPage = () => {
                     className={`w-10 h-10 rounded-full ${getColorClasses(
                       color
                     )} border-2 transition-all ${selectedColor === color
-                        ? "border-gray-800 scale-110 ring-2 ring-blush-300"
-                        : "border-gray-300 hover:scale-105"
+                      ? "border-gray-800 scale-110 ring-2 ring-blush-300"
+                      : "border-gray-300 hover:scale-105"
                       }`}
                     onClick={() => setSelectedColor(color)}
                     title={color}
@@ -318,7 +322,7 @@ const ProductPage = () => {
                 ))}
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Size Selection */}
           {selectedProduct.sizes && selectedProduct.sizes.length > 0 && (
@@ -334,8 +338,8 @@ const ProductPage = () => {
                   <button
                     key={size}
                     className={`px-4 py-2 border rounded-md transition-colors ${selectedSize === size
-                        ? "border-blush-500 bg-blush-50 text-blush-600"
-                        : "border-gray-300 hover:border-blush-300"
+                      ? "border-blush-500 bg-blush-50 text-blush-600"
+                      : "border-gray-300 hover:border-blush-300"
                       }`}
                     onClick={() => setSelectedSize(size)}
                   >
@@ -353,8 +357,8 @@ const ProductPage = () => {
             }
             disabled={selectedProduct.inventory?.stock <= 0}
             className={`w-full py-4 rounded-lg font-bold transition-transform transform ${selectedProduct.inventory?.stock > 0
-                ? "bg-blush-500 text-white hover:scale-[1.01] hover:bg-blush-600"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              ? "bg-blush-500 text-white hover:scale-[1.01] hover:bg-blush-600"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
               } mb-4`}
           >
             {selectedProduct.inventory?.stock > 0
@@ -371,35 +375,35 @@ const ProductPage = () => {
             </div>
           )}
 
-          {/* Accordion Sections */}
-          <div className="border-t border-gray-200 bg-white rounded-lg">
+          {/* Enhanced Accordion Sections */}
+          <div className="border-t border-gray-200 bg-white rounded-2xl shadow-sm overflow-hidden">
             <AccordionSection
               title="Product Details"
               isOpen={activeAccordion === "details"}
               onToggle={() => toggleAccordion("details")}
             >
-              <div className="space-y-3">
+              <div className="space-y-4 bg-gray-50 p-4 rounded-xl">
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="font-semibold text-gray-800">Category:</p>
-                    <p>{selectedProduct.category || "N/A"}</p>
+                  <div className="bg-white p-3 rounded-lg">
+                    <p className="font-semibold text-gray-800 mb-1">Category:</p>
+                    <p className="text-gray-600">{selectedProduct.category || "N/A"}</p>
                   </div>
-                  <div>
-                    <p className="font-semibold text-gray-800">Stock:</p>
-                    <p>{selectedProduct.inventory?.stock || 0} units</p>
+                  <div className="bg-white p-3 rounded-lg">
+                    <p className="font-semibold text-gray-800 mb-1">Stock:</p>
+                    <p className="text-gray-600">{selectedProduct.inventory?.stock || 0} units</p>
                   </div>
-                  <div>
-                    <p className="font-semibold text-gray-800">Colors:</p>
-                    <p>{selectedProduct.colors?.join(", ") || "N/A"}</p>
+                  <div className="bg-white p-3 rounded-lg">
+                    <p className="font-semibold text-gray-800 mb-1">Colors:</p>
+                    <p className="text-gray-600">{selectedProduct.colors?.join(", ") || "N/A"}</p>
                   </div>
-                  <div>
-                    <p className="font-semibold text-gray-800">Sizes:</p>
-                    <p>{selectedProduct.sizes?.join(", ") || "N/A"}</p>
+                  <div className="bg-white p-3 rounded-lg">
+                    <p className="font-semibold text-gray-800 mb-1">Sizes:</p>
+                    <p className="text-gray-600">{selectedProduct.sizes?.join(", ") || "N/A"}</p>
                   </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-gray-800">Product ID:</p>
-                  <p className="text-gray-500">
+                <div className="bg-white p-3 rounded-lg">
+                  <p className="font-semibold text-gray-800 mb-1">Product ID:</p>
+                  <p className="text-gray-500 text-xs font-mono">
                     {selectedProduct._id || selectedProduct.id}
                   </p>
                 </div>
@@ -412,17 +416,18 @@ const ProductPage = () => {
               onToggle={() => toggleAccordion("description")}
             >
               <div className="space-y-4">
-                <p>
+                <p className="text-gray-700 leading-relaxed">
                   {selectedProduct.description ||
                     "No detailed description available."}
                 </p>
 
                 {selectedProduct.isFeatured && (
-                  <div className="bg-purple-50 p-3 rounded-md border-l-4 border-purple-300">
-                    <p className="font-semibold text-purple-800 mb-1">
-                      ⭐ Featured Product
+                  <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-xl border-l-4 border-purple-500 shadow-sm">
+                    <p className="font-semibold text-purple-800 mb-1 flex items-center gap-2">
+                      <Star className="w-4 h-4 fill-purple-500 text-purple-500" />
+                      Featured Product
                     </p>
-                    <p className="text-purple-700">
+                    <p className="text-purple-700 text-sm">
                       This is one of our featured items, handpicked for quality
                       and style.
                     </p>
@@ -436,31 +441,37 @@ const ProductPage = () => {
               isOpen={activeAccordion === "shipping"}
               onToggle={() => toggleAccordion("shipping")}
             >
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <Truck className="h-5 w-5 text-tangerine-500 mt-1" />
+              <div className="space-y-5">
+                <div className="flex items-start space-x-4 bg-tangerine-50 p-4 rounded-xl">
+                  <div className="w-10 h-10 bg-gradient-to-br from-tangerine-400 to-tangerine-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Truck className="h-5 w-5 text-white" />
+                  </div>
                   <div>
-                    <p className="font-semibold text-gray-800">Free Shipping</p>
-                    <p className="text-sm">Free delivery on orders over ₹999</p>
+                    <p className="font-semibold text-gray-800 mb-1">Free Shipping</p>
+                    <p className="text-sm text-gray-600">Complimentary delivery on all orders over ₹999 across India</p>
                   </div>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <RefreshCw className="h-5 w-5 text-sea-500 mt-1" />
+                <div className="flex items-start space-x-4 bg-sea-50 p-4 rounded-xl">
+                  <div className="w-10 h-10 bg-gradient-to-br from-sea-400 to-sea-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <RefreshCw className="h-5 w-5 text-white" />
+                  </div>
                   <div>
-                    <p className="font-semibold text-gray-800">Easy Returns</p>
-                    <p className="text-sm">
-                      30-day return policy for unused items
+                    <p className="font-semibold text-gray-800 mb-1">Easy Returns</p>
+                    <p className="text-sm text-gray-600">
+                      Hassle-free 30-day return policy for complete peace of mind
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <Shield className="h-5 w-5 text-matcha-500 mt-1" />
+                <div className="flex items-start space-x-4 bg-matcha-50 p-4 rounded-xl">
+                  <div className="w-10 h-10 bg-gradient-to-br from-matcha-400 to-matcha-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Shield className="h-5 w-5 text-white" />
+                  </div>
                   <div>
-                    <p className="font-semibold text-gray-800">
+                    <p className="font-semibold text-gray-800 mb-1">
                       Secure Payment
                     </p>
-                    <p className="text-sm">
-                      All transactions are encrypted and secure
+                    <p className="text-sm text-gray-600">
+                      Bank-grade encryption keeps your payment information safe
                     </p>
                   </div>
                 </div>

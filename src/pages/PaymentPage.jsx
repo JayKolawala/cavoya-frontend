@@ -28,7 +28,7 @@ const PaymentPage = () => {
   // Redirect if no items or missing info
   useEffect(() => {
     if (hasInitiated.current) return;
-    
+
     if (cartItems.length === 0) {
       navigate("/cart");
     } else if (!shippingInfo.address1) {
@@ -48,7 +48,7 @@ const PaymentPage = () => {
     try {
       console.log("Initiating payment...");
       const pricing = calculateOrderPricing(getTotalPrice());
-      
+
       // Convert to paise (Razorpay expects smallest currency unit)
       const amountInPaise = Math.round(pricing.total * 100);
 
@@ -85,7 +85,7 @@ const PaymentPage = () => {
             setStatus("verifying");
             console.log("Step 2: Payment successful, verifying with backend...");
             console.log("Payment Response:", paymentResponse);
-            
+
             // Step 3: Verify payment with backend
             const verificationResult = await verifyPayment({
               razorpay_order_id: paymentResponse.orderId,
@@ -186,7 +186,7 @@ const PaymentPage = () => {
             </div>
             <h2 className="text-2xl font-light mb-2">Payment Failed</h2>
             <p className="text-red-600 mb-6">{error}</p>
-            
+
             <div className="flex flex-col space-y-3">
               <button
                 onClick={handleRetry}

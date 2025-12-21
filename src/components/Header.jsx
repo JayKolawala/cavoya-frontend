@@ -11,7 +11,8 @@ import {
 } from "lucide-react";
 import { useAppContext } from "../contexts/AppContext";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import logoBlack from "../../src/assets/cavoya-black.svg";
+// import logoBlack from "../../src/assets/cavoya-black.svg";
+import logoBlack from "../../src/assets/Cavoya_Logo.svg";
 
 const Header = () => {
   const {
@@ -68,14 +69,14 @@ const Header = () => {
   return (
     <header
       className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${isScrolled || !isHomePage
-          ? "bg-white shadow-lg shadow-black/20"
-          : "bg-transparent text-black"
+        ? "bg-white shadow-lg shadow-black/20"
+        : "bg-transparent text-white"
         }`}
     >
       <div
         className={`${showMobileMenu
-            ? "max-md:bg-black/50 min-h-screen fixed top-0 w-full transition duration-300 ease-linear"
-            : "h-full "
+          ? "max-md:bg-black/50 min-h-screen fixed top-0 w-full transition duration-300 ease-linear"
+          : "h-full "
           }`}
         onClick={() => setShowMobileMenu(false)}
       >
@@ -148,7 +149,7 @@ const Header = () => {
               )}
 
               {/* Icons */}
-              <div className="flex items-center space-x-4 text-black">
+              <div className={`flex items-center space-x-4  ${isScrolled || !isHomePage ? "text-black" : "text-white"}`}>
                 <button
                   onClick={() => navigate("/wishlist")}
                   className="hover:text-tangerine-500 transition-colors relative"

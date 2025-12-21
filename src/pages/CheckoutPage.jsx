@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
-import CheckoutStep2 from "../components/checkout/CheckoutStep2";
 import CheckoutStep3 from "../components/checkout/CheckoutStep3";
 import CheckoutStep4 from "../components/checkout/CheckoutStep4";
 import CheckoutStep1 from "../components/checkout/CheckoutStep1";
@@ -53,22 +52,20 @@ const CheckoutPage = () => {
       {/* Progress Steps */}
       <div className="max-w-4xl mx-auto mb-12">
         <div className="flex justify-between items-center mb-8">
-          {[1, 2, 3, 4].map((step) => (
+          {[1, 2, 3].map((step) => (
             <div key={step} className="flex flex-col items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                  currentStep >= step
-                    ? "bg-pink-500 border-pink-500 text-white"
-                    : "border-gray-300 text-gray-400"
-                }`}
+                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${currentStep >= step
+                  ? "bg-pink-500 border-pink-500 text-white"
+                  : "border-gray-300 text-gray-400"
+                  }`}
               >
                 {step}
               </div>
               <span className="text-sm mt-2 text-gray-600">
                 {step === 1 && "Shipping"}
-                {step === 2 && "Payment"}
-                {step === 3 && "Review"}
-                {step === 4 && "Confirm"}
+                {step === 2 && "Review"}
+                {step === 3 && "Confirm"}
               </span>
             </div>
           ))}
@@ -79,7 +76,7 @@ const CheckoutPage = () => {
           <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 transform -translate-y-1/2"></div>
           <div
             className="absolute top-1/2 left-0 h-1 bg-pink-500 transform -translate-y-1/2 transition-all duration-300"
-            style={{ width: `${((currentStep - 1) / 3) * 100}%` }}
+            style={{ width: `${((currentStep - 1) / 2) * 100}%` }}
           ></div>
         </div>
 
@@ -90,19 +87,13 @@ const CheckoutPage = () => {
               <CheckoutStep1 onNext={() => setCurrentStep(2)} />
             )}
             {currentStep === 2 && (
-              <CheckoutStep2
+              <CheckoutStep3
                 onNext={() => setCurrentStep(3)}
                 onBack={() => setCurrentStep(1)}
-              />
-            )}
-            {currentStep === 3 && (
-              <CheckoutStep3
-                onNext={() => setCurrentStep(4)}
-                onBack={() => setCurrentStep(2)}
                 total={total}
               />
             )}
-            {currentStep === 4 && <CheckoutStep4 total={total} />}
+            {currentStep === 3 && <CheckoutStep4 total={total} />}
           </ScrollToTop>
         </div>
       </div>
