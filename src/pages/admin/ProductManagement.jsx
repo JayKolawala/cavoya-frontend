@@ -33,6 +33,7 @@ const ProductManagement = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [validationAttempted, setValidationAttempted] = useState(false);
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -66,6 +67,7 @@ const ProductManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setValidationAttempted(true);
     setSubmitLoading(true);
 
     try {
@@ -173,6 +175,7 @@ const ProductManagement = () => {
     setImagePreviews([]);
     setEditingProduct(null);
     setShowForm(false);
+    setValidationAttempted(false);
   };
 
   const handleColorChange = (index, value) => {
@@ -298,7 +301,7 @@ const ProductManagement = () => {
                     Product Images & Videos *
                   </label>
                   <div className="space-y-2">
-                    <input
+                    {/* <input
                       type="text"
                       className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
                       value={formData.image}
@@ -309,7 +312,7 @@ const ProductManagement = () => {
                     />
                     <div className="text-sm text-gray-500">
                       OR upload new files
-                    </div>
+                    </div> */}
                     <input
                       type="file"
                       accept="image/*,video/*"
@@ -400,7 +403,8 @@ const ProductManagement = () => {
                       </div>
                     )}
 
-                    {imagePreviews.length === 0 &&
+                    {validationAttempted &&
+                      imagePreviews.length === 0 &&
                       selectedFiles.length === 0 &&
                       !formData.image &&
                       !editingProduct && (
