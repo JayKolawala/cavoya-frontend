@@ -5,7 +5,7 @@ const Footer = () => {
   const navigate = useNavigate();
 
   return (
-    <footer className="bg-gray-900 text-white mt-16">
+    <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 pt-12 pb-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
@@ -45,17 +45,26 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Customer Care</h4>
             <ul className="space-y-2 text-gray-300">
               <li>
-                <a href="#" className="hover:text-tangerine-400 transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-tangerine-400 transition-colors"
+                >
                   Contact Us
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-tangerine-400 transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-tangerine-400 transition-colors"
+                >
                   Shipping Info
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-tangerine-400 transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-tangerine-400 transition-colors"
+                >
                   Returns
                 </a>
               </li>
@@ -73,7 +82,10 @@ const Footer = () => {
                 </button>
               </li>
               <li>
-                <a href="#" className="hover:text-tangerine-400 transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-tangerine-400 transition-colors"
+                >
                   Careers
                 </a>
               </li>

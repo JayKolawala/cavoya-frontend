@@ -163,8 +163,7 @@ export const processRazorpayPayment = async ({
         }
 
         // Get Razorpay key from environment
-        const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_PhbqP4B6bWvzJ7';
-        console.log("Using Razorpay Key:", razorpayKey);
+        const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
         // Razorpay options
         const options = {
@@ -185,7 +184,6 @@ export const processRazorpayPayment = async ({
             },
             handler: function (response) {
                 // Payment successful
-                console.log('Payment successful:', response);
                 if (onSuccess) {
                     onSuccess({
                         paymentId: response.razorpay_payment_id,

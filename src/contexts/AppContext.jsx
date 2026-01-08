@@ -71,9 +71,9 @@ function appReducer(state, action) {
         cartItems: state.cartItems.map((item) =>
           item.id === action.payload.id
             ? {
-              ...item,
-              quantity: Math.max(1, item.quantity + action.payload.change),
-            }
+                ...item,
+                quantity: Math.max(1, item.quantity + action.payload.change),
+              }
             : item
         ),
       };
@@ -561,9 +561,11 @@ export function AppProvider({ children }) {
       });
 
       // Validate items
-      const invalidItems = items.filter(item => !item.productId);
+      const invalidItems = items.filter((item) => !item.productId);
       if (invalidItems.length > 0) {
-        throw new Error(`Cannot create order: ${invalidItems.length} items have missing product IDs`);
+        throw new Error(
+          `Cannot create order: ${invalidItems.length} items have missing product IDs`
+        );
       }
 
       // Calculate pricing
@@ -604,15 +606,12 @@ export function AppProvider({ children }) {
         },
       };
 
-      console.log("Creating order:", orderData);
-
       const response = await apiRequest("/orders", {
         method: "POST",
         body: JSON.stringify(orderData),
       });
 
       if (response.success && response.data) {
-        console.log("Order created successfully:", response.data);
         return response.data;
       }
 

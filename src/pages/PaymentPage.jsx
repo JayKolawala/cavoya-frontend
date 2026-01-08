@@ -46,31 +46,30 @@ const PaymentPage = () => {
     setStatus("processing");
 
     try {
-      console.log("Initiating payment...");
       const pricing = calculateOrderPricing(getTotalPrice());
 
       // Convert to paise (Razorpay expects smallest currency unit)
       const amountInPaise = Math.round(pricing.total * 100);
 
       // Step 1: Create Razorpay order via backend API
-      console.log("Step 1: Creating Razorpay order...");
       const razorpayOrderData = await createRazorpayOrder({
         amount: amountInPaise,
         currency: "INR",
         receipt: `receipt_${Date.now()}`,
       });
 
-      console.log("Razorpay order created data:", razorpayOrderData);
-
       // Handle different response structures (direct ID, nested order.id, or nested data.id)
-      const orderId = razorpayOrderData.id || razorpayOrderData.order?.id || razorpayOrderData.data?.id;
+      const orderId =
+        razorpayOrderData.id ||
+        razorpayOrderData.order?.id ||
+        razorpayOrderData.data?.id;
 
       if (!orderId) {
         console.error("Invalid order data:", razorpayOrderData);
-        throw new Error("Failed to retrieve Razorpay order ID from backend response");
+        throw new Error(
+          "Failed to retrieve Razorpay order ID from backend response"
+        );
       }
-
-      console.log("Using Order ID:", orderId);
 
       // Step 2: Open Razorpay checkout with order ID from backend
       await processRazorpayPayment({
@@ -83,8 +82,6 @@ const PaymentPage = () => {
         onSuccess: async (paymentResponse) => {
           try {
             setStatus("verifying");
-            console.log("Step 2: Payment successful, verifying with backend...");
-            console.log("Payment Response:", paymentResponse);
 
             // Step 3: Verify payment with backend
             const verificationResult = await verifyPayment({
@@ -97,10 +94,8 @@ const PaymentPage = () => {
               throw new Error("Payment verification failed");
             }
 
-            console.log("Payment verified successfully!");
-
             // Step 4: Create order in database
-            console.log("Step 3: Creating order in database...");
+
             const orderData = await createOrder({
               paymentId: paymentResponse.paymentId,
               orderId: paymentResponse.orderId,
@@ -120,7 +115,9 @@ const PaymentPage = () => {
             setStatus("error");
             setIsProcessing(false);
             setError(
-              `Payment successful but verification/order creation failed: ${err.message}. Response: ${JSON.stringify(paymentResponse)}`
+              `Payment successful but verification/order creation failed: ${
+                err.message
+              }. Response: ${JSON.stringify(paymentResponse)}`
             );
             console.error("Post-payment error:", err);
           }
@@ -172,12 +169,24 @@ const PaymentPage = () => {
         ) : status === "success" ? (
           <div className="py-8">
             <div className="rounded-full h-16 w-16 bg-green-100 flex items-center justify-center mx-auto mb-6">
-              <svg className="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+              <svg
+                className="h-8 w-8 text-green-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
             <h2 className="text-2xl font-light mb-2">Payment Successful!</h2>
-            <p className="text-gray-600">Redirecting to order confirmation...</p>
+            <p className="text-gray-600">
+              Redirecting to order confirmation...
+            </p>
           </div>
         ) : (
           <div className="py-4">

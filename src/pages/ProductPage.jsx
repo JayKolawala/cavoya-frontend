@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Star,
   Truck,
@@ -10,6 +10,7 @@ import {
   Play,
 } from "lucide-react";
 import { useAppContext } from "../contexts/AppContext";
+import ProductCard from "../components/ProductCard";
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center min-h-screen">
@@ -19,6 +20,7 @@ const LoadingSpinner = () => (
 
 const ProductPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { addToCart, products, fetchProductById } = useAppContext();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState("");
@@ -26,6 +28,44 @@ const ProductPage = () => {
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [activeAccordion, setActiveAccordion] = useState(null);
+
+  // Get related products (same category, exclude current product)
+  // If no related products, fallback to any other products
+  const relatedProducts = selectedProduct
+    ? (() => {
+        // First, try to find products in the same category
+        const sameCategory = products.filter(
+          (p) =>
+            p.category === selectedProduct.category &&
+            p.id !== selectedProduct.id &&
+            p._id !== selectedProduct._id
+        );
+
+        // If we have related products from same category, use them
+        if (sameCategory.length > 0) {
+          return sameCategory.slice(0, 4);
+        }
+
+        // Otherwise, show any other products (excluding current)
+        return products
+          .filter(
+            (p) => p.id !== selectedProduct.id && p._id !== selectedProduct._id
+          )
+          .slice(0, 4);
+      })()
+    : [];
+
+  // Determine section title based on whether we found related products
+  const productsSectionTitle = selectedProduct
+    ? products.some(
+        (p) =>
+          p.category === selectedProduct.category &&
+          p.id !== selectedProduct.id &&
+          p._id !== selectedProduct._id
+      )
+      ? "Related Products"
+      : "You May Also Like"
+    : "Related Products";
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -144,8 +184,9 @@ const ProductPage = () => {
         )}
       </button>
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-[600px] pb-4" : "max-h-0"
-          }`}
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+          isOpen ? "max-h-[600px] pb-4" : "max-h-0"
+        }`}
       >
         <div className="text-gray-600 text-sm leading-relaxed">{children}</div>
       </div>
@@ -205,10 +246,11 @@ const ProductPage = () => {
             {productMedia.map((media, index) => (
               <div
                 key={index}
-                className={`relative w-full h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${activeMediaIndex === index
-                  ? "ring-4 ring-blush-500 shadow-lg scale-105"
-                  : "hover:opacity-80 hover:scale-105 shadow-md"
-                  }`}
+                className={`relative w-full h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${
+                  activeMediaIndex === index
+                    ? "ring-4 ring-blush-500 shadow-lg scale-105"
+                    : "hover:opacity-80 hover:scale-105 shadow-md"
+                }`}
                 onClick={() => setActiveMediaIndex(index)}
               >
                 {media.type === "video" ? (
@@ -246,15 +288,17 @@ const ProductPage = () => {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`h-5 w-5 ${i < Math.floor(selectedProduct.rating || 0)
-                    ? "fill-yellow-400 text-yellow-400"
-                    : "text-gray-300"
-                    }`}
+                  className={`h-5 w-5 ${
+                    i < Math.floor(selectedProduct.rating || 0)
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "text-gray-300"
+                  }`}
                 />
               ))}
             </div>
             <span className="ml-3 text-gray-600 font-medium">
-              {selectedProduct.rating?.toFixed(1) || "0.0"} ({selectedProduct.reviews || 0} reviews)
+              {selectedProduct.rating?.toFixed(1) || "0.0"} (
+              {selectedProduct.reviews || 0} reviews)
             </span>
           </div>
 
@@ -286,10 +330,11 @@ const ProductPage = () => {
           {/* Stock Status */}
           <div className="mb-6">
             <p
-              className={`text-sm font-medium ${selectedProduct.inventory?.stock > 0
-                ? "text-green-600"
-                : "text-red-600"
-                }`}
+              className={`text-sm font-medium ${
+                selectedProduct.inventory?.stock > 0
+                  ? "text-green-600"
+                  : "text-red-600"
+              }`}
             >
               {selectedProduct.inventory?.stock > 0
                 ? `In Stock (${selectedProduct.inventory.stock} available)`
@@ -337,10 +382,11 @@ const ProductPage = () => {
                 {selectedProduct.sizes.map((size) => (
                   <button
                     key={size}
-                    className={`px-4 py-2 border rounded-md transition-colors ${selectedSize === size
-                      ? "border-blush-500 bg-blush-50 text-blush-600"
-                      : "border-gray-300 hover:border-blush-300"
-                      }`}
+                    className={`px-4 py-2 border rounded-md transition-colors ${
+                      selectedSize === size
+                        ? "border-blush-500 bg-blush-50 text-blush-600"
+                        : "border-gray-300 hover:border-blush-300"
+                    }`}
                     onClick={() => setSelectedSize(size)}
                   >
                     {size}
@@ -356,10 +402,11 @@ const ProductPage = () => {
               addToCart(selectedProduct, selectedColor, selectedSize)
             }
             disabled={selectedProduct.inventory?.stock <= 0}
-            className={`w-full py-4 rounded-lg font-bold transition-transform transform ${selectedProduct.inventory?.stock > 0
-              ? "bg-blush-500 text-white hover:scale-[1.01] hover:bg-blush-600"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              } mb-4`}
+            className={`w-full py-4 rounded-lg font-bold transition-transform transform ${
+              selectedProduct.inventory?.stock > 0
+                ? "bg-blush-500 text-white hover:scale-[1.01] hover:bg-blush-600"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            } mb-4`}
           >
             {selectedProduct.inventory?.stock > 0
               ? "Add to Cart"
@@ -385,24 +432,36 @@ const ProductPage = () => {
               <div className="space-y-4 bg-gray-50 p-4 rounded-xl">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white p-3 rounded-lg">
-                    <p className="font-semibold text-gray-800 mb-1">Category:</p>
-                    <p className="text-gray-600">{selectedProduct.category || "N/A"}</p>
+                    <p className="font-semibold text-gray-800 mb-1">
+                      Category:
+                    </p>
+                    <p className="text-gray-600">
+                      {selectedProduct.category || "N/A"}
+                    </p>
                   </div>
                   <div className="bg-white p-3 rounded-lg">
                     <p className="font-semibold text-gray-800 mb-1">Stock:</p>
-                    <p className="text-gray-600">{selectedProduct.inventory?.stock || 0} units</p>
+                    <p className="text-gray-600">
+                      {selectedProduct.inventory?.stock || 0} units
+                    </p>
                   </div>
                   <div className="bg-white p-3 rounded-lg">
                     <p className="font-semibold text-gray-800 mb-1">Colors:</p>
-                    <p className="text-gray-600">{selectedProduct.colors?.join(", ") || "N/A"}</p>
+                    <p className="text-gray-600">
+                      {selectedProduct.colors?.join(", ") || "N/A"}
+                    </p>
                   </div>
                   <div className="bg-white p-3 rounded-lg">
                     <p className="font-semibold text-gray-800 mb-1">Sizes:</p>
-                    <p className="text-gray-600">{selectedProduct.sizes?.join(", ") || "N/A"}</p>
+                    <p className="text-gray-600">
+                      {selectedProduct.sizes?.join(", ") || "N/A"}
+                    </p>
                   </div>
                 </div>
                 <div className="bg-white p-3 rounded-lg">
-                  <p className="font-semibold text-gray-800 mb-1">Product ID:</p>
+                  <p className="font-semibold text-gray-800 mb-1">
+                    Product ID:
+                  </p>
                   <p className="text-gray-500 text-xs font-mono">
                     {selectedProduct._id || selectedProduct.id}
                   </p>
@@ -447,8 +506,13 @@ const ProductPage = () => {
                     <Truck className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800 mb-1">Free Shipping</p>
-                    <p className="text-sm text-gray-600">Complimentary delivery on all orders over ₹999 across India</p>
+                    <p className="font-semibold text-gray-800 mb-1">
+                      Free Shipping
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Complimentary delivery on all orders over ₹999 across
+                      India
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4 bg-sea-50 p-4 rounded-xl">
@@ -456,9 +520,12 @@ const ProductPage = () => {
                     <RefreshCw className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800 mb-1">Easy Returns</p>
+                    <p className="font-semibold text-gray-800 mb-1">
+                      Easy Returns
+                    </p>
                     <p className="text-sm text-gray-600">
-                      Hassle-free 30-day return policy for complete peace of mind
+                      Hassle-free 30-day return policy for complete peace of
+                      mind
                     </p>
                   </div>
                 </div>
@@ -480,6 +547,33 @@ const ProductPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Related Products Section */}
+      {relatedProducts.length > 0 && (
+        <div className="mt-20">
+          <h2 className="text-3xl font-light mb-8 text-center">
+            {productsSectionTitle}
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {relatedProducts.map((product, index) => (
+              <div
+                key={product.id || product._id}
+                className={`
+                  ${index >= 2 ? "hidden md:block" : ""}
+                  ${index >= 3 ? "lg:block" : ""}
+                `}
+              >
+                <ProductCard
+                  product={product}
+                  onProductClick={(product) =>
+                    navigate(`/product/${product.id || product._id}`)
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 };
