@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Plus, Edit, Trash2, Search, X } from "lucide-react";
 import { useAppContext } from "../../contexts/AppContext";
+import { PRODUCT_CATEGORIES } from "../../utils/constants";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
 const ProductManagement = () => {
@@ -285,16 +286,21 @@ const ProductManagement = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Category *
                   </label>
-                  <input
-                    type="text"
+                  <select
                     required
                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
                     value={formData.category}
                     onChange={(e) =>
                       setFormData({ ...formData, category: e.target.value })
                     }
-                    placeholder="e.g., Blouses, Dresses, T-Shirts"
-                  />
+                  >
+                    <option value="">Select a category...</option>
+                    {PRODUCT_CATEGORIES.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Image */}
