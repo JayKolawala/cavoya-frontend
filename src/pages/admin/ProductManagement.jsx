@@ -204,7 +204,9 @@ const ProductManagement = () => {
     <div className="p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Product Management</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
+          Product Management
+        </h1>
         <button
           onClick={() => setShowForm(true)}
           className="flex items-center justify-center px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg hover:from-pink-600 hover:to-rose-600 shadow-md transition-all duration-200 w-full sm:w-auto"
@@ -335,7 +337,7 @@ const ProductManagement = () => {
                             : "Selected Files"}{" "}
                           ( ):
                         </p>
-                        <div className="grid grid-cols-4 gap-4">
+                        <div className="grid grid-cols-4 gap-4 px-4">
                           {imagePreviews.map((preview, index) => (
                             <div key={index} className="relative group">
                               {preview.type === "video" ? (
@@ -500,8 +502,9 @@ const ProductManagement = () => {
                         onChange={(e) =>
                           handleColorChange(index, e.target.value)
                         }
-                        placeholder={`Color ${index + 1
-                          } (e.g., pink, white, black)`}
+                        placeholder={`Color ${
+                          index + 1
+                        } (e.g., pink, white, black)`}
                       />
                       <button
                         type="button"
@@ -525,10 +528,11 @@ const ProductManagement = () => {
                         key={size}
                         type="button"
                         onClick={() => handleSizeToggle(size)}
-                        className={`px-4 py-2 border rounded-md ${formData.sizes.includes(size)
-                          ? "bg-pink-500 text-white border-pink-500"
-                          : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
-                          }`}
+                        className={`px-4 py-2 border rounded-md ${
+                          formData.sizes.includes(size)
+                            ? "bg-pink-500 text-white border-pink-500"
+                            : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
+                        }`}
                       >
                         {size}
                       </button>
@@ -575,8 +579,8 @@ const ProductManagement = () => {
                   {submitLoading
                     ? "Saving..."
                     : editingProduct
-                      ? "Update Product"
-                      : "Add Product"}
+                    ? "Update Product"
+                    : "Add Product"}
                 </button>
               </div>
             </form>
@@ -612,7 +616,10 @@ const ProductManagement = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
               {filteredProducts.map((product) => (
-                <tr key={product._id} className="hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200">
+                <tr
+                  key={product._id}
+                  className="hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200"
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0">
@@ -633,7 +640,9 @@ const ProductManagement = () => {
                     {product.category}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-bold text-pink-600">₹{product.price}</span>
+                    <span className="text-sm font-bold text-pink-600">
+                      ₹{product.price}
+                    </span>
                     {product.originalPrice &&
                       product.originalPrice > product.price && (
                         <span className="ml-2 text-xs text-gray-500 line-through">
@@ -710,8 +719,18 @@ const ProductManagement = () => {
         {filteredProducts.length === 0 && !productsLoading && (
           <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-pink-50/30">
             <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              <svg
+                className="w-8 h-8 text-pink-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                />
               </svg>
             </div>
             <p className="text-gray-500 text-sm">No products found</p>

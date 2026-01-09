@@ -228,7 +228,7 @@ const ProductCard = ({ product, onProductClick }) => {
           </div>
 
           {/* Colors */}
-          {product.colors && product.colors.length > 0 && (
+          {/* {product.colors && product.colors.length > 0 && (
             <div className="flex gap-2">
               {product.colors.map((color, index) => (
                 <div
@@ -239,7 +239,7 @@ const ProductCard = ({ product, onProductClick }) => {
                 />
               ))}
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </>

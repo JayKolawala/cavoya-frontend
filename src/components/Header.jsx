@@ -86,7 +86,7 @@ const Header = () => {
         <div className="w-full mx-auto">
           {/* Main header */}
           <nav
-            className={`flex justify-between items-center py-4 px-2 md:px-4 z-10 relative ${
+            className={`flex justify-between items-center py-4 px-4 md:px-4 z-10 relative ${
               showMobileMenu || isScrolled ? "bg-white" : ""
             }`}
           >
@@ -183,13 +183,13 @@ const Header = () => {
                   </span>
                 )}
               </button>
-              <button
+              {/* <button
                 onClick={() => navigate("/login")}
                 className="hover:text-tangerine-500 transition-colors"
                 aria-label="Login"
               >
                 <User className="h-6 w-6" />
-              </button>
+              </button> */}
             </div>
           </nav>
 
@@ -199,7 +199,7 @@ const Header = () => {
               showMobileMenu ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
             }`}
           >
-            <div className="flex flex-col space-y-4 p-4 pb-7">
+            <div className="flex flex-col space-y-4 p-4">
               <div className="relative">
                 <input
                   type="text"

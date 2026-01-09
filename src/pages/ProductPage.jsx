@@ -242,7 +242,7 @@ const ProductPage = () => {
           </div>
 
           {/* Enhanced Thumbnails */}
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-4 gap-4 px-2">
             {productMedia.map((media, index) => (
               <div
                 key={index}
