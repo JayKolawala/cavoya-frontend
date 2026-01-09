@@ -37,8 +37,9 @@ const AdminLayout = () => {
     <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-72 transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
+        className={`fixed inset-y-0 left-0 z-50 w-72 transform ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
       >
         {/* Gradient Background */}
         <div className="h-full bg-gradient-to-br from-pink-600 via-pink-500 to-rose-600 shadow-2xl">
@@ -49,7 +50,9 @@ const AdminLayout = () => {
                 <LayoutDashboard className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white tracking-tight">Cavoya</h1>
+                <h1 className="text-xl font-bold text-white tracking-tight">
+                  Cavoya
+                </h1>
                 <p className="text-xs text-pink-100">Admin Panel</p>
               </div>
             </div>
@@ -72,10 +75,11 @@ const AdminLayout = () => {
                   key={item.name}
                   to={item.href}
                   onClick={() => setSidebarOpen(false)}
-                  className={`group relative flex items-center px-4 py-3.5 rounded-xl font-medium transition-all duration-300 ${active
+                  className={`group relative flex items-center px-4 py-3.5 rounded-xl font-medium transition-all duration-300 ${
+                    active
                       ? "bg-white text-pink-600 shadow-lg shadow-pink-900/30"
                       : "text-pink-50 hover:bg-white/10 hover:text-white"
-                    }`}
+                  }`}
                 >
                   {/* Active indicator */}
                   {active && (
@@ -83,10 +87,11 @@ const AdminLayout = () => {
                   )}
 
                   <IconComponent
-                    className={`h-5 w-5 mr-3.5 transition-all duration-300 ${active
+                    className={`h-5 w-5 mr-3.5 transition-all duration-300 ${
+                      active
                         ? "text-pink-600"
                         : "text-pink-100 group-hover:text-white group-hover:scale-110"
-                      }`}
+                    }`}
                   />
                   <span className="text-sm tracking-wide">{item.name}</span>
 
@@ -129,7 +134,9 @@ const AdminLayout = () => {
               A
             </div>
             <div>
-              <span className="text-sm font-semibold text-gray-800">Welcome back,</span>
+              <span className="text-sm font-semibold text-gray-800">
+                Welcome back,
+              </span>
               <p className="text-xs text-gray-500">Admin</p>
             </div>
           </div>
