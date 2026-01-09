@@ -326,8 +326,6 @@ export function AppProvider({ children }) {
         formData.append("imageUrl", productData.image);
       }
 
-      console.log("Sending FormData to API with multiple files");
-
       const response = await apiRequest("/products", {
         method: "POST",
         body: formData,
@@ -406,8 +404,6 @@ export function AppProvider({ children }) {
           );
         }
       }
-
-      console.log("Updating product with FormData");
 
       const response = await apiRequest(`/products/${id}`, {
         method: "PUT",

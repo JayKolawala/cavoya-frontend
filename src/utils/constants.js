@@ -101,9 +101,7 @@ export const PRODUCT_CATEGORIES = [
     "Traditional Wear",
     "Sarees",
     "Casual Wear",
-    "Bridal Wear",
     "Designer Collection",
-    "Premium Sarees",
 ];
 
 // Indian States

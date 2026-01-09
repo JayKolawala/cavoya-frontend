@@ -41,7 +41,6 @@ export const createRazorpayOrder = async ({ amount, currency = 'INR', receipt })
             throw new Error(data.message || 'Failed to create order');
         }
 
-        console.log('Create order response:', data);
         return data;
     } catch (error) {
         console.error('Create order error:', error);
@@ -195,7 +194,6 @@ export const processRazorpayPayment = async ({
             modal: {
                 ondismiss: function () {
                     // Payment cancelled/failed
-                    console.log('Payment cancelled by user');
                     if (onFailure) {
                         onFailure(new Error('Payment cancelled by user'));
                     }

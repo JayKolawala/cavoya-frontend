@@ -1,5 +1,5 @@
 // App.jsx
-import React from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -18,10 +18,16 @@ import PaymentPage from "./pages/PaymentPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
+import ShippingPage from "./pages/ShippingPage";
+import ReturnsPage from "./pages/ReturnsPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsPage from "./pages/TermsPage";
 import Footer from "./components/Footer";
 import CustomAlert from "./components/CustomAlert";
 import Header from "./components/Header";
 import ScrollToTop from "./components/ScrollToTop";
+import AppLoader from "./components/AppLoader";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProductManagement from "./pages/admin/ProductManagement";
@@ -42,81 +48,103 @@ const ProtectedUserRoute = ({ children }) => {
 };
 
 function App() {
+  const [showLoader, setShowLoader] = useState(true);
+
   return (
-    <AppProvider>
-      <AdminProvider>
-        <Router>
-          <ScrollToTop>
-            <div className="min-h-screen flex flex-col text-gray-800">
-              <Routes>
-                {/* Public Routes without Header/Footer */}
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/admin/login" element={<AdminLogin />} />
+    <>
+      {showLoader && <AppLoader onLoadComplete={() => setShowLoader(false)} />}
+      <AppProvider>
+        <AdminProvider>
+          <Router>
+            <ScrollToTop>
+              <div className="min-h-screen flex flex-col text-gray-800">
+                <Routes>
+                  {/* Public Routes without Header/Footer */}
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/admin/login" element={<AdminLogin />} />
 
-                {/* Admin Routes (without Header/Footer) */}
-                <Route
-                  path="/admin/*"
-                  element={
-                    <ProtectedAdminRoute>
-                      <AdminLayout />
-                    </ProtectedAdminRoute>
-                  }
-                >
-                  <Route path="dashboard" element={<AdminDashboard />} />
-                  <Route path="products" element={<ProductManagement />} />
-                  <Route path="orders" element={<OrderManager />} />
-                  <Route path="customers" element={<CustomerManager />} />
-                </Route>
+                  {/* Admin Routes (without Header/Footer) */}
+                  <Route
+                    path="/admin/*"
+                    element={
+                      <ProtectedAdminRoute>
+                        <AdminLayout />
+                      </ProtectedAdminRoute>
+                    }
+                  >
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="products" element={<ProductManagement />} />
+                    <Route path="orders" element={<OrderManager />} />
+                    <Route path="customers" element={<CustomerManager />} />
+                  </Route>
 
-                {/* Public Routes with Header/Footer */}
-                <Route
-                  path="*"
-                  element={
-                    <>
-                      <main className="flex-grow">
-                        <Header />
-                        <Routes>
-                          <Route path="/" element={<HomePage />} />
-                          <Route path="/products" element={<ProductsPage />} />
-                          <Route
-                            path="/product/:id"
-                            element={<ProductPage />}
-                          />
-                          <Route path="/cart" element={<CartPage />} />
-                          <Route path="/wishlist" element={<WishlistPage />} />
-                          <Route path="/about" element={<AboutPage />} />
+                  {/* Public Routes with Header/Footer */}
+                  <Route
+                    path="*"
+                    element={
+                      <>
+                        <main className="flex-grow">
+                          <Header />
+                          <Routes>
+                            <Route path="/" element={<HomePage />} />
+                            <Route
+                              path="/products"
+                              element={<ProductsPage />}
+                            />
+                            <Route
+                              path="/product/:id"
+                              element={<ProductPage />}
+                            />
+                            <Route path="/cart" element={<CartPage />} />
+                            <Route
+                              path="/wishlist"
+                              element={<WishlistPage />}
+                            />
+                            <Route path="/about" element={<AboutPage />} />
+                            <Route path="/contact" element={<ContactPage />} />
+                            <Route
+                              path="/shipping"
+                              element={<ShippingPage />}
+                            />
+                            <Route path="/returns" element={<ReturnsPage />} />
+                            <Route
+                              path="/privacy"
+                              element={<PrivacyPolicyPage />}
+                            />
+                            <Route path="/terms" element={<TermsPage />} />
 
-                          {/* Protected User Routes */}
-                          <Route
-                            path="/checkout"
-                            element={
-                              // <ProtectedUserRoute>
-                              <CheckoutPage />
-                              // </ProtectedUserRoute>
-                            }
-                          />
-                          <Route
-                            path="/payment"
-                            element={
-                              // <ProtectedUserRoute>
-                              <PaymentPage />
-                              // </ProtectedUserRoute>
-                            }
-                          />
-                        </Routes>
-                      </main>
-                      <Footer />
-                    </>
-                  }
-                />
-              </Routes>
-              <CustomAlert />
-            </div>
-          </ScrollToTop>
-        </Router>
-      </AdminProvider>
-    </AppProvider>
+                            {/* Protected User Routes */}
+                            <Route
+                              path="/checkout"
+                              element={
+                                // <ProtectedUserRoute>
+                                <CheckoutPage />
+                                // </ProtectedUserRoute>
+                              }
+                            />
+                            <Route
+                              path="/payment"
+                              element={
+                                // <ProtectedUserRoute>
+                                <PaymentPage />
+                                // </ProtectedUserRoute>
+                              }
+                            />
+                          </Routes>
+                        </main>
+                        <Footer />
+                      </>
+                    }
+                  />
+                </Routes>
+                <CustomAlert />
+              </div>
+            </ScrollToTop>
+          </Router>
+        </AdminProvider>
+      </AppProvider>
+    </>
   );
 }
 

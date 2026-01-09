@@ -45,28 +45,28 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Customer Care</h4>
             <ul className="space-y-2 text-gray-300">
               <li>
-                <a
-                  href="#"
+                <button
+                  onClick={() => navigate("/contact")}
                   className="hover:text-tangerine-400 transition-colors"
                 >
                   Contact Us
-                </a>
+                </button>
               </li>
               <li>
-                <a
-                  href="#"
+                <button
+                  onClick={() => navigate("/shipping")}
                   className="hover:text-tangerine-400 transition-colors"
                 >
                   Shipping Info
-                </a>
+                </button>
               </li>
               <li>
-                <a
-                  href="#"
+                <button
+                  onClick={() => navigate("/returns")}
                   className="hover:text-tangerine-400 transition-colors"
                 >
                   Returns
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -82,12 +82,12 @@ const Footer = () => {
                 </button>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="hover:text-tangerine-400 transition-colors"
+                <button
+                  onClick={() => navigate("/admin/login")}
+                  className="hover:text-tangerine-400 transition-colors text-sm opacity-70"
                 >
-                  Careers
-                </a>
+                  Admin Portal
+                </button>
               </li>
             </ul>
           </div>
@@ -97,18 +97,18 @@ const Footer = () => {
             &copy; 2024 Cavoya. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a
-              href="#"
+            <button
+              onClick={() => navigate("/privacy")}
               className="text-gray-300 hover:text-tangerine-400 transition-colors text-sm"
             >
               Privacy Policy
-            </a>
-            <a
-              href="#"
+            </button>
+            <button
+              onClick={() => navigate("/terms")}
               className="text-gray-300 hover:text-tangerine-400 transition-colors text-sm"
             >
               Terms of Service
-            </a>
+            </button>
           </div>
         </div>
         <div className="text-center mt-4 pt-4 border-t border-gray-700">

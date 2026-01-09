@@ -68,35 +68,43 @@ const Header = () => {
 
   return (
     <header
-      className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${isScrolled || !isHomePage
-        ? "bg-white shadow-lg shadow-black/20"
-        : "bg-transparent text-white"
-        }`}
+      className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${
+        isScrolled || !isHomePage
+          ? "bg-white shadow-lg shadow-black/20"
+          : "bg-transparent text-white"
+      }`}
     >
       <div
-        className={`${showMobileMenu
-          ? "max-md:bg-black/50 min-h-screen fixed top-0 w-full transition duration-300 ease-linear"
-          : "h-full "
-          }`}
+        className={`${
+          showMobileMenu
+            ? "max-md:bg-black/50 min-h-screen fixed top-0 w-full transition duration-300 ease-linear"
+            : "h-full "
+        }`}
         onClick={() => setShowMobileMenu(false)}
       >
         <div
-          className={`transition duration-300 ease-linear ${showMobileMenu ? "" : "h-[72px]"
-            }`}
+          className={`transition duration-300 ease-linear ${
+            showMobileMenu ? "" : "h-[72px]"
+          }`}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="w-full mx-auto">
             {/* Main header */}
             <nav
-              className={`flex justify-between items-center py-4 px-2 md:px-4 z-10 relative ${showMobileMenu || isScrolled ? "bg-white" : ""
-                }`}
+              className={`flex justify-between items-center py-4 px-2 md:px-4 z-10 relative ${
+                showMobileMenu || isScrolled ? "bg-white" : ""
+              }`}
             >
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
                 className="md:hidden hover:text-tangerine-500 transition-colors"
                 aria-label="Menu"
               >
-                <Menu className="h-6 w-6 text-black" />
+                <Menu
+                  className={`h-6 w-6 ${
+                    showMobileMenu || isScrolled ? "text-black" : "text-white"
+                  }`}
+                />
               </button>
               <div
                 className="text-2xl font-bold text-gray-600"
@@ -111,7 +119,10 @@ const Header = () => {
 
               {/* Desktop Navigation */}
               <div className="hidden md:flex space-x-8">
-                <Link to="/" className="hover:text-tangerine-500 transition-colors">
+                <Link
+                  to="/"
+                  className="hover:text-tangerine-500 transition-colors"
+                >
                   New Arrivals
                 </Link>
                 <Link
@@ -149,7 +160,13 @@ const Header = () => {
               )}
 
               {/* Icons */}
-              <div className={`flex items-center space-x-4  ${isScrolled || !isHomePage ? "text-black" : "text-white"}`}>
+              <div
+                className={`flex items-center space-x-4  ${
+                  showMobileMenu || isScrolled || !isHomePage
+                    ? "text-black"
+                    : "text-white"
+                }`}
+              >
                 <button
                   onClick={() => navigate("/wishlist")}
                   className="hover:text-tangerine-500 transition-colors relative"
@@ -170,7 +187,7 @@ const Header = () => {
                   )}
                 </button>
                 <button
-                  onClick={() => navigate("/admin/login")}
+                  onClick={() => navigate("/login")}
                   className="hover:text-tangerine-500 transition-colors"
                   aria-label="Login"
                 >
@@ -181,8 +198,9 @@ const Header = () => {
 
             {/* Mobile Menu */}
             <div
-              className={`p-4 pb-7 md:hidden border-t transition duration-500 ease-in-linear bg-white ${showMobileMenu ? "translate-y-0" : "h-fit -translate-y-[150%]"
-                }`}
+              className={`p-4 pb-7 md:hidden border-t transition duration-500 ease-in-linear bg-white ${
+                showMobileMenu ? "translate-y-0" : "h-fit -translate-y-[150%]"
+              }`}
             >
               <div className="flex flex-col space-y-4">
                 <div className="relative">

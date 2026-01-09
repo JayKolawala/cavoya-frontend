@@ -21,8 +21,8 @@ const ProductsPage = () => {
       {/* Hero Header Section */}
       <div className="relative bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#4a1942] text-white py-20 px-4 overflow-hidden">
         {/* Animated Background Elements */}
-        <div className="absolute top-10 left-10 w-64 h-64 bg-tangerine-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-80 h-80 bg-blush-500/10 rounded-full blur-3xl animate-pulse delay-700"></div>
+        <div className="absolute top-10 left-10 w-64 h-64 bg-tangerine-500/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-80 h-80 bg-blush-500/5 rounded-full blur-3xl animate-pulse delay-700"></div>
 
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/30"></div>
@@ -46,58 +46,63 @@ const ProductsPage = () => {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content - 25/75 Layout */}
       <section className="container mx-auto px-4 py-12">
-        {/* Filters */}
-        <div className="mb-8">
-          <ProductFilters />
-        </div>
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Filters Sidebar - 25% */}
+          <aside className="lg:w-1/4 lg:min-w-[280px]">
+            <ProductFilters />
+          </aside>
 
-        {/* Loading State */}
-        {productsLoading && (
-          <div className="flex justify-center py-20">
-            <LoadingSpinner />
-          </div>
-        )}
-
-        {/* Products Grid */}
-        {!productsLoading && sortedProducts.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {sortedProducts.map((product, index) => (
-              <div
-                key={product.id}
-                className="animate-slide-up"
-                style={{ animationDelay: `${(index % 8) * 100}ms` }}
-              >
-                <ProductCard
-                  product={product}
-                  onProductClick={handleProductClick}
-                />
+          {/* Products Section - 75% */}
+          <main className="lg:w-3/4 flex-1">
+            {/* Loading State */}
+            {productsLoading && (
+              <div className="flex justify-center py-20">
+                <LoadingSpinner />
               </div>
-            ))}
-          </div>
-        )}
+            )}
 
-        {/* Enhanced Empty State */}
-        {!productsLoading && sortedProducts.length === 0 && (
-          <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-6">
-              <Package className="w-10 h-10 text-gray-400" />
-            </div>
-            <h3 className="text-2xl font-light text-gray-800 mb-3">
-              No Products Found
-            </h3>
-            <p className="text-gray-600 text-lg mb-8">
-              We couldn't find any products matching your criteria.
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-8 py-3 bg-gradient-to-r from-blush-500 to-blush-600 text-white font-semibold rounded-full hover:shadow-xl hover:shadow-blush-500/30 transition-all duration-300 transform hover:scale-105"
-            >
-              Reset Filters
-            </button>
-          </div>
-        )}
+            {/* Products Grid */}
+            {!productsLoading && sortedProducts.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {sortedProducts.map((product, index) => (
+                  <div
+                    key={product.id}
+                    className="animate-slide-up"
+                    style={{ animationDelay: `${(index % 9) * 100}ms` }}
+                  >
+                    <ProductCard
+                      product={product}
+                      onProductClick={handleProductClick}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Enhanced Empty State */}
+            {!productsLoading && sortedProducts.length === 0 && (
+              <div className="text-center py-20">
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-6">
+                  <Package className="w-10 h-10 text-gray-400" />
+                </div>
+                <h3 className="text-2xl font-light text-gray-800 mb-3">
+                  No Products Found
+                </h3>
+                <p className="text-gray-600 text-lg mb-8">
+                  We couldn't find any products matching your criteria.
+                </p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-8 py-3 bg-gradient-to-r from-blush-500 to-blush-600 text-white font-semibold rounded-full hover:shadow-xl hover:shadow-blush-500/30 transition-all duration-300 transform hover:scale-105"
+                >
+                  Reset Filters
+                </button>
+              </div>
+            )}
+          </main>
+        </div>
       </section>
     </div>
   );

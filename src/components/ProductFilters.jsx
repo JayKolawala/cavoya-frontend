@@ -1,7 +1,13 @@
 import React from "react";
 import { useAppContext } from "../contexts/AppContext";
 import { PRODUCT_CATEGORIES } from "../utils/constants";
-import { SlidersHorizontal, ArrowUpDown, Filter, X, ChevronDown, Sparkles } from "lucide-react";
+import {
+  SlidersHorizontal,
+  ArrowUpDown,
+  Filter,
+  X,
+  ChevronDown,
+} from "lucide-react";
 
 const ProductFilters = () => {
   const { selectedCategory, setSelectedCategory, sortBy, setSortBy } =
@@ -9,132 +15,148 @@ const ProductFilters = () => {
 
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = React.useState(false);
 
+  // Temporary state for mobile filter selections (only applied on "Apply" click)
+  const [tempCategory, setTempCategory] = React.useState(selectedCategory);
+  const [tempSort, setTempSort] = React.useState(sortBy);
+
+  // Update temp state when actual filters change (for sync)
+  React.useEffect(() => {
+    setTempCategory(selectedCategory);
+    setTempSort(sortBy);
+  }, [selectedCategory, sortBy]);
+
   // Build categories array with "All Products" option first
   const categories = [
-    { id: "all", name: "All Products", count: 42 },
-    ...PRODUCT_CATEGORIES.map(cat => ({
+    { id: "all", name: "All Products" },
+    ...PRODUCT_CATEGORIES.map((cat) => ({
       id: cat,
       name: cat,
-      count: Math.floor(Math.random() * 20) + 5
-    }))
+    })),
   ];
 
   const sortOptions = [
-    { id: "featured", name: "Featured", icon: <Sparkles className="w-3.5 h-3.5" /> },
+    { id: "featured", name: "Featured" },
     { id: "newest", name: "Newest" },
     { id: "price-low", name: "Price: Low to High" },
     { id: "price-high", name: "Price: High to Low" },
     { id: "rating", name: "Highest Rated" },
   ];
 
-  // Get current sort option name for mobile display
-  const currentSortName = sortOptions.find(opt => opt.id === sortBy)?.name || "Featured";
+  // Handle category selection
+  const handleCategorySelect = (categoryId) => {
+    if (window.innerWidth < 1024) {
+      // On mobile, update temporary state only
+      setTempCategory(categoryId);
+    } else {
+      // On desktop, apply immediately
+      setSelectedCategory(categoryId);
+    }
+  };
+
+  // Handle sort selection
+  const handleSortSelect = (sortId) => {
+    if (window.innerWidth < 1024) {
+      // On mobile, update temporary state only
+      setTempSort(sortId);
+    } else {
+      // On desktop, apply immediately
+      setSortBy(sortId);
+    }
+  };
+
+  // Apply filters on mobile
+  const handleApplyFilters = () => {
+    setSelectedCategory(tempCategory);
+    setSortBy(tempSort);
+    setIsMobileFiltersOpen(false);
+  };
+
+  // Clear all filters
+  const handleClearAll = () => {
+    if (window.innerWidth < 1024) {
+      setTempCategory("all");
+      setTempSort("featured");
+    } else {
+      setSelectedCategory("all");
+      setSortBy("featured");
+    }
+  };
 
   return (
     <>
       {/* Mobile Filter Toggle Button */}
-      <div className="lg:hidden mb-4">
+      <div className="lg:hidden mb-6">
         <button
           onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
-          className="w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-md border border-gray-200"
+          className="w-full flex items-center justify-between px-5 py-4 bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow"
         >
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-blush-600" />
-            <span className="font-medium text-gray-800">Filters & Sorting</span>
+          <div className="flex items-center gap-3">
+            <Filter className="w-5 h-5 text-blush-600" />
+            <span className="font-semibold text-gray-800">Filters & Sort</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm px-2 py-1 rounded-full bg-blush-50 text-blush-700">
-              {selectedCategory === "all" ? "All" : selectedCategory}
-            </span>
-            <ChevronDown className={`w-4 h-4 transition-transform ${isMobileFiltersOpen ? "rotate-180" : ""}`} />
-          </div>
+          <ChevronDown
+            className={`w-5 h-5 text-gray-600 transition-transform ${
+              isMobileFiltersOpen ? "rotate-180" : ""
+            }`}
+          />
         </button>
       </div>
 
-      {/* Filters Container */}
-      <div className={`bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6 mb-8 transition-all duration-300 ${isMobileFiltersOpen ? "block" : "hidden lg:block"}`}>
-
-        {/* Header with Clear Button */}
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
-          <div>
-            <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+      {/* Filters Sidebar */}
+      <div
+        className={`bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 ${
+          isMobileFiltersOpen ? "block" : "hidden lg:block"
+        } lg:sticky lg:top-24`}
+      >
+        {/* Header */}
+        <div className="p-6 bg-gradient-to-r from-blush-50 to-tangerine-50 border-b border-gray-100">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
               <SlidersHorizontal className="w-5 h-5 text-blush-600" />
-              Refine Products
-            </h3>
-            <p className="text-sm text-gray-500 mt-1">
-              Filter by category and sort by preference
-            </p>
+              <h2 className="text-lg font-bold text-gray-900">Filters</h2>
+            </div>
+            <button
+              onClick={handleClearAll}
+              className="text-xs text-blush-600 hover:text-blush-800 font-medium hover:underline transition-colors"
+            >
+              Clear All
+            </button>
           </div>
-          <button
-            onClick={() => {
-              setSelectedCategory("all");
-              setSortBy("featured");
-            }}
-            className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:text-blush-700 hover:bg-blush-50 rounded-lg transition-colors"
-          >
-            <X className="w-3.5 h-3.5" />
-            Clear all
-          </button>
+          <p className="text-sm text-gray-600">Refine your search</p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="p-6 space-y-8">
           {/* Categories Section */}
-          <div className="flex-1">
-            <div className="mb-4">
-              <div className="flex items-center justify-between">
-                <span className="text-base font-semibold text-gray-800 flex items-center gap-2">
-                  Categories
-                  <span className="text-xs font-normal bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                    {categories.length}
-                  </span>
-                </span>
-                <button
-                  onClick={() => setSelectedCategory("all")}
-                  className="text-xs text-blush-600 hover:text-blush-800 font-medium"
-                >
-                  Select all
-                </button>
-              </div>
-              <p className="text-sm text-gray-500 mt-1">
-                Browse products by category
-              </p>
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+                Categories
+              </h3>
+              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                {categories.length}
+              </span>
             </div>
 
-            {/* Category Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {/* Category List */}
+            <div className="space-y-2">
               {categories.map((category) => (
                 <button
                   key={category.id}
-                  onClick={() => {
-                    setSelectedCategory(category.id);
-                    if (window.innerWidth < 1024) {
-                      setIsMobileFiltersOpen(false);
-                    }
-                  }}
-                  className={`group relative p-4 rounded-xl text-left transition-all duration-300 ${selectedCategory === category.id
-                    ? "bg-gradient-to-br from-tangerine-50 to-blush-50 border-2 border-blush-400 shadow-lg shadow-blush-200/50"
-                    : "bg-gray-50/80 border border-gray-200 hover:border-blush-300 hover:bg-blush-50 hover:shadow-md"
-                    }`}
+                  onClick={() => handleCategorySelect(category.id)}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
+                    (window.innerWidth < 1024
+                      ? tempCategory
+                      : selectedCategory) === category.id
+                      ? "bg-gradient-to-r from-tangerine-500 to-blush-500 text-white shadow-md"
+                      : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  }`}
                 >
-                  {/* Selected indicator */}
-                  {selectedCategory === category.id && (
-                    <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gradient-to-r from-tangerine-500 to-blush-500 flex items-center justify-center">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-sm">{category.name}</span>
+                    {(window.innerWidth < 1024
+                      ? tempCategory
+                      : selectedCategory) === category.id && (
                       <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                  )}
-
-                  <div className="font-medium text-gray-800 group-hover:text-blush-800">
-                    {category.name}
-                  </div>
-                  <div className="flex items-center justify-between mt-2">
-                    <span className={`text-xs px-2 py-1 rounded-full ${selectedCategory === category.id
-                      ? "bg-blush-100 text-blush-700"
-                      : "bg-gray-200 text-gray-600"
-                      }`}>
-                      {category.count} items
-                    </span>
-                    {selectedCategory === category.id && (
-                      <div className="w-2 h-2 rounded-full bg-blush-500 animate-pulse"></div>
                     )}
                   </div>
                 </button>
@@ -142,111 +164,83 @@ const ProductFilters = () => {
             </div>
           </div>
 
-          {/* Vertical Divider */}
-          <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
+          {/* Divider */}
+          <div className="border-t border-gray-200"></div>
 
           {/* Sort Section */}
-          <div className="lg:w-80 xl:w-96">
-            <div className="mb-4">
-              <span className="text-base font-semibold text-gray-800 flex items-center gap-2">
-                <ArrowUpDown className="w-4 h-4 text-blush-600" />
-                Sort Options
-              </span>
-              <p className="text-sm text-gray-500 mt-1">
-                Arrange products by your preference
-              </p>
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <ArrowUpDown className="w-4 h-4 text-blush-600" />
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+                Sort By
+              </h3>
             </div>
 
-            {/* Sort Options Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-3 mb-6">
+            {/* Sort Options */}
+            <div className="space-y-2">
               {sortOptions.map((option) => (
                 <button
                   key={option.id}
-                  onClick={() => {
-                    setSortBy(option.id);
-                    if (window.innerWidth < 1024) {
-                      setIsMobileFiltersOpen(false);
-                    }
-                  }}
-                  className={`group flex items-center justify-center gap-2 p-3 rounded-xl border transition-all duration-200 ${sortBy === option.id
-                    ? "bg-blush-50 border-blush-400 text-blush-800 shadow-md"
-                    : "bg-white border-gray-200 text-gray-700 hover:border-blush-300 hover:bg-blush-50"
-                    }`}
+                  onClick={() => handleSortSelect(option.id)}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
+                    (window.innerWidth < 1024 ? tempSort : sortBy) === option.id
+                      ? "bg-blush-50 text-blush-800 border-2 border-blush-400"
+                      : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent"
+                  }`}
                 >
-                  {option.icon && <span className={`${sortBy === option.id ? "text-blush-600" : "text-gray-400"}`}>{option.icon}</span>}
-                  <span className="text-sm font-medium truncate">{option.name}</span>
-                  {sortBy === option.id && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-blush-500 ml-auto"></div>
-                  )}
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-sm">{option.name}</span>
+                    {(window.innerWidth < 1024 ? tempSort : sortBy) ===
+                      option.id && (
+                      <div className="w-2 h-2 bg-blush-500 rounded-full"></div>
+                    )}
+                  </div>
                 </button>
               ))}
             </div>
+          </div>
 
-            {/* Current Selection Display */}
-            <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl border border-gray-200">
-              <div className="text-xs text-gray-500 mb-1">Currently selected</div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium text-gray-900">{currentSortName}</div>
-                  <div className="text-sm text-gray-600 mt-1">
-                    {selectedCategory === "all"
-                      ? "All product categories"
-                      : `Category: ${selectedCategory}`
-                    }
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    setSelectedCategory("all");
-                    setSortBy("featured");
-                  }}
-                  className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:text-blush-700 hover:bg-blush-50 rounded-lg transition-colors"
-                >
-                  <X className="w-3.5 h-3.5" />
-                  Reset
-                </button>
+          {/* Active Filter Summary */}
+          {/* <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">
+              Active Filters
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-600">Category:</span>
+                <span className="font-semibold text-gray-900">
+                  {selectedCategory === "all" ? "All" : selectedCategory}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-600">Sort:</span>
+                <span className="font-semibold text-gray-900">
+                  {sortOptions.find((opt) => opt.id === sortBy)?.name ||
+                    "Featured"}
+                </span>
               </div>
             </div>
 
-            {/* Mobile Apply Button */}
-            <div className="lg:hidden mt-6 pt-6 border-t border-gray-200">
-              <button
-                onClick={() => setIsMobileFiltersOpen(false)}
-                className="w-full py-3 bg-gradient-to-r from-tangerine-500 to-blush-500 text-white font-medium rounded-xl shadow-lg shadow-blush-300/50 hover:shadow-blush-300/70 transition-shadow"
-              >
-                Apply Filters
-              </button>
-            </div>
-          </div>
-        </div>
+            <button
+              onClick={() => {
+                setSelectedCategory("all");
+                setSortBy("featured");
+              }}
+              className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-blush-700 hover:bg-white border border-gray-200 rounded-lg transition-colors"
+            >
+              <X className="w-4 h-4" />
+              Reset All
+            </button>
+          </div> */}
 
-        {/* Active Filters Bar (Desktop) */}
-        <div className="hidden lg:flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
-          <div className="flex items-center gap-2">
-            <div className="text-sm text-gray-600">Active filters:</div>
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1.5 bg-blush-100 text-blush-800 text-sm rounded-full flex items-center gap-1.5">
-                {selectedCategory === "all" ? "All Products" : selectedCategory}
-                <button
-                  onClick={() => setSelectedCategory("all")}
-                  className="hover:text-blush-900"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
-              <span className="px-3 py-1.5 bg-gray-100 text-gray-800 text-sm rounded-full flex items-center gap-1.5">
-                {currentSortName}
-                <button
-                  onClick={() => setSortBy("featured")}
-                  className="hover:text-gray-900"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
-            </div>
-          </div>
-          <div className="text-sm text-gray-500">
-            Showing <span className="font-semibold text-gray-800">24</span> of <span className="font-semibold text-gray-800">128</span> products
+          {/* Mobile Apply Button */}
+          <div className="lg:hidden">
+            <button
+              onClick={handleApplyFilters}
+              className="w-full py-3 bg-gradient-to-r from-tangerine-500 to-blush-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+            >
+              Apply Filters
+            </button>
           </div>
         </div>
       </div>
