@@ -7,6 +7,8 @@ import {
   Shield,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   Play,
 } from "lucide-react";
 import { useAppContext } from "../contexts/AppContext";
@@ -28,6 +30,46 @@ const ProductPage = () => {
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [activeAccordion, setActiveAccordion] = useState(null);
+
+  // Thumbnail scroll state
+  const thumbnailScrollRef = React.useRef(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
+
+  // Check if arrows should be visible
+  const updateArrowVisibility = () => {
+    if (thumbnailScrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } =
+        thumbnailScrollRef.current;
+      setShowLeftArrow(scrollLeft > 0);
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  // Scroll thumbnails left or right
+  const scrollThumbnails = (direction) => {
+    if (thumbnailScrollRef.current) {
+      const scrollAmount = 300; // Scroll by 300px
+      const newScrollLeft =
+        thumbnailScrollRef.current.scrollLeft +
+        (direction === "left" ? -scrollAmount : scrollAmount);
+      thumbnailScrollRef.current.scrollTo({
+        left: newScrollLeft,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  // Update arrow visibility on scroll
+  React.useEffect(() => {
+    const thumbnailContainer = thumbnailScrollRef.current;
+    if (thumbnailContainer) {
+      updateArrowVisibility();
+      thumbnailContainer.addEventListener("scroll", updateArrowVisibility);
+      return () =>
+        thumbnailContainer.removeEventListener("scroll", updateArrowVisibility);
+    }
+  }, [selectedProduct]);
 
   // Get related products (same category, exclude current product)
   // If no related products, fallback to any other products
@@ -241,44 +283,73 @@ const ProductPage = () => {
             )}
           </div>
 
-          {/* Enhanced Thumbnails */}
-          <div className="grid grid-cols-4 gap-4 px-2">
-            {productMedia.map((media, index) => (
-              <div
-                key={index}
-                className={`relative w-full h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${
-                  activeMediaIndex === index
-                    ? "ring-4 ring-blush-500 shadow-lg scale-105"
-                    : "hover:opacity-80 hover:scale-105 shadow-md"
-                }`}
-                onClick={() => setActiveMediaIndex(index)}
+          {/* Enhanced Thumbnails with Horizontal Scroll */}
+          <div className="relative px-2">
+            {/* Left Arrow */}
+            {showLeftArrow && (
+              <button
+                onClick={() => scrollThumbnails("left")}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 transition-all duration-200 hover:scale-110"
+                aria-label="Scroll left"
               >
-                {media.type === "video" ? (
-                  <>
-                    <video
+                <ChevronLeft className="h-5 w-5 text-gray-700" />
+              </button>
+            )}
+
+            {/* Scrollable Thumbnail Container */}
+            <div
+              ref={thumbnailScrollRef}
+              className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth p-2 px-2"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {productMedia.map((media, index) => (
+                <div
+                  key={index}
+                  className={`relative flex-shrink-0 w-24 h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${
+                    activeMediaIndex === index
+                      ? "ring-4 ring-blush-500 shadow-lg scale-105"
+                      : "hover:opacity-80 hover:scale-105 shadow-md"
+                  }`}
+                  onClick={() => setActiveMediaIndex(index)}
+                >
+                  {media.type === "video" ? (
+                    <>
+                      <video
+                        src={media.url}
+                        className="w-full h-full object-cover"
+                        muted
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+                        <Play className="h-8 w-8 text-white drop-shadow-lg" />
+                      </div>
+                    </>
+                  ) : (
+                    <img
                       src={media.url}
+                      alt={`Thumbnail ${index + 1}`}
                       className="w-full h-full object-cover"
-                      muted
                     />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
-                      <Play className="h-8 w-8 text-white drop-shadow-lg" />
-                    </div>
-                  </>
-                ) : (
-                  <img
-                    src={media.url}
-                    alt={`Thumbnail ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Right Arrow */}
+            {showRightArrow && (
+              <button
+                onClick={() => scrollThumbnails("right")}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 transition-all duration-200 hover:scale-110"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="h-5 w-5 text-gray-700" />
+              </button>
+            )}
           </div>
         </div>
 
         {/* Enhanced Product Details */}
         <div className="lg:w-1/2">
-          <h1 className="text-4xl md:text-5xl font-light mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-light mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent capitalize">
             {selectedProduct.name}
           </h1>
 
@@ -328,7 +399,7 @@ const ProductPage = () => {
           </div>
 
           {/* Stock Status */}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <p
               className={`text-sm font-medium ${
                 selectedProduct.inventory?.stock > 0
@@ -340,7 +411,7 @@ const ProductPage = () => {
                 ? `In Stock (${selectedProduct.inventory.stock} available)`
                 : "Out of Stock"}
             </p>
-          </div>
+          </div> */}
 
           {/* Color Selection */}
           {/* {selectedProduct.colors && selectedProduct.colors.length > 0 && (

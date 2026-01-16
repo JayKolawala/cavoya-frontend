@@ -216,6 +216,16 @@ const ProductManagement = () => {
     setFormData({ ...formData, sizes: newSizes });
   };
 
+  // Helper function to detect if URL is a video
+  const isVideoUrl = (url) => {
+    if (!url) return false;
+    // Check if it's a Cloudinary video URL
+    if (url.includes("/video/upload/")) return true;
+    // Check file extension
+    if (url.match(/\.(mp4|webm|ogg|mov|avi)$/i)) return true;
+    return false;
+  };
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       {/* Header */}
@@ -324,18 +334,6 @@ const ProductManagement = () => {
                     Product Images & Videos *
                   </label>
                   <div className="space-y-2">
-                    {/* <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
-                      value={formData.image}
-                      onChange={(e) =>
-                        setFormData({ ...formData, image: e.target.value })
-                      }
-                      placeholder="https://example.com/image.jpg (main image URL)"
-                    />
-                    <div className="text-sm text-gray-500">
-                      OR upload new files
-                    </div> */}
                     <input
                       type="file"
                       accept="image/*,video/*"
@@ -615,7 +613,7 @@ const ProductManagement = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gradient-to-r from-pink-50 via-rose-50 to-pink-50">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
+                <th className="px-3 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
                   Sr No.
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
@@ -651,12 +649,20 @@ const ProductManagement = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="h-10 w-10 flex-shrink-0">
-                        <img
-                          className="h-10 w-10 rounded-lg object-cover ring-2 ring-pink-100"
-                          src={product.image}
-                          alt={product.name}
-                        />
+                      <div className="h-10 w-10 flex-shrink-0 rounded-lg overflow-hidden ring-2 ring-pink-100">
+                        {isVideoUrl(product.image) ? (
+                          <video
+                            src={product.image}
+                            className="h-10 w-10 object-cover"
+                            muted
+                          />
+                        ) : (
+                          <img
+                            className="h-10 w-10 object-cover"
+                            src={product.image}
+                            alt={product.name}
+                          />
+                        )}
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">

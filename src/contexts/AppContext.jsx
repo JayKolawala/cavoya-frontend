@@ -283,6 +283,7 @@ export function AppProvider({ children }) {
     colors: product.colors || [],
     sizes: product.sizes || [],
     image: product.image,
+    images: product.images || [], // Add images array from API
     isNew: false,
     isSale: product.isSale || false,
     description: product.description,

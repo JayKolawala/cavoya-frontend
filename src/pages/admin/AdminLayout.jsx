@@ -122,7 +122,7 @@ const AdminLayout = () => {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
+        <header className="flex items-center justify-between px-4 md:px-6 py-4 bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
           <button
             onClick={() => setSidebarOpen(true)}
             className="text-gray-500 hover:text-pink-600 hover:bg-pink-50 p-2 rounded-lg transition-all duration-200 lg:hidden"
