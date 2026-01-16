@@ -36,9 +36,24 @@ const ProductManagement = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [validationAttempted, setValidationAttempted] = useState(false);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+
+  // Reset to first page when search term changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -601,6 +616,9 @@ const ProductManagement = () => {
             <thead className="bg-gradient-to-r from-pink-50 via-rose-50 to-pink-50">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
+                  Sr No.
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
                   Product
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
@@ -621,11 +639,16 @@ const ProductManagement = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
-              {filteredProducts.map((product) => (
+              {paginatedProducts.map((product, index) => (
                 <tr
                   key={product._id}
                   className="hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200"
                 >
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                      {startIndex + index + 1}
+                    </div>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0">
@@ -701,7 +724,7 @@ const ProductManagement = () => {
 
               {productsLoading && !submitLoading && (
                 <tr>
-                  <td colSpan="6" className="text-center py-8">
+                  <td colSpan="7" className="text-center py-8">
                     <div className="flex justify-center items-center">
                       <LoadingSpinner />
                     </div>
@@ -711,7 +734,7 @@ const ProductManagement = () => {
 
               {productsError && (
                 <tr>
-                  <td colSpan="6" className="p-4">
+                  <td colSpan="7" className="p-4">
                     <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg text-center">
                       Error: {productsError}
                     </div>
@@ -721,6 +744,67 @@ const ProductManagement = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {filteredProducts.length > 0 && !productsLoading && (
+          <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-pink-50/30 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              {/* Page Info */}
+              <div className="text-sm text-gray-700">
+                Showing <span className="font-semibold">{startIndex + 1}</span>{" "}
+                to{" "}
+                <span className="font-semibold">
+                  {Math.min(endIndex, filteredProducts.length)}
+                </span>{" "}
+                of{" "}
+                <span className="font-semibold">{filteredProducts.length}</span>{" "}
+                products
+              </div>
+
+              {/* Navigation Buttons */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                >
+                  Previous
+                </button>
+
+                {/* Page Numbers */}
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                          currentPage === page
+                            ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
+                            : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  )}
+                </div>
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {filteredProducts.length === 0 && !productsLoading && (
           <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-pink-50/30">

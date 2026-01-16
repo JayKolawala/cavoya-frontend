@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useReducer, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useRef,
+} from "react";
 
 const AppContext = createContext();
 
@@ -16,6 +22,10 @@ const initialState = {
   products: [],
   productsLoading: false,
   productsError: null,
+  // Pagination state
+  nextCursor: null,
+  hasMore: true,
+  productsLimit: 12,
   shippingInfo: {
     firstName: "",
     lastName: "",
@@ -154,9 +164,39 @@ function appReducer(state, action) {
     case "SET_PRODUCTS":
       return {
         ...state,
-        products: action.payload,
+        products: action.payload.products,
+        nextCursor: action.payload.nextCursor || null,
+        hasMore:
+          action.payload.hasMore !== undefined ? action.payload.hasMore : false,
         productsLoading: false,
         productsError: null,
+      };
+
+    case "LOAD_MORE_PRODUCTS":
+      return {
+        ...state,
+        products: [...state.products, ...action.payload.products],
+        nextCursor: action.payload.nextCursor || null,
+        hasMore:
+          action.payload.hasMore !== undefined ? action.payload.hasMore : false,
+        productsLoading: false,
+      };
+
+    case "RESET_PRODUCTS":
+      return {
+        ...state,
+        products: [],
+        nextCursor: null,
+        hasMore: true,
+        productsLoading: true,
+      };
+
+    case "SET_PAGINATION":
+      return {
+        ...state,
+        nextCursor: action.payload.nextCursor || null,
+        hasMore:
+          action.payload.hasMore !== undefined ? action.payload.hasMore : false,
       };
 
     case "ADD_PRODUCT":
@@ -250,16 +290,51 @@ export function AppProvider({ children }) {
     isFeatured: product.isFeatured || false,
   });
 
-  // Fetch products from API
-  const fetchProducts = async () => {
+  // Fetch products from API with pagination support
+  const fetchProducts = async (options = {}) => {
     try {
+      const {
+        limit = state.productsLimit,
+        cursor = null,
+        category = null,
+        isFeatured = null,
+        append = false,
+      } = options;
+
       dispatch({ type: "SET_PRODUCTS_LOADING", payload: true });
-      const response = await apiRequest("/products");
+
+      // Build query string
+      const queryParams = new URLSearchParams();
+      queryParams.append("limit", limit);
+
+      if (cursor) {
+        queryParams.append("cursor", cursor);
+      }
+      if (category && category !== "all") {
+        queryParams.append("category", category);
+      }
+      if (isFeatured !== null) {
+        queryParams.append("isFeatured", isFeatured);
+      }
+
+      const response = await apiRequest(`/products?${queryParams.toString()}`);
 
       // Transform backend data to match frontend structure
       const transformedProducts = response.data.map(transformProduct);
 
-      dispatch({ type: "SET_PRODUCTS", payload: transformedProducts });
+      // Handle pagination response
+      const paginationData = {
+        products: transformedProducts,
+        nextCursor: response.pagination?.nextCursor || null,
+        hasMore: response.pagination?.hasMore || false,
+      };
+
+      // Dispatch appropriate action based on append flag
+      if (append) {
+        dispatch({ type: "LOAD_MORE_PRODUCTS", payload: paginationData });
+      } else {
+        dispatch({ type: "SET_PRODUCTS", payload: paginationData });
+      }
     } catch (error) {
       dispatch({ type: "SET_PRODUCTS_ERROR", payload: error.message });
       console.error("Error fetching products:", error);
@@ -278,6 +353,29 @@ export function AppProvider({ children }) {
       console.error("Error fetching product:", error);
       return null;
     }
+  };
+
+  // Load more products for infinite scroll
+  const loadMoreProducts = async () => {
+    if (!state.hasMore || state.productsLoading) {
+      return;
+    }
+
+    await fetchProducts({
+      cursor: state.nextCursor,
+      category:
+        state.selectedCategory !== "all" ? state.selectedCategory : null,
+      append: true,
+    });
+  };
+
+  // Reset and fetch products (used when filters change)
+  const resetAndFetchProducts = async () => {
+    dispatch({ type: "RESET_PRODUCTS" });
+    await fetchProducts({
+      category:
+        state.selectedCategory !== "all" ? state.selectedCategory : null,
+    });
   };
 
   // Add product - using FormData for file uploads with multiple images/videos
@@ -441,6 +539,20 @@ export function AppProvider({ children }) {
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  // Track if component has mounted (to prevent filter useEffect from running on initial render)
+  const hasMountedRef = useRef(false);
+
+  // Reset pagination when filters change (but not on initial mount)
+  useEffect(() => {
+    if (hasMountedRef.current) {
+      // Only reset if filters have changed after initial mount
+      resetAndFetchProducts();
+    } else {
+      // Mark as mounted after initial render
+      hasMountedRef.current = true;
+    }
+  }, [state.selectedCategory, state.sortBy]);
 
   const showCustomAlert = (message, callback) => {
     dispatch({ type: "SHOW_ALERT", payload: message });
@@ -648,6 +760,8 @@ export function AppProvider({ children }) {
     resetCheckout,
     fetchProducts,
     fetchProductById,
+    loadMoreProducts,
+    resetAndFetchProducts,
     addProduct,
     updateProduct,
     deleteProduct,

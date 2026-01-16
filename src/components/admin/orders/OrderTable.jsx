@@ -12,6 +12,21 @@ const OrderTable = ({ orders, onOrderUpdate }) => {
   const [editingOrder, setEditingOrder] = useState(null);
   const [showStatusModal, setShowStatusModal] = useState(false);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Calculate pagination
+  const totalPages = Math.ceil(orders.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedOrders = orders.slice(startIndex, endIndex);
+
+  // Reset to page 1 when orders change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [orders.length]);
+
   const handleViewOrder = (order) => {
     setSelectedOrder(order);
     setShowDetailsModal(true);
@@ -33,11 +48,23 @@ const OrderTable = ({ orders, onOrderUpdate }) => {
       <div className="bg-white rounded-xl shadow-lg border border-gray-100">
         <div className="text-center py-12">
           <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            <svg
+              className="w-8 h-8 text-pink-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+              />
             </svg>
           </div>
-          <p className="text-gray-500 text-sm">No orders found matching your criteria.</p>
+          <p className="text-gray-500 text-sm">
+            No orders found matching your criteria.
+          </p>
         </div>
       </div>
     );
@@ -52,6 +79,9 @@ const OrderTable = ({ orders, onOrderUpdate }) => {
             {/* Modern Gradient Header */}
             <thead className="bg-gradient-to-r from-pink-50 via-rose-50 to-pink-50">
               <tr>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
+                  Sr No.
+                </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
                   Order ID
                 </th>
@@ -76,16 +106,18 @@ const OrderTable = ({ orders, onOrderUpdate }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
-              {orders.map((order, index) => (
+              {paginatedOrders.map((order, index) => (
                 <tr
                   key={order.id}
                   className="hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200 group"
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                      {startIndex + index + 1}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-500 rounded-lg flex items-center justify-center mr-3 shadow-sm">
-                        <span className="text-white text-xs font-bold">#{index + 1}</span>
-                      </div>
                       <span className="text-sm font-semibold text-gray-900">
                         {order.id}
                       </span>
@@ -144,12 +176,64 @@ const OrderTable = ({ orders, onOrderUpdate }) => {
           </table>
         </div>
 
-        {/* Table Footer with Count */}
-        <div className="bg-gradient-to-r from-gray-50 to-pink-50/30 px-6 py-3 border-t border-gray-200">
-          <p className="text-xs text-gray-600">
-            Showing <span className="font-semibold text-pink-600">{orders.length}</span> order{orders.length !== 1 ? 's' : ''}
-          </p>
-        </div>
+        {/* Pagination Controls */}
+        {orders.length > 0 && (
+          <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-pink-50/30 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              {/* Page Info */}
+              <div className="text-sm text-gray-700">
+                Showing <span className="font-semibold">{startIndex + 1}</span>{" "}
+                to{" "}
+                <span className="font-semibold">
+                  {Math.min(endIndex, orders.length)}
+                </span>{" "}
+                of <span className="font-semibold">{orders.length}</span> orders
+              </div>
+
+              {/* Navigation Buttons */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                >
+                  Previous
+                </button>
+
+                {/* Page Numbers */}
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                          currentPage === page
+                            ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
+                            : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  )}
+                </div>
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Order Details Modal */}

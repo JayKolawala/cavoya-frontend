@@ -5,9 +5,11 @@ import ProductCard from "../components/ProductCard";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Sparkles, Package } from "lucide-react";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const ProductsPage = () => {
-  const { sortedProducts, productsLoading } = useAppContext();
+  const { sortedProducts, productsLoading, hasMore, loadMoreProducts } =
+    useAppContext();
   const [_selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
 
@@ -63,22 +65,47 @@ const ProductsPage = () => {
               </div>
             )}
 
-            {/* Products Grid */}
+            {/* Products Grid with Infinite Scroll */}
             {!productsLoading && sortedProducts.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {sortedProducts.map((product, index) => (
-                  <div
-                    key={product.id}
-                    className="animate-slide-up"
-                    style={{ animationDelay: `${(index % 9) * 100}ms` }}
-                  >
-                    <ProductCard
-                      product={product}
-                      onProductClick={handleProductClick}
-                    />
+              <InfiniteScroll
+                dataLength={sortedProducts.length}
+                next={loadMoreProducts}
+                hasMore={hasMore}
+                loader={
+                  <div className="flex justify-center py-8">
+                    <div className="flex items-center gap-3 text-gray-600">
+                      <div className="w-6 h-6 border-3 border-blush-500 border-t-transparent rounded-full animate-spin"></div>
+                      <span className="text-lg font-light">
+                        Loading more products...
+                      </span>
+                    </div>
                   </div>
-                ))}
-              </div>
+                }
+                endMessage={
+                  <div className="text-center py-12">
+                    <div className="inline-block px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-50 rounded-full">
+                      <p className="text-gray-600 font-light text-lg">
+                        ✨ You've seen all products
+                      </p>
+                    </div>
+                  </div>
+                }
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {sortedProducts.map((product, index) => (
+                    <div
+                      key={product.id}
+                      className="animate-slide-up"
+                      style={{ animationDelay: `${(index % 9) * 100}ms` }}
+                    >
+                      <ProductCard
+                        product={product}
+                        onProductClick={handleProductClick}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </InfiniteScroll>
             )}
 
             {/* Enhanced Empty State */}
