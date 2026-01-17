@@ -33,12 +33,24 @@ const ProductCard = ({ product, onProductClick }) => {
         <div className="flex gap-3 p-3">
           {/* Product Image - Left Side */}
           <div className="relative flex-shrink-0 w-24 h-24">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-full object-cover rounded-lg cursor-pointer"
-              onClick={() => onProductClick(product)}
-            />
+            {product.image && product.image.match(/\.(mp4|webm|ogg)$/i) ? (
+              <video
+                src={product.image}
+                className="w-full h-full object-cover rounded-lg cursor-pointer"
+                onClick={() => onProductClick(product)}
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
+            ) : (
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover rounded-lg cursor-pointer"
+                onClick={() => onProductClick(product)}
+              />
+            )}
             {product.discount && (
               <div className="absolute top-1 left-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">
                 {product.discount}% OFF
@@ -97,11 +109,10 @@ const ProductCard = ({ product, onProductClick }) => {
             className="flex-shrink-0 self-start"
           >
             <Heart
-              className={`h-5 w-5 ${
-                isInWishlist
+              className={`h-5 w-5 ${isInWishlist
                   ? "fill-red-500 text-red-500"
                   : "text-gray-400 hover:text-red-500"
-              } transition-colors`}
+                } transition-colors`}
             />
           </button>
         </div>
@@ -113,12 +124,24 @@ const ProductCard = ({ product, onProductClick }) => {
         data-aos="zoom-in"
       >
         <div className="relative">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-80 object-cover cursor-pointer"
-            onClick={() => onProductClick(product)}
-          />
+          {product.image && product.image.match(/\.(mp4|webm|ogg)$/i) ? (
+            <video
+              src={product.image}
+              className="w-full h-80 object-cover cursor-pointer"
+              onClick={() => onProductClick(product)}
+              autoPlay
+              loop
+              muted
+              playsInline
+            />
+          ) : (
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-80 object-cover cursor-pointer"
+              onClick={() => onProductClick(product)}
+            />
+          )}
 
           {/* Wishlist Button */}
           <button
@@ -130,11 +153,10 @@ const ProductCard = ({ product, onProductClick }) => {
             className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
           >
             <Heart
-              className={`h-4 w-4 ${
-                isInWishlist
+              className={`h-4 w-4 ${isInWishlist
                   ? "fill-red-500 text-red-500"
                   : "text-gray-600 hover:text-red-500"
-              } transition-colors`}
+                } transition-colors`}
             />
           </button>
 
@@ -157,11 +179,10 @@ const ProductCard = ({ product, onProductClick }) => {
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                        selectedSize === size
+                      className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${selectedSize === size
                           ? "bg-gradient-to-r from-tangerine-500 to-blush-500 text-white"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
+                        }`}
                     >
                       {size}
                     </button>
@@ -202,11 +223,10 @@ const ProductCard = ({ product, onProductClick }) => {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`h-4 w-4 ${
-                    i < Math.floor(product.rating || 4.5)
+                  className={`h-4 w-4 ${i < Math.floor(product.rating || 4.5)
                       ? "fill-current"
                       : "fill-none text-gray-300"
-                  }`}
+                    }`}
                 />
               ))}
             </div>

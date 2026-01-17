@@ -95,18 +95,16 @@ const ProductFilters = () => {
             <span className="font-semibold text-gray-800">Filters & Sort</span>
           </div>
           <ChevronDown
-            className={`w-5 h-5 text-gray-600 transition-transform ${
-              isMobileFiltersOpen ? "rotate-180" : ""
-            }`}
+            className={`w-5 h-5 text-gray-600 transition-transform ${isMobileFiltersOpen ? "rotate-180" : ""
+              }`}
           />
         </button>
       </div>
 
       {/* Filters Sidebar */}
       <div
-        className={`bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 ${
-          isMobileFiltersOpen ? "block" : "hidden lg:block"
-        } lg:sticky lg:top-24`}
+        className={`bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 ${isMobileFiltersOpen ? "block" : "hidden lg:block"
+          } lg:sticky lg:top-24`}
       >
         {/* Header */}
         <div className="p-6 bg-gradient-to-r from-blush-50 to-tangerine-50 border-b border-gray-100">
@@ -125,7 +123,7 @@ const ProductFilters = () => {
           <p className="text-sm text-gray-600">Refine your search</p>
         </div>
 
-        <div className="p-6 space-y-8">
+        <div className="p-6 space-y-8 max-h-[calc(100vh-250px)] overflow-y-auto">
           {/* Categories Section */}
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -143,21 +141,20 @@ const ProductFilters = () => {
                 <button
                   key={category.id}
                   onClick={() => handleCategorySelect(category.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
-                    (window.innerWidth < 1024
-                      ? tempCategory
-                      : selectedCategory) === category.id
-                      ? "bg-gradient-to-r from-tangerine-500 to-blush-500 text-white shadow-md"
-                      : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                  }`}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${(window.innerWidth < 1024
+                    ? tempCategory
+                    : selectedCategory) === category.id
+                    ? "bg-gradient-to-r from-tangerine-500 to-blush-500 text-white shadow-md"
+                    : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-sm">{category.name}</span>
                     {(window.innerWidth < 1024
                       ? tempCategory
                       : selectedCategory) === category.id && (
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    )}
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      )}
                   </div>
                 </button>
               ))}
@@ -182,18 +179,17 @@ const ProductFilters = () => {
                 <button
                   key={option.id}
                   onClick={() => handleSortSelect(option.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
-                    (window.innerWidth < 1024 ? tempSort : sortBy) === option.id
-                      ? "bg-blush-50 text-blush-800 border-2 border-blush-400"
-                      : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent"
-                  }`}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${(window.innerWidth < 1024 ? tempSort : sortBy) === option.id
+                    ? "bg-blush-50 text-blush-800 border-2 border-blush-400"
+                    : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent"
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-sm">{option.name}</span>
                     {(window.innerWidth < 1024 ? tempSort : sortBy) ===
                       option.id && (
-                      <div className="w-2 h-2 bg-blush-500 rounded-full"></div>
-                    )}
+                        <div className="w-2 h-2 bg-blush-500 rounded-full"></div>
+                      )}
                   </div>
                 </button>
               ))}
