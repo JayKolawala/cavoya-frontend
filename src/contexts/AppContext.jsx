@@ -81,9 +81,9 @@ function appReducer(state, action) {
         cartItems: state.cartItems.map((item) =>
           item.id === action.payload.id
             ? {
-                ...item,
-                quantity: Math.max(1, item.quantity + action.payload.change),
-              }
+              ...item,
+              quantity: Math.max(1, item.quantity + action.payload.change),
+            }
             : item
         ),
       };
@@ -289,6 +289,7 @@ export function AppProvider({ children }) {
     description: product.description,
     inventory: product.inventory,
     isFeatured: product.isFeatured || false,
+    bestSeller: product.bestSeller || false,
   });
 
   // Fetch products from API with pagination support
@@ -410,6 +411,9 @@ export function AppProvider({ children }) {
       if (productData.isFeatured !== undefined) {
         formData.append("isFeatured", productData.isFeatured);
       }
+      if (productData.bestSeller !== undefined) {
+        formData.append("bestSeller", productData.bestSeller);
+      }
 
       // Add multiple image/video files
       if (productData.imageFiles && productData.imageFiles.length > 0) {
@@ -475,6 +479,9 @@ export function AppProvider({ children }) {
       }
       if (productData.isFeatured !== undefined) {
         formData.append("isFeatured", productData.isFeatured);
+      }
+      if (productData.bestSeller !== undefined) {
+        formData.append("bestSeller", productData.bestSeller);
       }
 
       // Handle images - if new files uploaded, they replace existing ones

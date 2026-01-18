@@ -96,12 +96,12 @@ export const CLOTHING_SIZES = [
 
 // Product Categories
 export const PRODUCT_CATEGORIES = [
-    "Ethnic Wear",
-    "Western Wear",
-    "Traditional Wear",
-    "Sarees",
-    "Casual Wear",
-    "Designer Collection",
+    "Dresses",
+    "Co-ord Sets⁠",
+    "Tops",
+    "Bottomwear",
+    "Jumpsuits",
+    "Solset",
 ];
 
 // Indian States

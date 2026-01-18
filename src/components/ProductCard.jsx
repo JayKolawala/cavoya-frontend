@@ -52,7 +52,7 @@ const ProductCard = ({ product, onProductClick }) => {
               />
             )}
             {product.discount && (
-              <div className="absolute top-1 left-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">
+              <div className="absolute top-1 left-1 bg-black text-white text-xs font-bold px-1.5 py-0.5 rounded">
                 {product.discount}% OFF
               </div>
             )}
@@ -70,7 +70,7 @@ const ProductCard = ({ product, onProductClick }) => {
 
             {/* Rating */}
             <div className="flex items-center gap-1 mb-2">
-              <div className="flex items-center bg-green-600 text-white text-xs px-1.5 py-0.5 rounded">
+              <div className="flex items-center bg-gray-700 text-white text-xs px-1.5 py-0.5 rounded">
                 <Star className="w-3 h-3 fill-current mr-0.5" />
                 <span className="font-semibold">{product.rating || 4.5}</span>
               </div>
@@ -82,7 +82,7 @@ const ProductCard = ({ product, onProductClick }) => {
             {/* Price Section */}
             <div className="flex items-center gap-2 flex-wrap">
               {product.discount && (
-                <span className="bg-green-600 text-white text-xs font-bold px-1.5 py-0.5 rounded">
+                <span className="bg-gray-700 text-white text-xs font-bold px-1.5 py-0.5 rounded">
                   ↓{product.discount}%
                 </span>
               )}
@@ -110,8 +110,8 @@ const ProductCard = ({ product, onProductClick }) => {
           >
             <Heart
               className={`h-5 w-5 ${isInWishlist
-                  ? "fill-red-500 text-red-500"
-                  : "text-gray-400 hover:text-red-500"
+                ? "fill-gray-900 text-gray-900"
+                : "text-gray-400 hover:text-gray-900"
                 } transition-colors`}
             />
           </button>
@@ -154,15 +154,15 @@ const ProductCard = ({ product, onProductClick }) => {
           >
             <Heart
               className={`h-4 w-4 ${isInWishlist
-                  ? "fill-red-500 text-red-500"
-                  : "text-gray-600 hover:text-red-500"
+                ? "fill-gray-900 text-gray-900"
+                : "text-gray-600 hover:text-gray-900"
                 } transition-colors`}
             />
           </button>
 
           {/* Sale Badge */}
           {product.discount && (
-            <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+            <div className="absolute top-4 left-4 bg-black text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
               SALE
             </div>
           )}
@@ -180,8 +180,8 @@ const ProductCard = ({ product, onProductClick }) => {
                       key={size}
                       onClick={() => setSelectedSize(size)}
                       className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${selectedSize === size
-                          ? "bg-gradient-to-r from-tangerine-500 to-blush-500 text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        ? "bg-black text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                         }`}
                     >
                       {size}
@@ -191,7 +191,7 @@ const ProductCard = ({ product, onProductClick }) => {
                 <button
                   onClick={handleQuickAdd}
                   disabled={!selectedSize}
-                  className="w-full bg-gradient-to-r from-tangerine-500 to-blush-500 text-white py-2 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-black text-white py-2 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800"
                 >
                   Add to Cart
                 </button>
@@ -199,7 +199,7 @@ const ProductCard = ({ product, onProductClick }) => {
             ) : (
               <button
                 onClick={handleQuickAdd}
-                className="w-full bg-gradient-to-r from-tangerine-500 to-blush-500 text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:shadow-lg transition-all duration-300"
+                className="w-full bg-black text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-800 hover:shadow-lg transition-all duration-300"
               >
                 <ShoppingCart className="h-4 w-4" />
                 Quick Add
@@ -211,7 +211,7 @@ const ProductCard = ({ product, onProductClick }) => {
         {/* Product Info */}
         <div className="p-4">
           <h3
-            className="text-lg font-semibold text-gray-800 mb-2 cursor-pointer hover:text-blush-600 transition-colors"
+            className="text-lg font-semibold text-gray-800 mb-2 cursor-pointer hover:text-gray-600 transition-colors"
             onClick={() => onProductClick(product)}
           >
             {product.name}
@@ -219,13 +219,13 @@ const ProductCard = ({ product, onProductClick }) => {
 
           {/* Rating */}
           <div className="flex items-center mb-3">
-            <div className="flex items-center text-butter-500">
+            <div className="flex items-center text-gray-700">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
                   className={`h-4 w-4 ${i < Math.floor(product.rating || 4.5)
-                      ? "fill-current"
-                      : "fill-none text-gray-300"
+                    ? "fill-current"
+                    : "fill-none text-gray-300"
                     }`}
                 />
               ))}
@@ -237,7 +237,7 @@ const ProductCard = ({ product, onProductClick }) => {
 
           {/* Price */}
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-2xl font-bold bg-gradient-to-r from-tangerine-600 to-blush-600 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold text-gray-900">
               ₹{product.price}
             </span>
             {product.originalPrice && (

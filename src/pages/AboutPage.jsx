@@ -25,8 +25,8 @@ const AboutPage = () => {
       {
         icon: Heart,
         iconColor: "text-white",
-        gradientFrom: "from-blush-400",
-        gradientTo: "to-blush-600",
+        gradientFrom: "from-gray-600",
+        gradientTo: "to-gray-800",
         title: "Crafted with Love",
         description:
           "Every piece is made with attention to detail and genuine care",
@@ -34,8 +34,8 @@ const AboutPage = () => {
       {
         icon: RefreshCw,
         iconColor: "text-white",
-        gradientFrom: "from-matcha-400",
-        gradientTo: "to-matcha-600",
+        gradientFrom: "from-gray-500",
+        gradientTo: "to-gray-700",
         title: "Sustainable Fashion",
         description:
           "Committed to ethical practices and environmental responsibility",
@@ -43,8 +43,8 @@ const AboutPage = () => {
       {
         icon: Star,
         iconColor: "text-white",
-        gradientFrom: "from-sea-400",
-        gradientTo: "to-sea-600",
+        gradientFrom: "from-gray-700",
+        gradientTo: "to-black",
         title: "Premium Quality",
         description: "Using only the finest materials and expert craftsmanship",
       },
@@ -76,10 +76,10 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Header Section */}
-      <div className="relative bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#4a1942] text-white py-20 px-4 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white py-20 px-4 overflow-hidden">
         {/* Animated Background Elements */}
-        <div className="absolute top-10 left-10 w-64 h-64 bg-tangerine-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-80 h-80 bg-blush-500/10 rounded-full blur-3xl animate-pulse delay-700"></div>
+        <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-80 h-80 bg-gray-400/10 rounded-full blur-3xl animate-pulse delay-700"></div>
 
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/30"></div>
@@ -87,8 +87,8 @@ const AboutPage = () => {
         {/* Header Content */}
         <div className="relative z-10 container mx-auto text-center" data-aos="fade-down">
           <div className="mb-4 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-            <Sparkles className="w-4 h-4 text-butter-300" />
-            <span className="text-butter-100 text-sm font-light tracking-wider">
+            <Sparkles className="w-4 h-4 text-gray-300" />
+            <span className="text-gray-200 text-sm font-light tracking-wider">
               Our Journey
             </span>
           </div>
@@ -97,7 +97,7 @@ const AboutPage = () => {
             {aboutData.header.title}
           </h1>
 
-          <p className="text-lg md:text-xl font-light text-gray-200 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl font-light text-gray-300 max-w-2xl mx-auto">
             {aboutData.header.tagline}
           </p>
         </div>
@@ -110,18 +110,18 @@ const AboutPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
             <div data-aos="fade-right">
               <div className="inline-block mb-4">
-                <span className="px-4 py-2 bg-blush-100 text-blush-600 rounded-full text-sm font-semibold tracking-wider">
+                <span className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold tracking-wider">
                   SINCE 2020
                 </span>
               </div>
 
-              <h2 className="text-3xl md:text-4xl font-light mb-6 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              <h2 className="text-3xl md:text-4xl font-light mb-6 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                 {aboutData.story.title}
               </h2>
 
               <div className="space-y-4">
                 {aboutData.story.content.map((paragraph, index) => (
-                  <p key={index} className="text-gray-700 leading-relaxed text-lg">
+                  <p key={index} className="text-gray-600 leading-relaxed text-lg">
                     {paragraph}
                   </p>
                 ))}
@@ -132,7 +132,7 @@ const AboutPage = () => {
               className="relative group"
               data-aos="fade-left"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blush-400 to-tangerine-400 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-xl"></div>
               <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden shadow-2xl">
                 <img
                   src={aboutData.story.image.src}
@@ -145,10 +145,10 @@ const AboutPage = () => {
 
           {/* Values Section */}
           <div className="mb-12 text-center" data-aos="fade-up">
-            <h2 className="text-3xl md:text-4xl font-light mb-4 text-gray-800">
+            <h2 className="text-3xl md:text-4xl font-light mb-4 text-gray-900">
               Our Core Values
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-500 text-lg max-w-2xl mx-auto">
               The principles that guide everything we do
             </p>
           </div>
@@ -163,18 +163,18 @@ const AboutPage = () => {
                   data-aos="fade-up"
                   data-aos-delay={index * 100}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${value.gradientFrom} ${value.gradientTo} rounded-2xl opacity-0 group-hover:opacity-100 blur transition-all duration-300`}></div>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${value.gradientFrom} ${value.gradientTo} rounded-2xl opacity-0 group-hover:opacity-10 blur transition-all duration-300`}></div>
 
                   <div className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
                     <div className={`w-16 h-16 mx-auto mb-6 bg-gradient-to-br ${value.gradientFrom} ${value.gradientTo} rounded-2xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300 shadow-md`}>
                       <IconComponent className={`h-8 w-8 ${value.iconColor}`} />
                     </div>
 
-                    <h3 className="text-2xl font-semibold mb-3 text-gray-800 text-center">
+                    <h3 className="text-2xl font-semibold mb-3 text-gray-900 text-center">
                       {value.title}
                     </h3>
 
-                    <p className="text-gray-600 leading-relaxed text-center">
+                    <p className="text-gray-500 leading-relaxed text-center">
                       {value.description}
                     </p>
                   </div>
@@ -186,14 +186,14 @@ const AboutPage = () => {
           {/* Founders Section */}
           <div className="mb-12 text-center" data-aos="fade-up">
             <div className="inline-block mb-4">
-              <span className="px-4 py-2 bg-tangerine-100 text-tangerine-600 rounded-full text-sm font-semibold tracking-wider">
+              <span className="px-4 py-2 bg-gray-900 text-white rounded-full text-sm font-semibold tracking-wider">
                 LEADERSHIP
               </span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-light mb-4 text-gray-800">
+            <h2 className="text-3xl md:text-4xl font-light mb-4 text-gray-900">
               Meet Our Founders
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-500 text-lg max-w-2xl mx-auto">
               The visionaries behind Cavoya's commitment to sustainable elegance
             </p>
           </div>
@@ -212,7 +212,7 @@ const AboutPage = () => {
                   className={`relative group ${index % 2 === 1 ? "lg:order-2" : "lg:order-1"
                     }`}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-tangerine-400 to-blush-400 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-xl"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-xl"></div>
                   <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden shadow-2xl">
                     <img
                       src={founder.image}
@@ -228,15 +228,15 @@ const AboutPage = () => {
                     }`}
                 >
                   <div>
-                    <h3 className="text-3xl md:text-4xl font-light mb-2 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                    <h3 className="text-3xl md:text-4xl font-light mb-2 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                       {founder.name}
                     </h3>
-                    <p className="text-xl text-tangerine-600 font-medium mb-4">
+                    <p className="text-xl text-gray-600 font-medium mb-4">
                       {founder.role}
                     </p>
                   </div>
 
-                  <p className="text-gray-700 leading-relaxed text-lg">
+                  <p className="text-gray-600 leading-relaxed text-lg">
                     {founder.description}
                   </p>
 
@@ -244,14 +244,14 @@ const AboutPage = () => {
                   <div className="flex gap-4 pt-4">
                     <a
                       href={founder.linkedin}
-                      className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sea-500 to-sea-600 text-white rounded-xl hover:from-sea-600 hover:to-sea-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                      className="group flex items-center gap-2 px-6 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                     >
                       <Linkedin className="w-5 h-5" />
                       <span className="font-medium">LinkedIn</span>
                     </a>
                     <a
                       href={`mailto:${founder.email}`}
-                      className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blush-500 to-blush-600 text-white rounded-xl hover:from-blush-600 hover:to-blush-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                      className="group flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                     >
                       <Mail className="w-5 h-5" />
                       <span className="font-medium">Email</span>

@@ -11,9 +11,9 @@ const CustomAlert = () => {
       <div className="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full mx-4 transform animate-scale-in">
         <div className="text-center">
           <div className="mb-4">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-gray-100">
               <svg
-                className="h-6 w-6 text-green-600"
+                className="h-6 w-6 text-gray-700"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -31,7 +31,7 @@ const CustomAlert = () => {
           <p className="text-sm text-gray-600 mb-6">{alertMessage}</p>
           <button
             onClick={() => setShowAlert(false)}
-            className="w-full px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition-colors font-medium"
+            className="w-full px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors font-medium"
           >
             OK
           </button>

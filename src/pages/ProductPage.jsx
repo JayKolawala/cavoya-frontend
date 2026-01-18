@@ -16,7 +16,7 @@ import ProductCard from "../components/ProductCard";
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blush-500"></div>
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-700"></div>
   </div>
 );
 
@@ -75,36 +75,36 @@ const ProductPage = () => {
   // If no related products, fallback to any other products
   const relatedProducts = selectedProduct
     ? (() => {
-        // First, try to find products in the same category
-        const sameCategory = products.filter(
-          (p) =>
-            p.category === selectedProduct.category &&
-            p.id !== selectedProduct.id &&
-            p._id !== selectedProduct._id
-        );
+      // First, try to find products in the same category
+      const sameCategory = products.filter(
+        (p) =>
+          p.category === selectedProduct.category &&
+          p.id !== selectedProduct.id &&
+          p._id !== selectedProduct._id
+      );
 
-        // If we have related products from same category, use them
-        if (sameCategory.length > 0) {
-          return sameCategory.slice(0, 4);
-        }
+      // If we have related products from same category, use them
+      if (sameCategory.length > 0) {
+        return sameCategory.slice(0, 4);
+      }
 
-        // Otherwise, show any other products (excluding current)
-        return products
-          .filter(
-            (p) => p.id !== selectedProduct.id && p._id !== selectedProduct._id
-          )
-          .slice(0, 4);
-      })()
+      // Otherwise, show any other products (excluding current)
+      return products
+        .filter(
+          (p) => p.id !== selectedProduct.id && p._id !== selectedProduct._id
+        )
+        .slice(0, 4);
+    })()
     : [];
 
   // Determine section title based on whether we found related products
   const productsSectionTitle = selectedProduct
     ? products.some(
-        (p) =>
-          p.category === selectedProduct.category &&
-          p.id !== selectedProduct.id &&
-          p._id !== selectedProduct._id
-      )
+      (p) =>
+        p.category === selectedProduct.category &&
+        p.id !== selectedProduct.id &&
+        p._id !== selectedProduct._id
+    )
       ? "Related Products"
       : "You May Also Like"
     : "Related Products";
@@ -156,7 +156,7 @@ const ProductPage = () => {
         </p>
         <button
           onClick={() => window.history.back()}
-          className="px-6 py-2 bg-blush-500 text-white rounded-md hover:bg-blush-600 transition-colors"
+          className="px-6 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
         >
           Go Back
         </button>
@@ -226,9 +226,8 @@ const ProductPage = () => {
         )}
       </button>
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-[600px] pb-4" : "max-h-0"
-        }`}
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-[600px] pb-4" : "max-h-0"
+          }`}
       >
         <div className="text-gray-600 text-sm leading-relaxed">{children}</div>
       </div>
@@ -305,11 +304,10 @@ const ProductPage = () => {
               {productMedia.map((media, index) => (
                 <div
                   key={index}
-                  className={`relative flex-shrink-0 w-24 h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${
-                    activeMediaIndex === index
-                      ? "ring-4 ring-blush-500 shadow-lg scale-105"
+                  className={`relative flex-shrink-0 w-24 h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${activeMediaIndex === index
+                      ? "ring-4 ring-gray-700 shadow-lg scale-105"
                       : "hover:opacity-80 hover:scale-105 shadow-md"
-                  }`}
+                    }`}
                   onClick={() => setActiveMediaIndex(index)}
                 >
                   {media.type === "video" ? (
@@ -349,7 +347,7 @@ const ProductPage = () => {
 
         {/* Enhanced Product Details */}
         <div className="lg:w-1/2">
-          <h1 className="text-4xl md:text-5xl font-light mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent capitalize">
+          <h1 className="text-4xl md:text-5xl font-light mb-3 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent capitalize">
             {selectedProduct.name}
           </h1>
 
@@ -359,11 +357,10 @@ const ProductPage = () => {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`h-5 w-5 ${
-                    i < Math.floor(selectedProduct.rating || 0)
-                      ? "fill-yellow-400 text-yellow-400"
+                  className={`h-5 w-5 ${i < Math.floor(selectedProduct.rating || 0)
+                      ? "fill-gray-700 text-gray-700"
                       : "text-gray-300"
-                  }`}
+                    }`}
                 />
               ))}
             </div>
@@ -375,7 +372,7 @@ const ProductPage = () => {
 
           {/* Enhanced Price */}
           <div className="flex items-center space-x-4 mb-8">
-            <span className="text-4xl font-bold bg-gradient-to-r from-blush-600 to-blush-500 bg-clip-text text-transparent">
+            <span className="text-4xl font-bold text-gray-900">
               ₹{selectedProduct.price}
             </span>
             {selectedProduct.originalPrice &&
@@ -385,7 +382,7 @@ const ProductPage = () => {
                 </span>
               )}
             {selectedProduct.isSale && (
-              <span className="bg-gradient-to-r from-tangerine-500 to-tangerine-600 text-white px-3 py-1.5 text-sm font-semibold rounded-full shadow-md">
+              <span className="bg-black text-white px-3 py-1.5 text-sm font-semibold rounded-full shadow-md">
                 SALE
               </span>
             )}
@@ -429,7 +426,7 @@ const ProductPage = () => {
                     className={`w-10 h-10 rounded-full ${getColorClasses(
                       color
                     )} border-2 transition-all ${selectedColor === color
-                      ? "border-gray-800 scale-110 ring-2 ring-blush-300"
+                      ? "border-gray-800 scale-110 ring-2 ring-gray-300"
                       : "border-gray-300 hover:scale-105"
                       }`}
                     onClick={() => setSelectedColor(color)}
@@ -453,11 +450,10 @@ const ProductPage = () => {
                 {selectedProduct.sizes.map((size) => (
                   <button
                     key={size}
-                    className={`px-4 py-2 border rounded-md transition-colors ${
-                      selectedSize === size
-                        ? "border-blush-500 bg-blush-50 text-blush-600"
-                        : "border-gray-300 hover:border-blush-300"
-                    }`}
+                    className={`px-4 py-2 border rounded-md transition-colors ${selectedSize === size
+                        ? "border-gray-900 bg-gray-100 text-gray-900"
+                        : "border-gray-300 hover:border-gray-500"
+                      }`}
                     onClick={() => setSelectedSize(size)}
                   >
                     {size}
@@ -473,11 +469,10 @@ const ProductPage = () => {
               addToCart(selectedProduct, selectedColor, selectedSize)
             }
             disabled={selectedProduct.inventory?.stock <= 0}
-            className={`w-full py-4 rounded-lg font-bold transition-transform transform ${
-              selectedProduct.inventory?.stock > 0
-                ? "bg-blush-500 text-white hover:scale-[1.01] hover:bg-blush-600"
+            className={`w-full py-4 rounded-lg font-bold transition-transform transform ${selectedProduct.inventory?.stock > 0
+                ? "bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            } mb-4`}
+              } mb-4`}
           >
             {selectedProduct.inventory?.stock > 0
               ? "Add to Cart"
@@ -552,12 +547,12 @@ const ProductPage = () => {
                 </p>
 
                 {selectedProduct.isFeatured && (
-                  <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-xl border-l-4 border-purple-500 shadow-sm">
-                    <p className="font-semibold text-purple-800 mb-1 flex items-center gap-2">
-                      <Star className="w-4 h-4 fill-purple-500 text-purple-500" />
+                  <div className="bg-gradient-to-r from-gray-100 to-gray-50 p-4 rounded-xl border-l-4 border-gray-700 shadow-sm">
+                    <p className="font-semibold text-gray-800 mb-1 flex items-center gap-2">
+                      <Star className="w-4 h-4 fill-gray-700 text-gray-700" />
                       Featured Product
                     </p>
-                    <p className="text-purple-700 text-sm">
+                    <p className="text-gray-600 text-sm">
                       This is one of our featured items, handpicked for quality
                       and style.
                     </p>
@@ -572,8 +567,8 @@ const ProductPage = () => {
               onToggle={() => toggleAccordion("shipping")}
             >
               <div className="space-y-5">
-                <div className="flex items-start space-x-4 bg-tangerine-50 p-4 rounded-xl">
-                  <div className="w-10 h-10 bg-gradient-to-br from-tangerine-400 to-tangerine-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-xl">
+                  <div className="w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Truck className="h-5 w-5 text-white" />
                   </div>
                   <div>
@@ -586,8 +581,8 @@ const ProductPage = () => {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start space-x-4 bg-sea-50 p-4 rounded-xl">
-                  <div className="w-10 h-10 bg-gradient-to-br from-sea-400 to-sea-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-xl">
+                  <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
                     <RefreshCw className="h-5 w-5 text-white" />
                   </div>
                   <div>
@@ -600,8 +595,8 @@ const ProductPage = () => {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start space-x-4 bg-matcha-50 p-4 rounded-xl">
-                  <div className="w-10 h-10 bg-gradient-to-br from-matcha-400 to-matcha-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-xl">
+                  <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-black rounded-lg flex items-center justify-center flex-shrink-0">
                     <Shield className="h-5 w-5 text-white" />
                   </div>
                   <div>
@@ -622,7 +617,7 @@ const ProductPage = () => {
       {/* Related Products Section */}
       {relatedProducts.length > 0 && (
         <div className="mt-20">
-          <h2 className="text-3xl font-light mb-8 text-center">
+          <h2 className="text-3xl font-light mb-8 text-center text-gray-900">
             {productsSectionTitle}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

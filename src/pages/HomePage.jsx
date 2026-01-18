@@ -32,15 +32,15 @@ const HomePage = () => {
 
   return (
     <div className="animate-fade-in overflow-hidden">
-      {/* Hero Section with Enhanced Design */}
-      <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#4a1942]">
-        {/* Animated Background Gradient - Reduced Intensity */}
-        <div className="absolute inset-0 bg-gradient-to-br from-tangerine-500/10 via-blush-500/15 to-sea-500/10 animate-pulse"></div>
+      {/* Hero Section with Black & White Design */}
+      <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-black via-gray-900 to-gray-800">
+        {/* Animated Background Gradient - Monochrome */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-gray-500/10 to-white/5 animate-pulse"></div>
 
-        {/* Floating Decorative Elements - Reduced Opacity */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-tangerine-500/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blush-500/5 rounded-full blur-3xl animate-pulse delay-700"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-butter-500/3 rounded-full blur-3xl"></div>
+        {/* Floating Decorative Elements - Grayscale */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gray-400/5 rounded-full blur-3xl animate-pulse delay-700"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/3 rounded-full blur-3xl"></div>
 
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/40"></div>
@@ -51,8 +51,8 @@ const HomePage = () => {
             }`}
         >
           <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-            <Sparkles className="w-4 h-4 text-butter-300" />
-            <span className="text-butter-100 text-sm font-light tracking-wider">
+            <Sparkles className="w-4 h-4 text-gray-300" />
+            <span className="text-gray-200 text-sm font-light tracking-wider">
               New Collection 2024
             </span>
           </div>
@@ -61,14 +61,14 @@ const HomePage = () => {
             The Cavoya Collection
           </h1>
 
-          <p className="text-xl md:text-2xl font-light mb-12 text-gray-200 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl font-light mb-12 text-gray-300 max-w-2xl mx-auto">
             Elegance in every stitch. Discover timeless fashion.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <button
               onClick={handleShopNowClick}
-              className="group px-10 py-4 bg-gradient-to-r from-tangerine-500 to-blush-500 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-tangerine-500/50 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
+              className="group px-10 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-100 hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
             >
               <span className="flex items-center gap-2">
                 Explore Collections
@@ -80,10 +80,10 @@ const HomePage = () => {
       </div>
 
       {/* NEW IN Section */}
-      <section className="relative py-16 bg-[#FAF8F5]">
+      <section className="relative py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif mb-2 text-gray-800 tracking-wide">
+            <h2 className="text-3xl md:text-4xl font-serif mb-2 text-gray-900 tracking-wide">
               NEW IN
             </h2>
           </div>
@@ -137,15 +137,15 @@ const HomePage = () => {
                       >
                         <Heart
                           className={`h-4 w-4 ${isInWishlist
-                            ? "fill-red-500 text-red-500"
-                            : "text-gray-600 hover:text-red-500"
+                            ? "fill-gray-900 text-gray-900"
+                            : "text-gray-600 hover:text-gray-900"
                             } transition-colors`}
                         />
                       </button>
 
                       {/* Sale Badge */}
                       {product.discount && (
-                        <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                        <div className="absolute top-4 left-4 bg-black text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
                           SALE
                         </div>
                       )}
@@ -158,7 +158,7 @@ const HomePage = () => {
                             addToCart(product);
                             showAlert("Added to cart successfully!", "success");
                           }}
-                          className="w-full bg-gradient-to-r from-tangerine-500 to-blush-500 text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:shadow-lg transition-all duration-300"
+                          className="w-full bg-black text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-800 hover:shadow-lg transition-all duration-300"
                         >
                           <ShoppingCart className="h-4 w-4" />
                           Quick Add
@@ -174,7 +174,7 @@ const HomePage = () => {
           <div className="text-center mt-10">
             <button
               onClick={handleViewAllClick}
-              className="text-gray-700 hover:text-gray-900 text-sm font-medium inline-flex items-center gap-2 group"
+              className="text-gray-700 hover:text-black text-sm font-medium inline-flex items-center gap-2 group"
             >
               View All New In
               <svg
@@ -211,12 +211,12 @@ const HomePage = () => {
           </video>
 
           {/* Soft overlay (optional) */}
-          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
             <div className="text-center px-4">
               <h3 className="text-4xl md:text-5xl font-serif text-white mb-4">
                 Designed for Movement & Comfort
               </h3>
-              <p className="text-lg md:text-xl text-gray-200">
+              <p className="text-lg md:text-xl text-gray-300">
                 Experience the Cavoya Difference
               </p>
             </div>
@@ -226,83 +226,83 @@ const HomePage = () => {
 
 
       {/* SHOP BY PRINTS Section */}
-      <section className="relative py-16 bg-[#FAF8F5]">
+      <section className="relative py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif mb-2 text-gray-800 tracking-wide">
+            <h2 className="text-3xl md:text-4xl font-serif mb-2 text-gray-900 tracking-wide">
               SHOP BY PRINTS
             </h2>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto">
-            {/* Coral Print */}
+            {/* Print 1 */}
             <div className="group cursor-pointer">
-              <div className="aspect-square bg-gradient-to-br from-pink-200 via-red-200 to-pink-300 mb-3 overflow-hidden">
+              <div className="aspect-square bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 mb-3 overflow-hidden">
                 <div
                   className="w-full h-full opacity-60"
                   style={{
                     backgroundImage: `repeating-linear-gradient(
                       45deg,
-                      #ff6b9d 0px,
-                      #ff6b9d 10px,
-                      #ffa8c5 10px,
-                      #ffa8c5 20px
+                      #374151 0px,
+                      #374151 10px,
+                      #6b7280 10px,
+                      #6b7280 20px
                     )`,
                   }}
                 ></div>
               </div>
               <p className="text-center text-sm text-gray-700 font-medium">
-                Coral Print
+                Geometric
               </p>
             </div>
 
-            {/* Ocean Wave */}
+            {/* Print 2 */}
             <div className="group cursor-pointer">
-              <div className="aspect-square bg-gradient-to-br from-blue-300 via-cyan-200 to-blue-400 mb-3 overflow-hidden">
+              <div className="aspect-square bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 mb-3 overflow-hidden">
                 <div
                   className="w-full h-full opacity-70"
                   style={{
                     backgroundImage: `repeating-linear-gradient(
                       0deg,
-                      #4299e1 0px,
-                      #63b3ed 15px,
-                      #4299e1 30px
+                      #1f2937 0px,
+                      #374151 15px,
+                      #1f2937 30px
                     )`,
                   }}
                 ></div>
               </div>
               <p className="text-center text-sm text-gray-700 font-medium">
-                Ocean Wave
+                Linear
               </p>
             </div>
 
-            {/* Abstract Coastal */}
+            {/* Print 3 */}
             <div className="group cursor-pointer">
-              <div className="aspect-square bg-gradient-to-br from-orange-200 via-yellow-100 to-teal-200 mb-3 overflow-hidden">
-                <div className="w-full h-full opacity-60 bg-gradient-to-br from-orange-300 via-yellow-200 to-teal-300"></div>
+              <div className="aspect-square bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 mb-3 overflow-hidden">
+                <div className="w-full h-full opacity-60 bg-gradient-to-br from-gray-200 via-white to-gray-300"></div>
               </div>
               <p className="text-center text-sm text-gray-700 font-medium">
-                Abstract Coastal
+                Minimal
               </p>
             </div>
 
-            {/* Signature Print */}
+            {/* Print 4 */}
             <div className="group cursor-pointer">
-              <div className="aspect-square bg-gradient-to-br from-slate-400 via-gray-500 to-slate-600 mb-3 overflow-hidden">
+              <div className="aspect-square bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 mb-3 overflow-hidden">
                 <div
                   className="w-full h-full opacity-50"
                   style={{
                     backgroundImage: `repeating-linear-gradient(
                       90deg,
-                      #475569 0px,
-                      #64748b 8px,
-                      #475569 16px
+                      #111827 0px,
+                      #374151 8px,
+                      #111827 16px
                     )`,
                   }}
                 ></div>
               </div>
               <p className="text-center text-sm text-gray-700 font-medium">
-                Signature Print
+                Classic
               </p>
             </div>
           </div>
@@ -313,7 +313,7 @@ const HomePage = () => {
       <section className="relative py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif mb-2 text-gray-800 tracking-wide">
+            <h2 className="text-3xl md:text-4xl font-serif mb-2 text-gray-900 tracking-wide">
               BEST SELLERS
             </h2>
           </div>
@@ -324,7 +324,7 @@ const HomePage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              {products.slice(0, 4).map((product, index) => (
+              {products.filter(product => product.bestSeller === true).slice(0, 4).map((product, index) => (
                 <div
                   key={product.id}
                   className="group animate-slide-up"
@@ -352,7 +352,7 @@ const HomePage = () => {
                         />
                       )}
                     </div>
-                    <h3 className="text-sm font-medium text-gray-800 mb-1">
+                    <h3 className="text-sm font-medium text-gray-900 mb-1">
                       {product.name}
                     </h3>
                     <p className="text-sm text-gray-600 mb-3">
@@ -365,7 +365,7 @@ const HomePage = () => {
                       addToCart(product);
                       showAlert("Added to cart successfully!", "success");
                     }}
-                    className="w-full bg-gradient-to-r from-tangerine-500 to-blush-500 text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:shadow-lg transition-all duration-300"
+                    className="w-full bg-black text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-800 hover:shadow-lg transition-all duration-300"
                   >
                     <ShoppingCart className="h-4 w-4" />
                     Quick Add

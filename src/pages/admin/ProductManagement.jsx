@@ -27,6 +27,7 @@ const ProductManagement = () => {
     sizes: ["S", "M", "L", "XL"],
     category: "",
     isFeatured: false,
+    bestSeller: false,
     inventory: {
       stock: 0,
     },
@@ -130,6 +131,7 @@ const ProductManagement = () => {
       sizes: product.sizes || ["S", "M", "L", "XL"],
       category: product.category,
       isFeatured: product.isFeatured || false,
+      bestSeller: product.bestSeller || false,
       inventory: {
         stock: product.inventory?.stock || 0,
       },
@@ -182,6 +184,7 @@ const ProductManagement = () => {
       sizes: ["S", "M", "L", "XL"],
       category: "",
       isFeatured: false,
+      bestSeller: false,
       inventory: {
         stock: 0,
       },
@@ -521,9 +524,8 @@ const ProductManagement = () => {
                         onChange={(e) =>
                           handleColorChange(index, e.target.value)
                         }
-                        placeholder={`Color ${
-                          index + 1
-                        } (e.g., pink, white, black)`}
+                        placeholder={`Color ${index + 1
+                          } (e.g., pink, white, black)`}
                       />
                       <button
                         type="button"
@@ -547,11 +549,10 @@ const ProductManagement = () => {
                         key={size}
                         type="button"
                         onClick={() => handleSizeToggle(size)}
-                        className={`px-4 py-2 border rounded-md ${
-                          formData.sizes.includes(size)
-                            ? "bg-pink-500 text-white border-pink-500"
-                            : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
-                        }`}
+                        className={`px-4 py-2 border rounded-md ${formData.sizes.includes(size)
+                          ? "bg-pink-500 text-white border-pink-500"
+                          : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
+                          }`}
                       >
                         {size}
                       </button>
@@ -578,6 +579,26 @@ const ProductManagement = () => {
                     </span>
                   </label>
                 </div>
+
+                {/* Best Seller */}
+                <div>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                      checked={formData.bestSeller}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          bestSeller: e.target.checked,
+                        })
+                      }
+                    />
+                    <span className="ml-2 text-sm font-medium text-gray-700">
+                      Best Seller
+                    </span>
+                  </label>
+                </div>
               </div>
 
               {/* Form Actions */}
@@ -598,8 +619,8 @@ const ProductManagement = () => {
                   {submitLoading
                     ? "Saving..."
                     : editingProduct
-                    ? "Update Product"
-                    : "Add Product"}
+                      ? "Update Product"
+                      : "Add Product"}
                 </button>
               </div>
             </form>
@@ -694,6 +715,11 @@ const ProductManagement = () => {
                         Featured
                       </span>
                     )}
+                    {product.bestSeller && (
+                      <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                        Best Seller
+                      </span>
+                    )}
                     {product.originalPrice &&
                       product.originalPrice > product.price && (
                         <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
@@ -786,11 +812,10 @@ const ProductManagement = () => {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                          currentPage === page
-                            ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
-                            : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
-                        }`}
+                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${currentPage === page
+                          ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
+                          : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                          }`}
                       >
                         {page}
                       </button>

@@ -21,10 +21,10 @@ const ProductsPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Header Section */}
-      <div className="relative bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#4a1942] text-white py-20 px-4 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white py-20 px-4 overflow-hidden">
         {/* Animated Background Elements */}
-        <div className="absolute top-10 left-10 w-64 h-64 bg-tangerine-500/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-80 h-80 bg-blush-500/5 rounded-full blur-3xl animate-pulse delay-700"></div>
+        <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-80 h-80 bg-gray-400/5 rounded-full blur-3xl animate-pulse delay-700"></div>
 
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/30"></div>
@@ -32,8 +32,8 @@ const ProductsPage = () => {
         {/* Header Content */}
         <div className="relative z-10 container mx-auto text-center">
           <div className="mb-4 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-            <Sparkles className="w-4 h-4 text-butter-300" />
-            <span className="text-butter-100 text-sm font-light tracking-wider">
+            <Sparkles className="w-4 h-4 text-gray-300" />
+            <span className="text-gray-200 text-sm font-light tracking-wider">
               Curated Collection
             </span>
           </div>
@@ -42,7 +42,7 @@ const ProductsPage = () => {
             Shop All Products
           </h1>
 
-          <p className="text-lg md:text-xl font-light text-gray-200 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl font-light text-gray-300 max-w-2xl mx-auto">
             Discover our complete collection of premium fashion
           </p>
         </div>
@@ -74,7 +74,7 @@ const ProductsPage = () => {
                 loader={
                   <div className="flex justify-center py-8">
                     <div className="flex items-center gap-3 text-gray-600">
-                      <div className="w-6 h-6 border-3 border-blush-500 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-6 h-6 border-3 border-gray-700 border-t-transparent rounded-full animate-spin"></div>
                       <span className="text-lg font-light">
                         Loading more products...
                       </span>
@@ -122,7 +122,7 @@ const ProductsPage = () => {
                 </p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-8 py-3 bg-gradient-to-r from-blush-500 to-blush-600 text-white font-semibold rounded-full hover:shadow-xl hover:shadow-blush-500/30 transition-all duration-300 transform hover:scale-105"
+                  className="px-8 py-3 bg-black text-white font-semibold rounded-full hover:bg-gray-800 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
                   Reset Filters
                 </button>
