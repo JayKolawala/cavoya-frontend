@@ -12,6 +12,7 @@ import {
 import { useAppContext } from "../contexts/AppContext";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { PRODUCT_CATEGORIES } from "../utils/constants";
+import { getCategoryMap } from "../utils/categoryHelpers";
 // import logoBlack from "../../src/assets/cavoya-black.svg";
 import logoBlack from "../../src/assets/Cavoya_Logo.svg";
 
@@ -34,15 +35,24 @@ const Header = () => {
   const isProductsPage = location.pathname === "/products";
   const isHomePage = location.pathname === "/";
 
-  // Category mapping: URL slug -> Actual database category name
-  // This ensures we use the exact category names from the database (including hidden characters)
-  const categoryMap = {
-    dresses: PRODUCT_CATEGORIES[0], // "Dresses"
-    "coord-sets": PRODUCT_CATEGORIES[1], // "Co-ord Sets⁠" (with hidden character U+2060)
-    tops: PRODUCT_CATEGORIES[2], // "Tops"
-    bottomwear: PRODUCT_CATEGORIES[3], // "Bottomwear"
-    jumpsuits: PRODUCT_CATEGORIES[4], // "Jumpsuits"
-    solset: PRODUCT_CATEGORIES[5], // "Solset"
+  // Get category mapping from shared utility
+  const categoryMap = getCategoryMap();
+
+  // Consolidated navigation handler to avoid duplication
+  const handleNavigateWithFilters = (
+    category,
+    collection,
+    newArrivals,
+    path,
+    closeMobileMenu = false,
+  ) => {
+    setSelectedCategory(category);
+    setSelectedCollection(collection);
+    setSelectedNewArrivals(newArrivals);
+    if (closeMobileMenu) {
+      setShowMobileMenu(false);
+    }
+    navigate(path);
   };
 
   useEffect(() => {
@@ -135,23 +145,22 @@ const Header = () => {
                 Home
               </Link>
               <button
-                onClick={() => {
-                  setSelectedCategory("all");
-                  setSelectedCollection(null);
-                  setSelectedNewArrivals(false);
-                  navigate("/products");
-                }}
+                onClick={() =>
+                  handleNavigateWithFilters("all", null, false, "/products")
+                }
                 className="hover:text-gray-500 "
               >
                 Shop All
               </button>
               <button
-                onClick={() => {
-                  setSelectedCategory("all");
-                  setSelectedCollection(null);
-                  setSelectedNewArrivals(true);
-                  navigate("/products?newArrivals=true");
-                }}
+                onClick={() =>
+                  handleNavigateWithFilters(
+                    "all",
+                    null,
+                    true,
+                    "/products?newArrivals=true",
+                  )
+                }
                 className="hover:text-gray-500 "
               >
                 New Arrivals
@@ -177,56 +186,66 @@ const Header = () => {
                 </span>
                 <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100">
                   <button
-                    onClick={() => {
-                      setSelectedCategory(categoryMap["dresses"]);
-                      setSelectedCollection(null);
-                      setSelectedNewArrivals(false);
-                      navigate("/products?category=dresses");
-                    }}
+                    onClick={() =>
+                      handleNavigateWithFilters(
+                        categoryMap["dresses"],
+                        null,
+                        false,
+                        "/products?category=dresses",
+                      )
+                    }
                     className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black hover:rounded-lg"
                   >
                     Dresses
                   </button>
                   <button
-                    onClick={() => {
-                      setSelectedCategory(categoryMap["coord-sets"]);
-                      setSelectedCollection(null);
-                      setSelectedNewArrivals(false);
-                      navigate("/products?category=coord-sets");
-                    }}
+                    onClick={() =>
+                      handleNavigateWithFilters(
+                        categoryMap["coord-sets"],
+                        null,
+                        false,
+                        "/products?category=coord-sets",
+                      )
+                    }
                     className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
                   >
                     Co-ord Sets
                   </button>
                   <button
-                    onClick={() => {
-                      setSelectedCategory(categoryMap["tops"]);
-                      setSelectedCollection(null);
-                      setSelectedNewArrivals(false);
-                      navigate("/products?category=tops");
-                    }}
+                    onClick={() =>
+                      handleNavigateWithFilters(
+                        categoryMap["tops"],
+                        null,
+                        false,
+                        "/products?category=tops",
+                      )
+                    }
                     className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
                   >
                     Tops
                   </button>
                   <button
-                    onClick={() => {
-                      setSelectedCategory(categoryMap["bottomwear"]);
-                      setSelectedCollection(null);
-                      setSelectedNewArrivals(false);
-                      navigate("/products?category=bottomwear");
-                    }}
+                    onClick={() =>
+                      handleNavigateWithFilters(
+                        categoryMap["bottomwear"],
+                        null,
+                        false,
+                        "/products?category=bottomwear",
+                      )
+                    }
                     className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
                   >
                     Bottomwear
                   </button>
                   <button
-                    onClick={() => {
-                      setSelectedCategory(categoryMap["jumpsuits"]);
-                      setSelectedCollection(null);
-                      setSelectedNewArrivals(false);
-                      navigate("/products?category=jumpsuits");
-                    }}
+                    onClick={() =>
+                      handleNavigateWithFilters(
+                        categoryMap["jumpsuits"],
+                        null,
+                        false,
+                        "/products?category=jumpsuits",
+                      )
+                    }
                     className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:rounded-lg hover:text-black"
                   >
                     Jumpsuits
@@ -254,12 +273,14 @@ const Header = () => {
                 </span>
                 <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100">
                   <button
-                    onClick={() => {
-                      setSelectedCategory(categoryMap["solset"]);
-                      setSelectedCollection(categoryMap["solset"]);
-                      setSelectedNewArrivals(false);
-                      navigate("/products?collection=solset");
-                    }}
+                    onClick={() =>
+                      handleNavigateWithFilters(
+                        categoryMap["solset"],
+                        categoryMap["solset"],
+                        false,
+                        "/products?collection=solset",
+                      )
+                    }
                     className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:rounded-lg hover:text-black"
                   >
                     Solset
@@ -352,25 +373,29 @@ const Header = () => {
                 Home
               </Link>
               <button
-                onClick={() => {
-                  setSelectedCategory("all");
-                  setSelectedCollection(null);
-                  setSelectedNewArrivals(false);
-                  setShowMobileMenu(false);
-                  navigate("/products");
-                }}
+                onClick={() =>
+                  handleNavigateWithFilters(
+                    "all",
+                    null,
+                    false,
+                    "/products",
+                    true,
+                  )
+                }
                 className="text-left text-black hover:text-gray-500"
               >
                 Shop All
               </button>
               <button
-                onClick={() => {
-                  setSelectedCategory("all");
-                  setSelectedCollection(null);
-                  setSelectedNewArrivals(true);
-                  setShowMobileMenu(false);
-                  navigate("/products?newArrivals=true");
-                }}
+                onClick={() =>
+                  handleNavigateWithFilters(
+                    "all",
+                    null,
+                    true,
+                    "/products?newArrivals=true",
+                    true,
+                  )
+                }
                 className="text-left text-black hover:text-gray-500"
               >
                 New Arrivals
@@ -383,61 +408,71 @@ const Header = () => {
                 </div>
                 <div className="flex flex-col space-y-2 pl-4">
                   <button
-                    onClick={() => {
-                      setSelectedCategory(categoryMap["dresses"]);
-                      setSelectedCollection(null);
-                      setSelectedNewArrivals(false);
-                      setShowMobileMenu(false);
-                      navigate("/products?category=dresses");
-                    }}
+                    onClick={() =>
+                      handleNavigateWithFilters(
+                        categoryMap["dresses"],
+                        null,
+                        false,
+                        "/products?category=dresses",
+                        true,
+                      )
+                    }
                     className="text-left text-gray-600 hover:text-black"
                   >
                     Dresses
                   </button>
                   <button
-                    onClick={() => {
-                      setSelectedCategory(categoryMap["coord-sets"]);
-                      setSelectedCollection(null);
-                      setSelectedNewArrivals(false);
-                      setShowMobileMenu(false);
-                      navigate("/products?category=coord-sets");
-                    }}
+                    onClick={() =>
+                      handleNavigateWithFilters(
+                        categoryMap["coord-sets"],
+                        null,
+                        false,
+                        "/products?category=coord-sets",
+                        true,
+                      )
+                    }
                     className="text-left text-gray-600 hover:text-black"
                   >
                     Co-ord Sets
                   </button>
                   <button
-                    onClick={() => {
-                      setSelectedCategory(categoryMap["tops"]);
-                      setSelectedCollection(null);
-                      setSelectedNewArrivals(false);
-                      setShowMobileMenu(false);
-                      navigate("/products?category=tops");
-                    }}
+                    onClick={() =>
+                      handleNavigateWithFilters(
+                        categoryMap["tops"],
+                        null,
+                        false,
+                        "/products?category=tops",
+                        true,
+                      )
+                    }
                     className="text-left text-gray-600 hover:text-black"
                   >
                     Tops
                   </button>
                   <button
-                    onClick={() => {
-                      setSelectedCategory(categoryMap["bottomwear"]);
-                      setSelectedCollection(null);
-                      setSelectedNewArrivals(false);
-                      setShowMobileMenu(false);
-                      navigate("/products?category=bottomwear");
-                    }}
+                    onClick={() =>
+                      handleNavigateWithFilters(
+                        categoryMap["bottomwear"],
+                        null,
+                        false,
+                        "/products?category=bottomwear",
+                        true,
+                      )
+                    }
                     className="text-left text-gray-600 hover:text-black"
                   >
                     Bottomwear
                   </button>
                   <button
-                    onClick={() => {
-                      setSelectedCategory(categoryMap["jumpsuits"]);
-                      setSelectedCollection(null);
-                      setSelectedNewArrivals(false);
-                      setShowMobileMenu(false);
-                      navigate("/products?category=jumpsuits");
-                    }}
+                    onClick={() =>
+                      handleNavigateWithFilters(
+                        categoryMap["jumpsuits"],
+                        null,
+                        false,
+                        "/products?category=jumpsuits",
+                        true,
+                      )
+                    }
                     className="text-left text-gray-600 hover:text-black"
                   >
                     Jumpsuits
@@ -452,13 +487,15 @@ const Header = () => {
                 </div>
                 <div className="flex flex-col space-y-2 pl-4">
                   <button
-                    onClick={() => {
-                      setSelectedCategory(categoryMap["solset"]);
-                      setSelectedCollection(categoryMap["solset"]);
-                      setSelectedNewArrivals(false);
-                      setShowMobileMenu(false);
-                      navigate("/products?collection=solset");
-                    }}
+                    onClick={() =>
+                      handleNavigateWithFilters(
+                        categoryMap["solset"],
+                        categoryMap["solset"],
+                        false,
+                        "/products?collection=solset",
+                        true,
+                      )
+                    }
                     className="text-left text-gray-600 hover:text-black"
                   >
                     Solset

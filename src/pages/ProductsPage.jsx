@@ -7,6 +7,7 @@ import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Sparkles, Package } from "lucide-react";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { getCategoryMap } from "../utils/categoryHelpers";
 
 const ProductsPage = () => {
   const {
@@ -23,16 +24,8 @@ const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const location = useLocation();
 
-  // Category mapping: URL slug -> Actual database category name
-  // Must match the exact names from database (including hidden characters)
-  const categoryMap = {
-    dresses: PRODUCT_CATEGORIES[0], // "Dresses"
-    "coord-sets": PRODUCT_CATEGORIES[1], // "Co-ord Sets⁠" (with hidden character U+2060)
-    tops: PRODUCT_CATEGORIES[2], // "Tops"
-    bottomwear: PRODUCT_CATEGORIES[3], // "Bottomwear"
-    jumpsuits: PRODUCT_CATEGORIES[4], // "Jumpsuits"
-    solset: PRODUCT_CATEGORIES[5], // "Solset"
-  };
+  // Get category mapping from shared utility
+  const categoryMap = getCategoryMap();
 
   // Get filter type from URL query parameters
   const category = searchParams.get("category");
@@ -46,7 +39,7 @@ const ProductsPage = () => {
       return collection.charAt(0).toUpperCase() + collection.slice(1);
     }
     if (category && category !== "all") {
-      const categoryMap = {
+      const categoryDisplayMap = {
         dresses: "Dresses",
         "coord-sets": "Co-ord Sets",
         tops: "Tops",
@@ -54,7 +47,7 @@ const ProductsPage = () => {
         jumpsuits: "Jumpsuits",
       };
       return (
-        categoryMap[category] ||
+        categoryDisplayMap[category] ||
         category.charAt(0).toUpperCase() + category.slice(1)
       );
     }

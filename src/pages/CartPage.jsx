@@ -9,6 +9,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { isVideo } from "../utils/mediaHelpers";
 
 const CartPage = () => {
   const { cartItems, updateCartQuantity, removeFromCart, getTotalPrice } =
@@ -16,20 +17,6 @@ const CartPage = () => {
 
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
-
-  // Utility function to check if media is a video
-  const isVideo = (url) => {
-    if (!url) return false;
-    const lowerUrl = url.toLowerCase();
-    const videoExtensions = [".mp4", ".webm", ".ogg", ".mov"];
-    const hasVideoExtension = videoExtensions.some((ext) =>
-      lowerUrl.includes(ext),
-    );
-    // Check for Cloudinary video URLs (they contain 'video/upload' not just 'upload')
-    const isCloudinaryVideo = lowerUrl.includes("video/upload");
-
-    return hasVideoExtension || isCloudinaryVideo;
-  };
 
   useEffect(() => {
     setIsVisible(true);

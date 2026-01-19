@@ -3,6 +3,7 @@ import { Plus, Edit, Trash2, Search, X } from "lucide-react";
 import { useAppContext } from "../../contexts/AppContext";
 import { PRODUCT_CATEGORIES } from "../../utils/constants";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { isVideo } from "../../utils/mediaHelpers";
 
 const ProductManagement = () => {
   const {
@@ -42,7 +43,7 @@ const ProductManagement = () => {
   const itemsPerPage = 10;
 
   const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Calculate pagination
@@ -91,7 +92,7 @@ const ProductManagement = () => {
       // Validate that we have images
       if (selectedFiles.length === 0 && !formData.image) {
         alert(
-          "Please provide an image URL or upload at least one image/video file"
+          "Please provide an image URL or upload at least one image/video file",
         );
         setSubmitLoading(false);
         return;
@@ -217,16 +218,6 @@ const ProductManagement = () => {
       ? formData.sizes.filter((s) => s !== size)
       : [...formData.sizes, size];
     setFormData({ ...formData, sizes: newSizes });
-  };
-
-  // Helper function to detect if URL is a video
-  const isVideoUrl = (url) => {
-    if (!url) return false;
-    // Check if it's a Cloudinary video URL
-    if (url.includes("/video/upload/")) return true;
-    // Check file extension
-    if (url.match(/\.(mp4|webm|ogg|mov|avi)$/i)) return true;
-    return false;
   };
 
   return (
@@ -402,7 +393,7 @@ const ProductManagement = () => {
                                 type="button"
                                 onClick={() => {
                                   const newPreviews = imagePreviews.filter(
-                                    (_, i) => i !== index
+                                    (_, i) => i !== index,
                                   );
                                   setImagePreviews(newPreviews);
 
@@ -412,7 +403,7 @@ const ProductManagement = () => {
                                       .slice(0, index)
                                       .filter((p) => !p.isExisting).length;
                                     const newFiles = selectedFiles.filter(
-                                      (_, i) => i !== newFileIndex
+                                      (_, i) => i !== newFileIndex,
                                     );
                                     setSelectedFiles(newFiles);
                                   }
@@ -524,8 +515,9 @@ const ProductManagement = () => {
                         onChange={(e) =>
                           handleColorChange(index, e.target.value)
                         }
-                        placeholder={`Color ${index + 1
-                          } (e.g., pink, white, black)`}
+                        placeholder={`Color ${
+                          index + 1
+                        } (e.g., pink, white, black)`}
                       />
                       <button
                         type="button"
@@ -549,10 +541,11 @@ const ProductManagement = () => {
                         key={size}
                         type="button"
                         onClick={() => handleSizeToggle(size)}
-                        className={`px-4 py-2 border rounded-md ${formData.sizes.includes(size)
-                          ? "bg-pink-500 text-white border-pink-500"
-                          : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
-                          }`}
+                        className={`px-4 py-2 border rounded-md ${
+                          formData.sizes.includes(size)
+                            ? "bg-pink-500 text-white border-pink-500"
+                            : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
+                        }`}
                       >
                         {size}
                       </button>
@@ -671,7 +664,7 @@ const ProductManagement = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0 rounded-lg overflow-hidden ring-2 ring-pink-100">
-                        {isVideoUrl(product.image) ? (
+                        {isVideo(product.image) ? (
                           <video
                             src={product.image}
                             className="h-10 w-10 object-cover"
@@ -739,7 +732,7 @@ const ProductManagement = () => {
                         onClick={() => {
                           if (
                             window.confirm(
-                              "Are you sure you want to delete this product?"
+                              "Are you sure you want to delete this product?",
                             )
                           ) {
                             deleteProduct(product._id);
@@ -812,14 +805,15 @@ const ProductManagement = () => {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${currentPage === page
-                          ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
-                          : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
-                          }`}
+                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                          currentPage === page
+                            ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
+                            : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                        }`}
                       >
                         {page}
                       </button>
-                    )
+                    ),
                   )}
                 </div>
 

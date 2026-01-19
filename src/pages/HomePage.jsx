@@ -1,14 +1,24 @@
 // pages/HomePage.jsx
 import React, { useState, useEffect } from "react";
-import { Truck, RefreshCw, Shield, Star, Sparkles, Heart, ShoppingCart } from "lucide-react";
+import {
+  Truck,
+  RefreshCw,
+  Shield,
+  Star,
+  Sparkles,
+  Heart,
+  ShoppingCart,
+} from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import { useAppContext } from "../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import bgVideo2 from "../assets/bg-video2.mp4";
+import { isVideo } from "../utils/mediaHelpers";
 
 const HomePage = () => {
-  const { products, loading, toggleWishlist, wishlist, addToCart, showAlert } = useAppContext();
+  const { products, loading, toggleWishlist, wishlist, addToCart, showAlert } =
+    useAppContext();
   const [_selectedProduct, setSelectedProduct] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
@@ -22,11 +32,7 @@ const HomePage = () => {
     navigate(`/product/${product.id}`);
   };
 
-  const handleShopNowClick = () => {
-    navigate("/products");
-  };
-
-  const handleViewAllClick = () => {
+  const handleNavigateToProducts = () => {
     navigate("/products");
   };
 
@@ -47,8 +53,9 @@ const HomePage = () => {
 
         {/* Hero Content */}
         <div
-          className={`relative z-10 text-center px-4 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-            }`}
+          className={`relative z-10 text-center px-4 transition-all duration-1000 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          }`}
         >
           <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
             <Sparkles className="w-4 h-4 text-gray-300" />
@@ -67,7 +74,7 @@ const HomePage = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <button
-              onClick={handleShopNowClick}
+              onClick={handleNavigateToProducts}
               className="group px-10 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-100 hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
             >
               <span className="flex items-center gap-2">
@@ -107,7 +114,7 @@ const HomePage = () => {
                         className="relative aspect-[3/4] overflow-hidden bg-white cursor-pointer"
                         onClick={() => handleProductClick(product)}
                       >
-                        {product.image && product.image.match(/\.(mp4|webm|ogg)$/i) ? (
+                        {isVideo(product.image) ? (
                           <video
                             src={product.image}
                             className="w-full h-full object-cover"
@@ -131,15 +138,24 @@ const HomePage = () => {
                           e.stopPropagation();
                           toggleWishlist(product.id);
                         }}
-                        aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
-                        title={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+                        aria-label={
+                          isInWishlist
+                            ? "Remove from wishlist"
+                            : "Add to wishlist"
+                        }
+                        title={
+                          isInWishlist
+                            ? "Remove from wishlist"
+                            : "Add to wishlist"
+                        }
                         className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <Heart
-                          className={`h-4 w-4 ${isInWishlist
-                            ? "fill-gray-900 text-gray-900"
-                            : "text-gray-600 hover:text-gray-900"
-                            } transition-colors`}
+                          className={`h-4 w-4 ${
+                            isInWishlist
+                              ? "fill-gray-900 text-gray-900"
+                              : "text-gray-600 hover:text-gray-900"
+                          } transition-colors`}
                         />
                       </button>
 
@@ -173,7 +189,7 @@ const HomePage = () => {
 
           <div className="text-center mt-10">
             <button
-              onClick={handleViewAllClick}
+              onClick={handleNavigateToProducts}
               className="text-gray-700 hover:text-black text-sm font-medium inline-flex items-center gap-2 group"
             >
               View All New In
@@ -223,7 +239,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
 
       {/* SHOP BY PRINTS Section */}
       <section className="relative py-16 bg-gray-50">
@@ -324,54 +339,57 @@ const HomePage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              {products.filter(product => product.bestSeller === true).slice(0, 4).map((product, index) => (
-                <div
-                  key={product.id}
-                  className="group animate-slide-up"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
+              {products
+                .filter((product) => product.bestSeller === true)
+                .slice(0, 4)
+                .map((product, index) => (
                   <div
-                    className="cursor-pointer mb-4"
-                    onClick={() => handleProductClick(product)}
+                    key={product.id}
+                    className="group animate-slide-up"
+                    style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-3">
-                      {product.image && product.image.match(/\.(mp4|webm|ogg)$/i) ? (
-                        <video
-                          src={product.image}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                        />
-                      ) : (
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      )}
+                    <div
+                      className="cursor-pointer mb-4"
+                      onClick={() => handleProductClick(product)}
+                    >
+                      <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-3">
+                        {isVideo(product.image) ? (
+                          <video
+                            src={product.image}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                          />
+                        ) : (
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        )}
+                      </div>
+                      <h3 className="text-sm font-medium text-gray-900 mb-1">
+                        {product.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-3">
+                        ₹{product.price}
+                      </p>
                     </div>
-                    <h3 className="text-sm font-medium text-gray-900 mb-1">
-                      {product.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-3">
-                      ₹{product.price}
-                    </p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToCart(product);
+                        showAlert("Added to cart successfully!", "success");
+                      }}
+                      className="w-full bg-black text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-800 hover:shadow-lg transition-all duration-300"
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                      Quick Add
+                    </button>
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addToCart(product);
-                      showAlert("Added to cart successfully!", "success");
-                    }}
-                    className="w-full bg-black text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-800 hover:shadow-lg transition-all duration-300"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                    Quick Add
-                  </button>
-                </div>
-              ))}
+                ))}
             </div>
           )}
         </div>

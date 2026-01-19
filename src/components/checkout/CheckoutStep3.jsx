@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../contexts/AppContext";
 import { Truck, Shield, RefreshCw } from "lucide-react";
+import { isVideo } from "../../utils/mediaHelpers";
 
 const CheckoutStep3 = ({ onNext, onBack, total }) => {
   const navigate = useNavigate();
@@ -9,20 +10,6 @@ const CheckoutStep3 = ({ onNext, onBack, total }) => {
     useAppContext();
 
   const [isProcessing, setIsProcessing] = useState(false);
-
-  // Utility function to check if media is a video
-  const isVideo = (url) => {
-    if (!url) return false;
-    const lowerUrl = url.toLowerCase();
-    const videoExtensions = [".mp4", ".webm", ".ogg", ".mov"];
-    const hasVideoExtension = videoExtensions.some((ext) =>
-      lowerUrl.includes(ext),
-    );
-    // Check for Cloudinary video URLs (they contain 'video/upload' not just 'upload')
-    const isCloudinaryVideo = lowerUrl.includes("video/upload");
-
-    return hasVideoExtension || isCloudinaryVideo;
-  };
 
   const handleConfirmOrder = async (e) => {
     e.preventDefault();
