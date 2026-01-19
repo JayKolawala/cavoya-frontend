@@ -17,6 +17,8 @@ const initialState = {
   alertMessage: "",
   searchQuery: "",
   selectedCategory: "all",
+  selectedCollection: null,
+  selectedNewArrivals: false,
   sortBy: "featured",
   showMobileMenu: false,
   products: [],
@@ -53,7 +55,7 @@ function appReducer(state, action) {
         (item) =>
           item.productId === action.payload.productId &&
           item.color === action.payload.color &&
-          item.size === action.payload.size
+          item.size === action.payload.size,
       );
 
       if (existingItem) {
@@ -62,7 +64,7 @@ function appReducer(state, action) {
           cartItems: state.cartItems.map((item) =>
             item.id === existingItem.id
               ? { ...item, quantity: item.quantity + 1 }
-              : item
+              : item,
           ),
         };
       } else {
@@ -81,10 +83,10 @@ function appReducer(state, action) {
         cartItems: state.cartItems.map((item) =>
           item.id === action.payload.id
             ? {
-              ...item,
-              quantity: Math.max(1, item.quantity + action.payload.change),
-            }
-            : item
+                ...item,
+                quantity: Math.max(1, item.quantity + action.payload.change),
+              }
+            : item,
         ),
       };
 
@@ -117,6 +119,12 @@ function appReducer(state, action) {
 
     case "SET_CATEGORY":
       return { ...state, selectedCategory: action.payload };
+
+    case "SET_COLLECTION":
+      return { ...state, selectedCollection: action.payload };
+
+    case "SET_NEW_ARRIVALS":
+      return { ...state, selectedNewArrivals: action.payload };
 
     case "SET_SORT_BY":
       return { ...state, sortBy: action.payload };
@@ -209,7 +217,7 @@ function appReducer(state, action) {
       return {
         ...state,
         products: state.products.map((product) =>
-          product._id === action.payload._id ? action.payload : product
+          product._id === action.payload._id ? action.payload : product,
         ),
       };
 
@@ -217,7 +225,7 @@ function appReducer(state, action) {
       return {
         ...state,
         products: state.products.filter(
-          (product) => product._id !== action.payload
+          (product) => product._id !== action.payload,
         ),
       };
 
@@ -401,7 +409,7 @@ export function AppProvider({ children }) {
         JSON.stringify({
           stock: Number(productData.inventory?.stock) || 0,
           trackQuantity: true,
-        })
+        }),
       );
 
       // Add optional fields
@@ -470,7 +478,7 @@ export function AppProvider({ children }) {
         JSON.stringify({
           stock: Number(productData.inventory?.stock) || 0,
           trackQuantity: true,
-        })
+        }),
       );
 
       // Add optional fields
@@ -506,7 +514,7 @@ export function AppProvider({ children }) {
         ) {
           formData.append(
             "existingImages",
-            JSON.stringify(productData.existingImages)
+            JSON.stringify(productData.existingImages),
           );
         }
       }
@@ -609,7 +617,7 @@ export function AppProvider({ children }) {
     dispatch({ type: "TOGGLE_WISHLIST", payload: productId });
     const isInWishlist = state.wishlist.includes(productId);
     showCustomAlert(
-      isInWishlist ? "Removed from wishlist" : "Added to wishlist"
+      isInWishlist ? "Removed from wishlist" : "Added to wishlist",
     );
   };
 
@@ -627,10 +635,30 @@ export function AppProvider({ children }) {
     const matchesSearch = product.name
       .toLowerCase()
       .includes(state.searchQuery.toLowerCase());
+
+    // Case-insensitive category matching - normalize both values to lowercase for comparison
     const matchesCategory =
       state.selectedCategory === "all" ||
-      product.category === state.selectedCategory;
-    return matchesSearch && matchesCategory;
+      product.category?.toLowerCase().trim() ===
+        state.selectedCategory?.toLowerCase().trim();
+
+    // Collection filtering - check category field since collection field doesn't exist in API
+    // "Solset" is actually stored as a category in the database
+    const matchesCollection =
+      !state.selectedCollection ||
+      product.category?.toLowerCase().trim() ===
+        state.selectedCollection?.toLowerCase().trim();
+
+    // New arrivals - use isFeatured since isNew field doesn't exist in API
+    const matchesNewArrivals =
+      !state.selectedNewArrivals || product.isFeatured === true;
+
+    return (
+      matchesSearch &&
+      matchesCategory &&
+      matchesCollection &&
+      matchesNewArrivals
+    );
   });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -680,7 +708,7 @@ export function AppProvider({ children }) {
       const invalidItems = items.filter((item) => !item.productId);
       if (invalidItems.length > 0) {
         throw new Error(
-          `Cannot create order: ${invalidItems.length} items have missing product IDs`
+          `Cannot create order: ${invalidItems.length} items have missing product IDs`,
         );
       }
 
@@ -777,6 +805,10 @@ export function AppProvider({ children }) {
       dispatch({ type: "SET_SEARCH_QUERY", payload: query }),
     setSelectedCategory: (category) =>
       dispatch({ type: "SET_CATEGORY", payload: category }),
+    setSelectedCollection: (collection) =>
+      dispatch({ type: "SET_COLLECTION", payload: collection }),
+    setSelectedNewArrivals: (isNew) =>
+      dispatch({ type: "SET_NEW_ARRIVALS", payload: isNew }),
     setSortBy: (sortBy) => dispatch({ type: "SET_SORT_BY", payload: sortBy }),
     setShowMobileMenu: (show) =>
       dispatch({ type: "SET_MOBILE_MENU", payload: show }),

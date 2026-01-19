@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useAppContext } from "../contexts/AppContext";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { PRODUCT_CATEGORIES } from "../utils/constants";
 // import logoBlack from "../../src/assets/cavoya-black.svg";
 import logoBlack from "../../src/assets/Cavoya_Logo.svg";
 
@@ -21,6 +22,9 @@ const Header = () => {
     setSearchQuery,
     showMobileMenu,
     setShowMobileMenu,
+    setSelectedCategory,
+    setSelectedCollection,
+    setSelectedNewArrivals,
   } = useAppContext();
 
   const navigate = useNavigate();
@@ -29,6 +33,17 @@ const Header = () => {
 
   const isProductsPage = location.pathname === "/products";
   const isHomePage = location.pathname === "/";
+
+  // Category mapping: URL slug -> Actual database category name
+  // This ensures we use the exact category names from the database (including hidden characters)
+  const categoryMap = {
+    dresses: PRODUCT_CATEGORIES[0], // "Dresses"
+    "coord-sets": PRODUCT_CATEGORIES[1], // "Co-ord Sets⁠" (with hidden character U+2060)
+    tops: PRODUCT_CATEGORIES[2], // "Tops"
+    bottomwear: PRODUCT_CATEGORIES[3], // "Bottomwear"
+    jumpsuits: PRODUCT_CATEGORIES[4], // "Jumpsuits"
+    solset: PRODUCT_CATEGORIES[5], // "Solset"
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -71,33 +86,36 @@ const Header = () => {
       {/* Mobile Menu Backdrop - Only render when menu is open */}
       {showMobileMenu && (
         <div
-          className="max-md:bg-black/50 min-h-screen fixed top-0 left-0 w-full transition duration-300 ease-linear z-40"
+          className="max-lg:bg-black/50 min-h-screen fixed top-0 left-0 w-full transition duration-300 ease-linear z-40"
           onClick={() => setShowMobileMenu(false)}
         />
       )}
 
       <header
-        className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${isScrolled || !isHomePage
-          ? "bg-white shadow-lg shadow-black/10"
-          : "bg-transparent text-white"
-          }`}
+        className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${
+          isScrolled || !isHomePage
+            ? "bg-white shadow-lg shadow-black/10"
+            : "bg-transparent text-white"
+        }`}
       >
         <div className="w-full mx-auto">
           {/* Main header */}
           <nav
-            className={`flex justify-between items-center py-4 px-4 md:px-4 z-10 relative ${showMobileMenu || isScrolled ? "bg-white" : ""
-              }`}
+            className={`flex justify-between items-center py-4 px-4 lg:px-4 z-10 relative ${
+              showMobileMenu || isScrolled ? "bg-white" : ""
+            }`}
           >
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="md:hidden hover:text-gray-600 transition-colors"
+              className="lg:hidden hover:text-gray-600 transition-colors"
               aria-label="Menu"
             >
               <Menu
-                className={`h-6 w-6 ${!isHomePage || showMobileMenu || isScrolled
-                  ? "text-black"
-                  : "text-white"
-                  }`}
+                className={`h-6 w-6 ${
+                  !isHomePage || showMobileMenu || isScrolled
+                    ? "text-black"
+                    : "text-white"
+                }`}
               />
             </button>
             <div
@@ -112,70 +130,154 @@ const Header = () => {
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex space-x-6">
-              <Link
-                to="/"
-                className="hover:text-gray-500 "
-              >
+            <div className="hidden lg:flex space-x-6">
+              <Link to="/" className="hover:text-gray-500 ">
                 Home
               </Link>
-              <Link
-                to="/products"
+              <button
+                onClick={() => {
+                  setSelectedCategory("all");
+                  setSelectedCollection(null);
+                  setSelectedNewArrivals(false);
+                  navigate("/products");
+                }}
                 className="hover:text-gray-500 "
               >
                 Shop All
-              </Link>
-              <Link
-                to="/"
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedCategory("all");
+                  setSelectedCollection(null);
+                  setSelectedNewArrivals(true);
+                  navigate("/products?newArrivals=true");
+                }}
                 className="hover:text-gray-500 "
               >
                 New Arrivals
-              </Link>
+              </button>
 
               {/* Shop by style dropdown */}
               <div className="relative group">
                 <span className="hover:text-gray-500 transition-colors cursor-pointer flex items-center">
                   Shop by style
-                  <svg className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <svg
+                    className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </span>
                 <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100">
-                  <Link to="/products?category=dresses" className="block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black">Dresses</Link>
-                  <Link to="/products?category=coord-sets" className="block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black">Co-ord Sets</Link>
-                  <Link to="/products?category=tops" className="block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black">Tops</Link>
-                  <Link to="/products?category=bottomwear" className="block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black">Bottomwear</Link>
-                  <Link to="/products?category=jumpsuits" className="block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black">Jumpsuits</Link>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(categoryMap["dresses"]);
+                      setSelectedCollection(null);
+                      setSelectedNewArrivals(false);
+                      navigate("/products?category=dresses");
+                    }}
+                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
+                  >
+                    Dresses
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(categoryMap["coord-sets"]);
+                      setSelectedCollection(null);
+                      setSelectedNewArrivals(false);
+                      navigate("/products?category=coord-sets");
+                    }}
+                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
+                  >
+                    Co-ord Sets
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(categoryMap["tops"]);
+                      setSelectedCollection(null);
+                      setSelectedNewArrivals(false);
+                      navigate("/products?category=tops");
+                    }}
+                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
+                  >
+                    Tops
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(categoryMap["bottomwear"]);
+                      setSelectedCollection(null);
+                      setSelectedNewArrivals(false);
+                      navigate("/products?category=bottomwear");
+                    }}
+                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
+                  >
+                    Bottomwear
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(categoryMap["jumpsuits"]);
+                      setSelectedCollection(null);
+                      setSelectedNewArrivals(false);
+                      navigate("/products?category=jumpsuits");
+                    }}
+                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
+                  >
+                    Jumpsuits
+                  </button>
                 </div>
               </div>
 
-              {/* Shop by collecting dropdown */}
+              {/* Shop by collection dropdown */}
               <div className="relative group">
                 <span className="hover:text-gray-500 transition-colors cursor-pointer flex items-center">
                   Shop by collection
-                  <svg className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <svg
+                    className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </span>
                 <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100">
-                  <Link to="/products?collection=solset" className="block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black">Solset</Link>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(categoryMap["solset"]);
+                      setSelectedCollection(categoryMap["solset"]);
+                      setSelectedNewArrivals(false);
+                      navigate("/products?collection=solset");
+                    }}
+                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
+                  >
+                    Solset
+                  </button>
                   {/* Ocean and Floral commented out as not decided yet */}
-                  {/* <Link to="/products?collection=ocean" className="block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black">Ocean</Link> */}
-                  {/* <Link to="/products?collection=floral" className="block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black">Floral</Link> */}
+                  {/* <button onClick={() => { setSelectedCategory("Ocean"); setSelectedCollection("Ocean"); setSelectedNewArrivals(false); navigate("/products?collection=ocean"); }} className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black">Ocean</button> */}
+                  {/* <button onClick={() => { setSelectedCategory("Floral"); setSelectedCollection("Floral"); setSelectedNewArrivals(false); navigate("/products?collection=floral"); }} className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black">Floral</button> */}
                 </div>
               </div>
 
-              <Link
-                to="/about"
-                className="hover:text-gray-500"
-              >
+              <Link to="/about" className="hover:text-gray-500">
                 About
               </Link>
             </div>
 
             {/* Search Bar */}
-            {isProductsPage && (
-              <div className="hidden md:flex relative">
+            {/* {isProductsPage && (
+              <div className="hidden lg:flex relative">
                 <input
                   type="text"
                   placeholder="Search products..."
@@ -185,14 +287,15 @@ const Header = () => {
                 />
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               </div>
-            )}
+            )} */}
 
             {/* Icons */}
             <div
-              className={`flex items-center space-x-4  ${showMobileMenu || isScrolled || !isHomePage
-                ? "text-black"
-                : "text-white"
-                }`}
+              className={`flex items-center space-x-4  ${
+                showMobileMenu || isScrolled || !isHomePage
+                  ? "text-black"
+                  : "text-white"
+              }`}
             >
               <button
                 onClick={() => navigate("/wishlist")}
@@ -225,8 +328,9 @@ const Header = () => {
 
           {/* Mobile Menu */}
           <div
-            className={` md:hidden border-t border-gray-200 transition-all duration-500 ease-in-out bg-white overflow-hidden ${showMobileMenu ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
-              }`}
+            className={` lg:hidden border-t border-gray-200 transition-all duration-500 ease-in-out bg-white overflow-hidden ${
+              showMobileMenu ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+            }`}
           >
             <div className="flex flex-col space-y-4 p-4">
               <div className="relative">
@@ -247,38 +351,118 @@ const Header = () => {
               >
                 Home
               </Link>
-              <Link
-                to="/products"
+              <button
+                onClick={() => {
+                  setSelectedCategory("all");
+                  setSelectedCollection(null);
+                  setSelectedNewArrivals(false);
+                  setShowMobileMenu(false);
+                  navigate("/products");
+                }}
                 className="text-left text-black hover:text-gray-500"
-                onClick={() => setShowMobileMenu(false)}
               >
                 Shop All
-              </Link>
-              <Link
-                to="/"
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedCategory("all");
+                  setSelectedCollection(null);
+                  setSelectedNewArrivals(true);
+                  setShowMobileMenu(false);
+                  navigate("/products?newArrivals=true");
+                }}
                 className="text-left text-black hover:text-gray-500"
-                onClick={() => setShowMobileMenu(false)}
               >
                 New Arrivals
-              </Link>
+              </button>
 
               {/* Shop by style - Mobile */}
               <div className="flex flex-col space-y-2">
-                <div className="text-left text-black font-medium">Shop by style</div>
+                <div className="text-left text-black font-medium">
+                  Shop by style
+                </div>
                 <div className="flex flex-col space-y-2 pl-4">
-                  <Link to="/products?category=dresses" className="text-gray-600 hover:text-black" onClick={() => setShowMobileMenu(false)}>Dresses</Link>
-                  <Link to="/products?category=coord-sets" className="text-gray-600 hover:text-black" onClick={() => setShowMobileMenu(false)}>Co-ord Sets</Link>
-                  <Link to="/products?category=tops" className="text-gray-600 hover:text-black" onClick={() => setShowMobileMenu(false)}>Tops</Link>
-                  <Link to="/products?category=bottomwear" className="text-gray-600 hover:text-black" onClick={() => setShowMobileMenu(false)}>Bottomwear</Link>
-                  <Link to="/products?category=jumpsuits" className="text-gray-600 hover:text-black" onClick={() => setShowMobileMenu(false)}>Jumpsuits</Link>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(categoryMap["dresses"]);
+                      setSelectedCollection(null);
+                      setSelectedNewArrivals(false);
+                      setShowMobileMenu(false);
+                      navigate("/products?category=dresses");
+                    }}
+                    className="text-left text-gray-600 hover:text-black"
+                  >
+                    Dresses
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(categoryMap["coord-sets"]);
+                      setSelectedCollection(null);
+                      setSelectedNewArrivals(false);
+                      setShowMobileMenu(false);
+                      navigate("/products?category=coord-sets");
+                    }}
+                    className="text-left text-gray-600 hover:text-black"
+                  >
+                    Co-ord Sets
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(categoryMap["tops"]);
+                      setSelectedCollection(null);
+                      setSelectedNewArrivals(false);
+                      setShowMobileMenu(false);
+                      navigate("/products?category=tops");
+                    }}
+                    className="text-left text-gray-600 hover:text-black"
+                  >
+                    Tops
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(categoryMap["bottomwear"]);
+                      setSelectedCollection(null);
+                      setSelectedNewArrivals(false);
+                      setShowMobileMenu(false);
+                      navigate("/products?category=bottomwear");
+                    }}
+                    className="text-left text-gray-600 hover:text-black"
+                  >
+                    Bottomwear
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(categoryMap["jumpsuits"]);
+                      setSelectedCollection(null);
+                      setSelectedNewArrivals(false);
+                      setShowMobileMenu(false);
+                      navigate("/products?category=jumpsuits");
+                    }}
+                    className="text-left text-gray-600 hover:text-black"
+                  >
+                    Jumpsuits
+                  </button>
                 </div>
               </div>
 
               {/* Shop by collecting - Mobile */}
               <div className="flex flex-col space-y-2">
-                <div className="text-left text-black font-medium">Shop by collection</div>
+                <div className="text-left text-black font-medium">
+                  Shop by collection
+                </div>
                 <div className="flex flex-col space-y-2 pl-4">
-                  <Link to="/products?collection=solset" className="text-gray-600 hover:text-black" onClick={() => setShowMobileMenu(false)}>Solset</Link>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(categoryMap["solset"]);
+                      setSelectedCollection(categoryMap["solset"]);
+                      setSelectedNewArrivals(false);
+                      setShowMobileMenu(false);
+                      navigate("/products?collection=solset");
+                    }}
+                    className="text-left text-gray-600 hover:text-black"
+                  >
+                    Solset
+                  </button>
                   {/* Ocean and Floral commented out as not decided yet */}
                   {/* <Link to="/products?collection=ocean" className="text-gray-600 hover:text-black" onClick={() => setShowMobileMenu(false)}>Ocean</Link> */}
                   {/* <Link to="/products?collection=floral" className="text-gray-600 hover:text-black" onClick={() => setShowMobileMenu(false)}>Floral</Link> */}

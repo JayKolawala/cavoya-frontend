@@ -34,17 +34,17 @@ h3 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(75deg, #e36999, #f2d88f);
+  background: linear-gradient(75deg, #000000, #6b6b6b);
   border-radius: 4px;
-  transition-property: color, background-color, border-color,
-    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
-    backdrop-filter;
+  transition-property:
+    color, background-color, border-color, text-decoration-color, fill, stroke,
+    opacity, box-shadow, transform, filter, backdrop-filter;
   transition-duration: 0.3s;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(75deg, #c33968, #d4a93d);
+  background: linear-gradient(75deg, #000000, #707070);
 }
 
 .scrollbar-hidden::-webkit-scrollbar-thumb {

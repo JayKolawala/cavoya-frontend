@@ -1,17 +1,105 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useAppContext } from "../contexts/AppContext";
+import { PRODUCT_CATEGORIES } from "../utils/constants";
 import ProductFilters from "../components/ProductFilters";
 import ProductCard from "../components/ProductCard";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Sparkles, Package } from "lucide-react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const ProductsPage = () => {
-  const { sortedProducts, productsLoading, hasMore, loadMoreProducts } =
-    useAppContext();
+  const {
+    sortedProducts,
+    productsLoading,
+    hasMore,
+    loadMoreProducts,
+    setSelectedCategory,
+    setSelectedCollection,
+    setSelectedNewArrivals,
+  } = useAppContext();
   const [_selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+
+  // Category mapping: URL slug -> Actual database category name
+  // Must match the exact names from database (including hidden characters)
+  const categoryMap = {
+    dresses: PRODUCT_CATEGORIES[0], // "Dresses"
+    "coord-sets": PRODUCT_CATEGORIES[1], // "Co-ord Sets⁠" (with hidden character U+2060)
+    tops: PRODUCT_CATEGORIES[2], // "Tops"
+    bottomwear: PRODUCT_CATEGORIES[3], // "Bottomwear"
+    jumpsuits: PRODUCT_CATEGORIES[4], // "Jumpsuits"
+    solset: PRODUCT_CATEGORIES[5], // "Solset"
+  };
+
+  // Get filter type from URL query parameters
+  const category = searchParams.get("category");
+  const collection = searchParams.get("collection");
+  const newArrivals = searchParams.get("newArrivals");
+
+  // Memoized dynamic title based on URL parameters - recalculates when params change
+  const pageTitle = useMemo(() => {
+    if (newArrivals === "true") return "New Arrivals";
+    if (collection) {
+      return collection.charAt(0).toUpperCase() + collection.slice(1);
+    }
+    if (category && category !== "all") {
+      const categoryMap = {
+        dresses: "Dresses",
+        "coord-sets": "Co-ord Sets",
+        tops: "Tops",
+        bottomwear: "Bottomwear",
+        jumpsuits: "Jumpsuits",
+      };
+      return (
+        categoryMap[category] ||
+        category.charAt(0).toUpperCase() + category.slice(1)
+      );
+    }
+    return "Shop All Products";
+  }, [category, collection, newArrivals]);
+
+  const pageSubtitle = useMemo(() => {
+    if (newArrivals === "true") {
+      return "Explore our latest collection of premium fashion";
+    }
+    if (collection) {
+      return `Explore our ${collection} collection`;
+    }
+    if (category && category !== "all") {
+      return `Browse our collection of premium ${category.replace("-", " ")}`;
+    }
+    return "Discover our complete collection of premium fashion";
+  }, [category, collection, newArrivals]);
+
+  // Apply filters based on URL parameters
+  // Map URL slugs to actual database category names
+  useEffect(() => {
+    if (newArrivals === "true") {
+      setSelectedNewArrivals(true);
+      setSelectedCollection(null);
+      setSelectedCategory("all");
+    } else if (collection) {
+      // Map collection slug to database name
+      const dbCollectionName = categoryMap[collection] || collection;
+      setSelectedCollection(dbCollectionName);
+      setSelectedCategory(dbCollectionName);
+      setSelectedNewArrivals(false);
+    } else if (category) {
+      // Map category slug to database name (includes hidden characters)
+      const dbCategoryName = categoryMap[category] || category;
+      setSelectedCategory(dbCategoryName);
+      setSelectedCollection(null);
+      setSelectedNewArrivals(false);
+    } else {
+      setSelectedCategory("all");
+      setSelectedCollection(null);
+      setSelectedNewArrivals(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, collection, newArrivals]);
 
   const handleProductClick = (product) => {
     setSelectedProduct(product);
@@ -39,11 +127,11 @@ const ProductsPage = () => {
           </div>
 
           <h1 className="text-4xl md:text-6xl font-extralight tracking-wide mb-4">
-            Shop All Products
+            {pageTitle}
           </h1>
 
           <p className="text-lg md:text-xl font-light text-gray-300 max-w-2xl mx-auto">
-            Discover our complete collection of premium fashion
+            {pageSubtitle}
           </p>
         </div>
       </div>
