@@ -1,0 +1,22 @@
+{
+  "name": "Cavoya - Premium Women's Fashion",
+  "short_name": "Cavoya",
+  "description": "Cavoya is your premier destination for premium women's fashion in Surat, India",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
