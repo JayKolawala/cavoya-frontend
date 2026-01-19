@@ -169,7 +169,7 @@ const Header = () => {
               {/* Shop by style dropdown */}
               <div className="relative group">
                 <span className="hover:text-gray-500 transition-colors cursor-pointer flex items-center">
-                  Shop by style
+                  Shop by styles
                   <svg
                     className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180"
                     fill="none"
