@@ -5,14 +5,24 @@ import { Truck, Shield, RefreshCw } from "lucide-react";
 
 const CheckoutStep3 = ({ onNext, onBack, total }) => {
   const navigate = useNavigate();
-  const {
-    cartItems,
-    shippingInfo,
-    paymentMethod,
-    getTotalPrice,
-  } = useAppContext();
+  const { cartItems, shippingInfo, paymentMethod, getTotalPrice } =
+    useAppContext();
 
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Utility function to check if media is a video
+  const isVideo = (url) => {
+    if (!url) return false;
+    const lowerUrl = url.toLowerCase();
+    const videoExtensions = [".mp4", ".webm", ".ogg", ".mov"];
+    const hasVideoExtension = videoExtensions.some((ext) =>
+      lowerUrl.includes(ext),
+    );
+    // Check for Cloudinary video URLs (they contain 'video/upload' not just 'upload')
+    const isCloudinaryVideo = lowerUrl.includes("video/upload");
+
+    return hasVideoExtension || isCloudinaryVideo;
+  };
 
   const handleConfirmOrder = async (e) => {
     e.preventDefault();
@@ -37,16 +47,24 @@ const CheckoutStep3 = ({ onNext, onBack, total }) => {
             className="flex items-center justify-between py-3 border-b border-gray-200"
           >
             <div className="flex items-center">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-16 h-20 object-cover rounded"
-              />
+              {isVideo(item.image) ? (
+                <video
+                  src={item.image}
+                  className="w-16 h-20 object-cover rounded"
+                  muted
+                  loop
+                  playsInline
+                />
+              ) : (
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-16 h-20 object-cover rounded"
+                />
+              )}
               <div className="ml-4">
                 <h4 className="font-medium text-gray-900">{item.name}</h4>
-                <p className="text-sm text-gray-600">
-                  Color: {item.color} | Size: {item.size}
-                </p>
+                <p className="text-sm text-gray-600">Size: {item.size}</p>
                 <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
               </div>
             </div>
@@ -78,7 +96,9 @@ const CheckoutStep3 = ({ onNext, onBack, total }) => {
 
       {/* Shipping Info */}
       <div className="bg-gray-50 rounded-lg p-6 mb-6">
-        <h3 className="text-lg font-medium mb-4 text-gray-900">Shipping Address</h3>
+        <h3 className="text-lg font-medium mb-4 text-gray-900">
+          Shipping Address
+        </h3>
         <p className="text-gray-600">
           {shippingInfo.firstName} {shippingInfo.lastName}
           <br />
@@ -97,7 +117,9 @@ const CheckoutStep3 = ({ onNext, onBack, total }) => {
 
       {/* Payment Method */}
       <div className="bg-gray-50 rounded-lg p-6 mb-6">
-        <h3 className="text-lg font-medium mb-4 text-gray-900">Payment Method</h3>
+        <h3 className="text-lg font-medium mb-4 text-gray-900">
+          Payment Method
+        </h3>
         <p className="text-gray-600 capitalize">
           {paymentMethod === "card" && "Credit/Debit Card"}
           {paymentMethod === "upi" && "UPI Payment"}

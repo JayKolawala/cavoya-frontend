@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../contexts/AppContext";
-import { ShoppingCart, Minus, Plus, X, Sparkles, ShoppingBag } from "lucide-react";
+import {
+  ShoppingCart,
+  Minus,
+  Plus,
+  X,
+  Sparkles,
+  ShoppingBag,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
@@ -9,6 +16,20 @@ const CartPage = () => {
 
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
+
+  // Utility function to check if media is a video
+  const isVideo = (url) => {
+    if (!url) return false;
+    const lowerUrl = url.toLowerCase();
+    const videoExtensions = [".mp4", ".webm", ".ogg", ".mov"];
+    const hasVideoExtension = videoExtensions.some((ext) =>
+      lowerUrl.includes(ext),
+    );
+    // Check for Cloudinary video URLs (they contain 'video/upload' not just 'upload')
+    const isCloudinaryVideo = lowerUrl.includes("video/upload");
+
+    return hasVideoExtension || isCloudinaryVideo;
+  };
 
   useEffect(() => {
     setIsVisible(true);
@@ -28,7 +49,9 @@ const CartPage = () => {
         <div className="absolute inset-0 bg-black/40"></div>
 
         {/* Empty Cart Content */}
-        <div className={`relative z-10 text-center px-4 max-w-lg transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`relative z-10 text-center px-4 max-w-lg transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+        >
           <div className="mb-8 inline-flex items-center justify-center w-32 h-32 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
             <ShoppingCart className="h-16 w-16 text-gray-300" />
           </div>
@@ -38,7 +61,8 @@ const CartPage = () => {
           </h2>
 
           <p className="text-xl text-gray-300 mb-10 font-light">
-            Discover our beautiful collection and add some elegant items to your cart!
+            Discover our beautiful collection and add some elegant items to your
+            cart!
           </p>
 
           <button
@@ -61,7 +85,9 @@ const CartPage = () => {
       <div className="absolute top-20 right-10 w-96 h-96 bg-gray-200/30 rounded-full blur-3xl"></div>
       <div className="absolute bottom-40 left-10 w-80 h-80 bg-gray-300/20 rounded-full blur-3xl"></div>
 
-      <section className={`relative container mx-auto px-4 pt-28 pb-20 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <section
+        className={`relative container mx-auto px-4 pt-28 pb-20 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+      >
         {/* Header */}
         <div className="mb-12 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full mb-4">
@@ -74,7 +100,8 @@ const CartPage = () => {
             Shopping Cart
           </h1>
           <p className="text-gray-600 text-lg">
-            {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'} ready for checkout
+            {cartItems.length} {cartItems.length === 1 ? "item" : "items"} ready
+            for checkout
           </p>
         </div>
 
@@ -93,11 +120,26 @@ const CartPage = () => {
 
                   <div className="flex items-center w-full sm:w-auto">
                     <div className="relative">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-24 h-32 rounded-xl object-cover shadow-lg transform group-hover:scale-105 transition-transform duration-300"
-                      />
+                      {isVideo(item.image) ? (
+                        <video
+                          src={item.image}
+                          className="w-24 h-32 rounded-xl object-cover shadow-lg transform group-hover:scale-105 transition-transform duration-300"
+                          muted
+                          loop
+                          playsInline
+                          onMouseEnter={(e) => e.target.play()}
+                          onMouseLeave={(e) => {
+                            e.target.pause();
+                            e.target.currentTime = 0;
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-24 h-32 rounded-xl object-cover shadow-lg transform group-hover:scale-105 transition-transform duration-300"
+                        />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
                     </div>
 
@@ -106,7 +148,26 @@ const CartPage = () => {
                         {item.name}
                       </h3>
                       <p className="text-gray-500 text-sm mb-2">
-                        Color: <span className="font-medium text-gray-700">{item.color}</span> | Size: <span className="font-medium text-gray-700">{item.size}</span>
+                        {item.color && (
+                          <>
+                            <span className="font-medium text-gray-700">
+                              Color: {item.color}
+                            </span>{" "}
+                            |{" "}
+                          </>
+                        )}
+                        {item.size && (
+                          <>
+                            <span className="font-medium text-gray-700">
+                              Size: {item.size}
+                            </span>
+                          </>
+                        )}
+                        {!item.color && !item.size && (
+                          <span className="text-gray-400 italic">
+                            No options selected
+                          </span>
+                        )}
                       </p>
                       <p className="text-xl font-bold text-gray-900">
                         ₹{item.price}
@@ -172,12 +233,16 @@ const CartPage = () => {
                   </div>
                   <div className="flex justify-between text-gray-700">
                     <span className="font-light">Tax (18%):</span>
-                    <span className="font-semibold">₹{(parseFloat(getTotalPrice()) * 0.18).toFixed(2)}</span>
+                    <span className="font-semibold">
+                      ₹{(parseFloat(getTotalPrice()) * 0.18).toFixed(2)}
+                    </span>
                   </div>
 
                   <div className="border-t-2 border-gray-200 pt-4 mt-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-xl font-light text-gray-900">Total:</span>
+                      <span className="text-xl font-light text-gray-900">
+                        Total:
+                      </span>
                       <span className="text-2xl font-bold text-gray-900">
                         ₹{(parseFloat(getTotalPrice()) * 1.18).toFixed(2)}
                       </span>

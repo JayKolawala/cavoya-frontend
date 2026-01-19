@@ -183,7 +183,7 @@ const Header = () => {
                       setSelectedNewArrivals(false);
                       navigate("/products?category=dresses");
                     }}
-                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
+                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black hover:rounded-lg"
                   >
                     Dresses
                   </button>
@@ -227,7 +227,7 @@ const Header = () => {
                       setSelectedNewArrivals(false);
                       navigate("/products?category=jumpsuits");
                     }}
-                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
+                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:rounded-lg hover:text-black"
                   >
                     Jumpsuits
                   </button>
@@ -260,7 +260,7 @@ const Header = () => {
                       setSelectedNewArrivals(false);
                       navigate("/products?collection=solset");
                     }}
-                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
+                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:rounded-lg hover:text-black"
                   >
                     Solset
                   </button>

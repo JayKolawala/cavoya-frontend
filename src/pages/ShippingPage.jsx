@@ -20,7 +20,7 @@ const ShippingPage = () => {
           {/* Shipping Methods */}
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-tangerine-400 to-tangerine-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center">
                 <Truck className="h-6 w-6 text-white" />
               </div>
               <h2 className="text-3xl font-light text-gray-800">
@@ -28,7 +28,7 @@ const ShippingPage = () => {
               </h2>
             </div>
             <div className="space-y-4">
-              <div className="border-l-4 border-tangerine-500 pl-6 py-2">
+              <div className="border-l-4 border-black pl-6 py-2">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
                   Standard Shipping (Free)
                 </h3>
@@ -37,7 +37,7 @@ const ShippingPage = () => {
                   business days.
                 </p>
               </div>
-              <div className="border-l-4 border-blush-500 pl-6 py-2">
+              <div className="border-l-4 border-gray-700 pl-6 py-2">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
                   Express Shipping (₹150)
                 </h3>
@@ -46,7 +46,7 @@ const ShippingPage = () => {
                   locations.
                 </p>
               </div>
-              <div className="border-l-4 border-matcha-500 pl-6 py-2">
+              <div className="border-l-4 border-gray-500 pl-6 py-2">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
                   Same-Day Delivery (₹300)
                 </h3>
@@ -61,7 +61,7 @@ const ShippingPage = () => {
           {/* Delivery Timeline */}
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blush-400 to-blush-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center">
                 <Clock className="h-6 w-6 text-white" />
               </div>
               <h2 className="text-3xl font-light text-gray-800">
@@ -95,7 +95,7 @@ const ShippingPage = () => {
           {/* Shipping Locations */}
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-matcha-400 to-matcha-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gray-700 rounded-xl flex items-center justify-center">
                 <MapPin className="h-6 w-6 text-white" />
               </div>
               <h2 className="text-3xl font-light text-gray-800">
@@ -115,7 +115,7 @@ const ShippingPage = () => {
           {/* Order Tracking */}
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-sea-400 to-sea-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gray-600 rounded-xl flex items-center justify-center">
                 <Package className="h-6 w-6 text-white" />
               </div>
               <h2 className="text-3xl font-light text-gray-800">
@@ -133,7 +133,7 @@ const ShippingPage = () => {
                 our customer service team at{" "}
                 <a
                   href="mailto:support@cavoya.com"
-                  className="text-tangerine-500 hover:text-tangerine-600 font-medium"
+                  className="text-black hover:text-gray-700 font-medium underline"
                 >
                   support@cavoya.com
                 </a>

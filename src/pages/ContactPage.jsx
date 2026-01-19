@@ -39,7 +39,7 @@ const ContactPage = () => {
           {/* Contact Information Cards */}
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
-              <div className="w-12 h-12 bg-gradient-to-br from-tangerine-400 to-tangerine-600 rounded-xl flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center mb-4">
                 <Mail className="h-6 w-6 text-white" />
               </div>
               <h3 className="text-xl font-semibold mb-2 text-gray-800">
@@ -50,7 +50,7 @@ const ContactPage = () => {
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
-              <div className="w-12 h-12 bg-gradient-to-br from-blush-400 to-blush-600 rounded-xl flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center mb-4">
                 <Phone className="h-6 w-6 text-white" />
               </div>
               <h3 className="text-xl font-semibold mb-2 text-gray-800">
@@ -61,7 +61,7 @@ const ContactPage = () => {
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
-              <div className="w-12 h-12 bg-gradient-to-br from-matcha-400 to-matcha-600 rounded-xl flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-gray-700 rounded-xl flex items-center justify-center mb-4">
                 <MapPin className="h-6 w-6 text-white" />
               </div>
               <h3 className="text-xl font-semibold mb-2 text-gray-800">
@@ -99,7 +99,7 @@ const ContactPage = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blush-500 focus:border-transparent transition"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition"
                       placeholder="John Doe"
                     />
                   </div>
@@ -117,7 +117,7 @@ const ContactPage = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blush-500 focus:border-transparent transition"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition"
                       placeholder="john@example.com"
                     />
                   </div>
@@ -136,7 +136,7 @@ const ContactPage = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blush-500 focus:border-transparent transition"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition"
                     placeholder="How can we help?"
                   />
                 </div>
@@ -154,13 +154,13 @@ const ContactPage = () => {
                     onChange={handleChange}
                     required
                     rows="6"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blush-500 focus:border-transparent transition resize-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition resize-none"
                     placeholder="Tell us more about your inquiry..."
                   ></textarea>
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-tangerine-500 to-blush-500 text-white font-semibold py-4 rounded-lg hover:shadow-xl hover:shadow-tangerine-500/30 transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                  className="w-full bg-black text-white font-semibold py-4 rounded-lg hover:bg-gray-800 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2"
                 >
                   <Send className="h-5 w-5" />
                   Send Message
