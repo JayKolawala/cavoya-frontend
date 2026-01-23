@@ -131,20 +131,28 @@ const WishlistPage = () => {
                 </h3>
 
                 {/* Rating */}
-                <div className="flex items-center mb-3">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-4 w-4 ${i < Math.floor(product.rating)
-                        ? 'fill-gray-700 text-gray-700'
-                        : 'fill-gray-200 text-gray-200'
-                        }`}
-                    />
-                  ))}
-                  <span className="ml-2 text-sm text-gray-600 font-medium">
-                    {product.rating}
-                  </span>
-                </div>
+                {(product.reviews && product.reviews > 0) ? (
+                  <div className="flex items-center mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-4 w-4 ${i < Math.floor(product.rating)
+                          ? 'fill-gray-700 text-gray-700'
+                          : 'fill-gray-200 text-gray-200'
+                          }`}
+                      />
+                    ))}
+                    <span className="ml-2 text-sm text-gray-600 font-medium">
+                      {product.rating}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="mb-3">
+                    <span className="text-gray-400 text-xs italic">
+                      No ratings yet
+                    </span>
+                  </div>
+                )}
 
                 {/* Price */}
                 <div className="flex items-center space-x-2 mb-4">

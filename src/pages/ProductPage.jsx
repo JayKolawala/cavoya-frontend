@@ -325,24 +325,32 @@ const ProductPage = () => {
           </h1>
 
           {/* Enhanced Rating */}
-          <div className="flex items-center mb-6">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`h-5 w-5 ${
-                    i < Math.floor(selectedProduct.rating || 0)
-                      ? "fill-gray-700 text-gray-700"
-                      : "text-gray-300"
-                  }`}
-                />
-              ))}
+          {(selectedProduct.reviews && selectedProduct.reviews > 0) ? (
+            <div className="flex items-center mb-6">
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-5 w-5 ${
+                      i < Math.floor(selectedProduct.rating || 0)
+                        ? "fill-gray-700 text-gray-700"
+                        : "text-gray-300"
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="ml-3 text-gray-600 font-medium">
+                {selectedProduct.rating?.toFixed(1) || "0.0"} (
+                {selectedProduct.reviews} reviews)
+              </span>
             </div>
-            <span className="ml-3 text-gray-600 font-medium">
-              {selectedProduct.rating?.toFixed(1) || "0.0"} (
-              {selectedProduct.reviews || 0} reviews)
-            </span>
-          </div>
+          ) : (
+            <div className="mb-6">
+              <span className="text-gray-500 text-sm italic">
+                No ratings yet
+              </span>
+            </div>
+          )}
 
           {/* Enhanced Price */}
           <div className="flex items-center space-x-4 mb-8">
