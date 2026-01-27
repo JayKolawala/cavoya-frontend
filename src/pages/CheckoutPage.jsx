@@ -8,7 +8,7 @@ import ScrollToTop from "../components/ScrollToTop";
 import { ShoppingCart, Sparkles, ShoppingBag } from "lucide-react";
 
 const CheckoutPage = () => {
-  const { cartItems, getTotalPrice } = useAppContext();
+  const { cartItems, getTotalPrice, orderConfirmed } = useAppContext();
   const [currentStep, setCurrentStep] = useState(1);
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
@@ -17,7 +17,10 @@ const CheckoutPage = () => {
     setIsVisible(true);
   }, []);
 
-  if (cartItems.length === 0) {
+  // If cart is empty and no order has been completed, show the empty-cart state.
+  // After a successful order, we still want to show the confirmation (step 4),
+  // even though the cart has been cleared.
+  if (cartItems.length === 0 && !orderConfirmed) {
     return (
       <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-black via-gray-900 to-gray-800">
         {/* Animated Background Gradient */}

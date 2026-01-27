@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   Star,
   Truck,
@@ -14,19 +14,30 @@ import {
 import { useAppContext } from "../contexts/AppContext";
 import ProductCard from "../components/ProductCard";
 import LoadingSpinner from "../components/LoadingSpinner";
+import StarDisplay from "../components/StarDisplay";
+import ReviewsDisplay from "../components/ReviewsDisplay";
 import { isVideo } from "../utils/mediaHelpers";
 import { getColorClasses } from "../utils/colorHelpers";
+import { API_BASE_URL } from "../utils/apiHelpers";
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart, products, fetchProductById } = useAppContext();
+  const location = useLocation();
+  const { addToCart, products, fetchProductById, showCustomAlert } = useAppContext();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [activeAccordion, setActiveAccordion] = useState(null);
+  
+  // Check URL params to auto-open reviews section
+  const searchParams = new URLSearchParams(location.search);
+  const shouldShowReviews = searchParams.get("rate") === "true" || searchParams.get("showReviews") === "true";
+  const [activeAccordion, setActiveAccordion] = useState(shouldShowReviews ? "reviews" : null);
+  
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
 
   // Thumbnail scroll state
   const thumbnailScrollRef = React.useRef(null);
@@ -106,6 +117,32 @@ const ProductPage = () => {
       : "You May Also Like"
     : "Related Products";
 
+  // Fetch reviews for the product
+  const fetchReviews = async (productId) => {
+    if (!productId) return;
+
+    setReviewsLoading(true);
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/ratings/${productId}`
+      );
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // API returns: { success, data: { avgRating, totalRatings, ratings: [] } }
+        setReviews(data.data?.ratings || data.ratings || []);
+      } else {
+        setReviews([]);
+      }
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      setReviews([]);
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
+
   useEffect(() => {
     const loadProduct = async () => {
       setLoading(true);
@@ -126,6 +163,9 @@ const ProductPage = () => {
         setSelectedSize(
           product.sizes && product.sizes.length > 0 ? product.sizes[0] : "",
         );
+
+        // Fetch reviews for this product
+        await fetchReviews(product.id || product._id);
       }
 
       setLoading(false);
@@ -222,7 +262,7 @@ const ProductPage = () => {
       </button>
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-[600px] pb-4" : "max-h-0"
+          isOpen ? "max-h-[2000px] pb-4 px-4" : "max-h-0"
         }`}
       >
         <div className="text-gray-600 text-sm leading-relaxed">{children}</div>
@@ -324,30 +364,24 @@ const ProductPage = () => {
             {selectedProduct.name}
           </h1>
 
-          {/* Enhanced Rating */}
-          {(selectedProduct.reviews && selectedProduct.reviews > 0) ? (
+          {/* Enhanced Rating - Use backend avgRating and totalRatings */}
+          {selectedProduct.totalRatings > 0 ? (
             <div className="flex items-center mb-6">
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-5 w-5 ${
-                      i < Math.floor(selectedProduct.rating || 0)
-                        ? "fill-gray-700 text-gray-700"
-                        : "text-gray-300"
-                    }`}
-                  />
-                ))}
-              </div>
+              <StarDisplay
+                rating={selectedProduct.avgRating || 0}
+                size="h-5 w-5"
+                showHalfStars={true}
+              />
               <span className="ml-3 text-gray-600 font-medium">
-                {selectedProduct.rating?.toFixed(1) || "0.0"} (
-                {selectedProduct.reviews} reviews)
+                {selectedProduct.avgRating?.toFixed(1) || "0.0"} (
+                {selectedProduct.totalRatings}{" "}
+                {selectedProduct.totalRatings === 1 ? "review" : "reviews"})
               </span>
             </div>
           ) : (
             <div className="mb-6">
               <span className="text-gray-500 text-sm italic">
-                No ratings yet
+                No reviews yet
               </span>
             </div>
           )}
@@ -371,8 +405,8 @@ const ProductPage = () => {
           </div>
 
           {/* Enhanced Description */}
-          <div className="bg-gray-50 rounded-2xl p-6 mb-6">
-            <p className="text-gray-700 leading-relaxed">
+          <div className="bg-gray-50 rounded-2xl py-6">
+            <p className="text-gray-700 font-bold leading-relaxed">
               {selectedProduct.description || "No description available."}
             </p>
           </div>
@@ -472,8 +506,9 @@ const ProductPage = () => {
             </div>
           )}
 
+
           {/* Enhanced Accordion Sections */}
-          <div className="border-t border-gray-200 bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div className="border-t border-gray-200 bg-white rounded-2xl shadow-sm overflow-hidden" id="reviews-section">
             <AccordionSection
               title="Product Details"
               isOpen={activeAccordion === "details"}
@@ -597,6 +632,17 @@ const ProductPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Reviews Display Section - Only show reviews, no rating form */}
+      <div className="border-b border-gray-200">
+              <div className="py-4 px-4 ">
+                <h3 className="text-gray-700 text-center font-medium text-2xl mb-6">Customer Reviews ({reviews.length})</h3>
+                <div className="space-y-6">
+                  {/* Reviews Display */}
+                  <ReviewsDisplay reviews={reviews} loading={reviewsLoading} />
+                </div>
+              </div>
+            </div>
 
       {/* Related Products Section */}
       {relatedProducts.length > 0 && (

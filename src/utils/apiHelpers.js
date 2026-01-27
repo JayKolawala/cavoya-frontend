@@ -23,6 +23,11 @@ export const API_ENDPOINTS = {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
     LOGOUT: '/auth/logout',
+
+    // Ratings
+    RATINGS: '/ratings',
+    PRODUCT_RATINGS: (productId) => `/ratings/product/${productId}`,
+    SUBMIT_RATING: '/ratings',
 };
 
 /**
@@ -35,8 +40,12 @@ export const transformProduct = (product) => ({
     price: product.price,
     originalPrice: product.originalPrice || product.price,
     category: product.category,
-    rating: product.rating || 4.5,
-    reviews: product.reviews || 0,
+    // Use backend ratings - never calculate in frontend
+    avgRating: product.avgRating || 0,
+    totalRatings: product.totalRatings || 0,
+    // Keep legacy fields for backward compatibility (will be removed later)
+    rating: product.avgRating || 0,
+    reviews: product.totalRatings || 0,
     colors: product.colors || [],
     sizes: product.sizes || [],
     image: product.image,

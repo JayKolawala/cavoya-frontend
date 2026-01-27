@@ -8,6 +8,7 @@ import {
   verifyPayment,
 } from "../utils/paymentService";
 import { Shield, Lock, AlertCircle } from "lucide-react";
+import RatingModal from "../components/RatingModal";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -23,6 +24,9 @@ const PaymentPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("initializing"); // initializing, processing, verifying, success, error
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [orderDataForRating, setOrderDataForRating] = useState(null);
+  const [orderNumberForRating, setOrderNumberForRating] = useState(null);
   const hasInitiated = React.useRef(false);
 
   // Redirect if no items or missing info
@@ -104,10 +108,14 @@ const PaymentPage = () => {
             if (orderData && orderData.orderNumber) {
               setStatus("success");
               confirmOrder(orderData.orderNumber);
-              // Small delay to show success state before redirect
-              setTimeout(() => {
-                navigate("/checkout?step=4"); // Assuming step 4 is confirmation
-              }, 1500);
+
+              // Store order data for rating modal and show it
+              setOrderDataForRating({
+                items: cartItems,
+                orderNumber: orderData.orderNumber,
+              });
+              setOrderNumberForRating(orderData.orderNumber);
+              setShowRatingModal(true);
             } else {
               throw new Error("Failed to create order after payment");
             }
@@ -142,6 +150,18 @@ const PaymentPage = () => {
 
   const handleCancel = () => {
     navigate("/checkout");
+  };
+
+  // User skipped/closed the rating modal without submitting
+  const handleRatingModalCancel = () => {
+    setShowRatingModal(false);
+    navigate("/checkout?step=4");
+  };
+
+  // User finished rating successfully – go to products listing
+  const handleRatingModalSuccess = () => {
+    setShowRatingModal(false);
+    navigate("/products");
   };
 
   return (
@@ -212,6 +232,18 @@ const PaymentPage = () => {
           </div>
         )}
       </div>
+
+      {/* Rating Modal - Shows after successful payment */}
+      {showRatingModal && orderDataForRating && (
+        <RatingModal
+          isOpen={showRatingModal}
+          onClose={handleRatingModalCancel}
+          orderData={orderDataForRating}
+          orderNumber={orderNumberForRating}
+          customerEmail={shippingInfo.email}
+          onSuccess={handleRatingModalSuccess}
+        />
+      )}
     </div>
   );
 };
