@@ -12,9 +12,9 @@ const AboutPage = () => {
     story: {
       title: "Our Story",
       content: [
-        "Founded in 2020, Cavoya emerged from a passion for timeless elegance and sustainable fashion. We believe that true style transcends trends, focusing on quality craftsmanship and ethical practices.",
-        "Every piece in our collection is carefully curated to offer you the perfect blend of comfort, style, and sustainability. From luxurious silks to organic cottons, we source the finest materials to create pieces that you'll treasure for years to come.",
-        "Our commitment extends beyond fashion – we're dedicated to supporting artisans, promoting sustainable practices, and creating a positive impact in the fashion industry.",
+        "Born from the belief that fashion should move with a woman and never limit her, Cavoya redefines contemporary western wear for the modern, ever-evolving woman. Built on a foundation of sustainability, the brand uses consciously chosen fabrics to craft pieces that feel as good as they look. Cavoya creates versatile wardrobe essentials thoughtfully designed for the rhythm of real life.",
+        "At the heart of Cavoya is a deep love for expressive colours and distinctive prints. Every garment is fully printed, bringing vibrancy, emotion, and personality to the collection. The prints are bold yet refined, allowing women to express themselves effortlessly with elegance and versatility.",
+        "What truly sets Cavoya apart is its intelligently adjustable silhouettes that move with a woman through every phase of her journey. As bodies change and lifestyles evolve, Cavoya adapts while offering comfort without compromising on style. Rooted in flow, strength, and femininity, Cavoya is made around women because they were never meant to fit in.",
       ],
       image: {
         src: "https://placehold.co/600x400/E8D2C5/543C42?text=Our+Story",
@@ -51,17 +51,17 @@ const AboutPage = () => {
     ],
     founders: [
       {
-        name: "Sophia Martinez",
-        role: "Co-Founder & Creative Director",
-        description: "With over 15 years of experience in sustainable fashion, Sophia leads our design philosophy with a focus on timeless elegance and ethical practices. Her vision has shaped Cavoya into a brand that celebrates both beauty and responsibility.",
+        name: "ZEEL JARIWALA",
+        role: "Founder",
+        description: "Zeel jariwala leads with a strong focus on quality, production, and execution. With deep involvement in sourcing and manufacturing, she ensures every piece reflects purity of material, fine craftsmanship, and consistent standards the brand stands for.",
         image: "/founder1.jpg",
         linkedin: "#",
         email: "sophia@cavoya.com",
       },
       {
-        name: "Alexandra Chen",
-        role: "Co-Founder & CEO",
-        description: "Alexandra brings a wealth of business acumen and passion for sustainable innovation to Cavoya. Her commitment to ethical manufacturing and transparent supply chains ensures that every piece meets our highest standards of quality and integrity.",
+        name: "RIYA CHEVLI",
+        role: "Founder",
+        description: "Riya chevli is the creative force behind the brand, bringing a sharp eye for design, colour, and contemporary styling. Her passion for textiles and aesthetics shapes collections that feel fresh, vibrant, and emotionally connected to the modern woman.",
         image: "/founder2.jpg",
         linkedin: "#",
         email: "alexandra@cavoya.com",
@@ -111,7 +111,7 @@ const AboutPage = () => {
             <div data-aos="fade-right">
               <div className="inline-block mb-4">
                 <span className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold tracking-wider">
-                  SINCE 2020
+                  SINCE 2026
                 </span>
               </div>
 
