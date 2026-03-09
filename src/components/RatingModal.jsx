@@ -113,15 +113,14 @@ const RatingModal = ({
               <div className="space-y-6">
                 {uniqueProducts.map((product, index) => {
                   const isRated = submittedRatings.has(product.productId);
-                  
+
                   return (
                     <div
                       key={product.productId || index}
-                      className={`border rounded-xl p-6 transition-all ${
-                        isRated
-                          ? "bg-green-50 border-green-200"
-                          : "bg-white border-gray-200"
-                      }`}
+                      className={`border rounded-xl p-6 transition-all ${isRated
+                        ? "bg-green-50 border-green-200"
+                        : "bg-white border-gray-200"
+                        }`}
                     >
                       {/* Product Info */}
                       <div className="flex items-start gap-4 mb-4">
@@ -214,7 +213,7 @@ const RatingModal = ({
 
           {/* Footer */}
           <div className="border-t border-gray-200 p-6 bg-gray-50">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
               <p className="text-sm text-gray-600">
                 {allRated
                   ? "All products rated! Thank you for your feedback."

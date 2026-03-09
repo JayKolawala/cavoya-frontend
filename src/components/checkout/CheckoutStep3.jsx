@@ -133,7 +133,7 @@ const CheckoutStep3 = ({ onNext, onBack, total }) => {
         </div>
       </div>
 
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-2">
         <button
           type="button"
           onClick={onBack}

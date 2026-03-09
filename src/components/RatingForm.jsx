@@ -129,7 +129,7 @@ const RatingForm = ({ productId, orderId: propOrderId, defaultEmail, onSubmit, o
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-      <h3 className="text-xl font-semibold mb-4 text-gray-900">
+      <h3 className="sm:text-xl text-lg font-semibold mb-4 text-gray-900">
         Rate this product
       </h3>
 
@@ -149,9 +149,8 @@ const RatingForm = ({ productId, orderId: propOrderId, defaultEmail, onSubmit, o
             value={formData.orderId}
             onChange={handleChange}
             disabled={!!propOrderId}
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
-              errors.orderId ? "border-red-500" : "border-gray-300"
-            } ${propOrderId ? "bg-gray-100 cursor-not-allowed" : ""}`}
+            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent ${errors.orderId ? "border-red-500" : "border-gray-300"
+              } ${propOrderId ? "bg-gray-100 cursor-not-allowed" : ""}`}
             placeholder="Enter your Order ID"
           />
           {errors.orderId && (
@@ -177,9 +176,8 @@ const RatingForm = ({ productId, orderId: propOrderId, defaultEmail, onSubmit, o
             value={formData.email}
             onChange={handleChange}
             disabled={!!defaultEmail}
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
-              errors.email ? "border-red-500" : "border-gray-300"
-            } ${defaultEmail ? "bg-gray-100 cursor-not-allowed" : ""}`}
+            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent ${errors.email ? "border-red-500" : "border-gray-300"
+              } ${defaultEmail ? "bg-gray-100 cursor-not-allowed" : ""}`}
             placeholder="Enter your email address"
           />
           {errors.email && (
@@ -209,11 +207,10 @@ const RatingForm = ({ productId, orderId: propOrderId, defaultEmail, onSubmit, o
                   className="focus:outline-none transition-transform hover:scale-110"
                 >
                   <Star
-                    className={`h-6 w-6 ${
-                      star <= displayRating
+                    className={`h-6 w-6 ${star <= displayRating
                         ? "fill-gray-700 text-gray-700"
                         : "text-gray-300"
-                    }`}
+                      }`}
                   />
                 </button>
               ))}
