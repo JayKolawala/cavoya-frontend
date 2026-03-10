@@ -1,23 +1,38 @@
 // src/admin/pages/AdminLogin.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useApi from "../../hooks/useApi";
 
 const AdminLogin = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
+  const { post, loading } = useApi();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
-    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
-    if (
-      credentials.email === adminEmail &&
-      credentials.password === adminPassword
-    ) {
-      localStorage.setItem("adminAuth", "true");
-      navigate("/admin/dashboard");
-    } else {
-      alert("Invalid credentials");
+    setErrorMsg("");
+    try {
+      // POST https://api.cavoya.in/api/admin/login
+      const response = await post("/admin/login", {
+        email: credentials.email,
+        password: credentials.password,
+      });
+
+      // Handle token from response (supports { token }, { data: { token } })
+      const token = response.token || response.data?.token;
+
+      if (token) {
+        localStorage.setItem("adminAuth", "true");
+        localStorage.setItem("adminToken", token);
+        navigate("/admin/dashboard");
+      } else {
+        setErrorMsg(
+          response.message || "Invalid credentials. Please try again.",
+        );
+      }
+    } catch (err) {
+      setErrorMsg("Invalid email or password. Please try again.");
     }
   };
 
@@ -30,6 +45,11 @@ const AdminLogin = () => {
         </div>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
+            {errorMsg && (
+              <p className="text-red-500 text-sm text-center bg-red-50 py-2 px-4 rounded-md">
+                {errorMsg}
+              </p>
+            )}
             <input
               type="email"
               placeholder="Email Address"
@@ -52,9 +72,10 @@ const AdminLogin = () => {
             />
             <button
               type="submit"
-              className="w-full py-3 bg-pink-500 text-white rounded-md font-bold hover:bg-pink-600 transition-colors"
+              disabled={loading}
+              className="w-full py-3 bg-pink-500 text-white rounded-md font-bold hover:bg-pink-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Sign In
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </div>
         </form>

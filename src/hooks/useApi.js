@@ -65,8 +65,15 @@ const useApi = (baseURL = null) => {
         const url = `${API_BASE_URL}${endpoint}`;
 
         try {
+            // Abort the request if it takes longer than 15 seconds
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+            console.log(`[API] ${method} ${url}`);
+
             const config = {
                 method,
+                signal: controller.signal,
                 headers: {
                     'Content-Type': 'application/json',
                     ...headers,
@@ -77,16 +84,15 @@ const useApi = (baseURL = null) => {
             // Handle request body
             if (body) {
                 if (body instanceof FormData) {
-                    // Remove Content-Type for FormData (browser sets it with boundary)
                     delete config.headers['Content-Type'];
                     config.body = body;
                 } else {
-                    // Stringify JSON body
                     config.body = JSON.stringify(body);
                 }
             }
 
             const response = await fetch(url, config);
+            clearTimeout(timeoutId);
             const responseData = await response.json();
 
             if (!response.ok) {
