@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 
+const WHATSAPP_NUMBER = "919426631080"; // Replace with actual number (country code + number)
+
 const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -12,8 +14,19 @@ const ContactPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission - in production, this would send to backend
-    alert("Thank you for your message! We'll get back to you soon.");
+
+    const phone = WHATSAPP_NUMBER;
+
+    const message =
+      `*New Contact Form Submission*\n\n` +
+      `*Name:* ${formData.name}\n` +
+      `*Email:* ${formData.email}\n` +
+      `*Subject:* ${formData.subject}\n\n` +
+      `*Message:*\n${formData.message}`;
+
+    const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, "_blank", "noopener,noreferrer");
+
     setFormData({ name: "", email: "", subject: "", message: "" });
   };
 

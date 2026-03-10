@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Heart, RefreshCw, Star, Sparkles, Linkedin, Mail } from "lucide-react";
+import { Heart, RefreshCw, Star, Sparkles, Mail } from "lucide-react";
 import AOS from "aos";
 
 const AboutPage = () => {
@@ -53,17 +53,19 @@ const AboutPage = () => {
       {
         name: "ZEEL JARIWALA",
         role: "Founder",
-        description: "Zeel jariwala leads with a strong focus on quality, production, and execution. With deep involvement in sourcing and manufacturing, she ensures every piece reflects purity of material, fine craftsmanship, and consistent standards the brand stands for.",
+        description:
+          "Zeel jariwala leads with a strong focus on quality, production, and execution. With deep involvement in sourcing and manufacturing, she ensures every piece reflects purity of material, fine craftsmanship, and consistent standards the brand stands for.",
         image: "/founder1.jpg",
-        linkedin: "#",
+        whatsapp: "https://wa.me/91XXXXXXXXXX",
         email: "sophia@cavoya.com",
       },
       {
         name: "RIYA CHEVLI",
         role: "Founder",
-        description: "Riya chevli is the creative force behind the brand, bringing a sharp eye for design, colour, and contemporary styling. Her passion for textiles and aesthetics shapes collections that feel fresh, vibrant, and emotionally connected to the modern woman.",
+        description:
+          "Riya chevli is the creative force behind the brand, bringing a sharp eye for design, colour, and contemporary styling. Her passion for textiles and aesthetics shapes collections that feel fresh, vibrant, and emotionally connected to the modern woman.",
         image: "/founder2.jpg",
-        linkedin: "#",
+        whatsapp: "https://wa.me/91XXXXXXXXXX",
         email: "alexandra@cavoya.com",
       },
     ],
@@ -85,7 +87,10 @@ const AboutPage = () => {
         <div className="absolute inset-0 bg-black/30"></div>
 
         {/* Header Content */}
-        <div className="relative z-10 container mx-auto text-center" data-aos="fade-down">
+        <div
+          className="relative z-10 container mx-auto text-center"
+          data-aos="fade-down"
+        >
           <div className="mb-4 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
             <Sparkles className="w-4 h-4 text-gray-300" />
             <span className="text-gray-200 text-sm font-light tracking-wider">
@@ -121,17 +126,17 @@ const AboutPage = () => {
 
               <div className="space-y-4">
                 {aboutData.story.content.map((paragraph, index) => (
-                  <p key={index} className="text-gray-600 leading-relaxed text-lg">
+                  <p
+                    key={index}
+                    className="text-gray-600 leading-relaxed text-lg"
+                  >
                     {paragraph}
                   </p>
                 ))}
               </div>
             </div>
 
-            <div
-              className="relative group"
-              data-aos="fade-left"
-            >
+            <div className="relative group" data-aos="fade-left">
               <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-xl"></div>
               <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden shadow-2xl">
                 <img
@@ -163,10 +168,14 @@ const AboutPage = () => {
                   data-aos="fade-up"
                   data-aos-delay={index * 100}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${value.gradientFrom} ${value.gradientTo} rounded-2xl opacity-0 group-hover:opacity-10 blur transition-all duration-300`}></div>
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${value.gradientFrom} ${value.gradientTo} rounded-2xl opacity-0 group-hover:opacity-10 blur transition-all duration-300`}
+                  ></div>
 
                   <div className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
-                    <div className={`w-16 h-16 mx-auto mb-6 bg-gradient-to-br ${value.gradientFrom} ${value.gradientTo} rounded-2xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300 shadow-md`}>
+                    <div
+                      className={`w-16 h-16 mx-auto mb-6 bg-gradient-to-br ${value.gradientFrom} ${value.gradientTo} rounded-2xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300 shadow-md`}
+                    >
                       <IconComponent className={`h-8 w-8 ${value.iconColor}`} />
                     </div>
 
@@ -202,15 +211,17 @@ const AboutPage = () => {
             {aboutData.founders.map((founder, index) => (
               <div
                 key={index}
-                className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? "lg:flex-row-reverse" : ""
-                  }`}
+                className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${
+                  index % 2 === 1 ? "lg:flex-row-reverse" : ""
+                }`}
                 data-aos="fade-up"
                 data-aos-delay={index * 100}
               >
                 {/* Image Section */}
                 <div
-                  className={`relative group ${index % 2 === 1 ? "lg:order-2" : "lg:order-1"
-                    }`}
+                  className={`relative group ${
+                    index % 2 === 1 ? "lg:order-2" : "lg:order-1"
+                  }`}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-xl"></div>
                   <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden shadow-2xl">
@@ -224,8 +235,9 @@ const AboutPage = () => {
 
                 {/* Content Section */}
                 <div
-                  className={`space-y-6 ${index % 2 === 1 ? "lg:order-1" : "lg:order-2"
-                    }`}
+                  className={`space-y-6 ${
+                    index % 2 === 1 ? "lg:order-1" : "lg:order-2"
+                  }`}
                 >
                   <div>
                     <h3 className="text-3xl md:text-4xl font-light mb-2 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
@@ -243,11 +255,22 @@ const AboutPage = () => {
                   {/* Social Links */}
                   <div className="flex gap-4 pt-4">
                     <a
-                      href={founder.linkedin}
-                      className="group flex items-center gap-2 px-6 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                      href={founder.whatsapp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center gap-2 px-6 py-3 bg-[#25D366] text-white rounded-xl hover:bg-[#1ebe5d] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                     >
-                      <Linkedin className="w-5 h-5" />
-                      <span className="font-medium">LinkedIn</span>
+                      {/* WhatsApp icon */}
+                      <svg
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.85L.057 23.571a.5.5 0 0 0 .372.614l5.938-1.556A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.866 9.866 0 0 1-5.031-1.375l-.36-.214-3.733.979.995-3.638-.235-.374A9.865 9.865 0 0 1 2.118 12C2.118 6.553 6.553 2.118 12 2.118c5.446 0 9.882 4.435 9.882 9.882 0 5.446-4.436 9.882-9.882 9.882z" />
+                      </svg>
+                      <span className="font-medium">WhatsApp</span>
                     </a>
                     <a
                       href={`mailto:${founder.email}`}

@@ -17,8 +17,14 @@ import bgVideo2 from "../assets/bg-video2.mp4";
 import { isVideo } from "../utils/mediaHelpers";
 
 const HomePage = () => {
-  const { products, loading, toggleWishlist, wishlist, addToCart, showAlert } =
-    useAppContext();
+  const {
+    products,
+    productsLoading: loading,
+    toggleWishlist,
+    wishlist,
+    addToCart,
+    showCustomAlert: showAlert,
+  } = useAppContext();
   const [_selectedProduct, setSelectedProduct] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();

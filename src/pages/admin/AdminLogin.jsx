@@ -8,10 +8,11 @@ const AdminLogin = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simple authentication (replace with proper auth in production)
+    const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
+    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
     if (
-      credentials.email === "admin@cavoya.com" &&
-      credentials.password === "admin123"
+      credentials.email === adminEmail &&
+      credentials.password === adminPassword
     ) {
       localStorage.setItem("adminAuth", "true");
       navigate("/admin/dashboard");

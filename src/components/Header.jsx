@@ -1,20 +1,91 @@
 // components/Header.jsx
 import React, { useEffect, useState } from "react";
-import {
-  ShoppingCart,
-  User,
-  Search,
-  Heart,
-  Menu,
-  Truck,
-  Shield,
-} from "lucide-react";
+import { ShoppingCart, Search, Heart, Menu, ChevronDown } from "lucide-react";
 import { useAppContext } from "../contexts/AppContext";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { PRODUCT_CATEGORIES } from "../utils/constants";
+
 import { getCategoryMap } from "../utils/categoryHelpers";
-// import logoBlack from "../../src/assets/cavoya-black.svg";
 import logoBlack from "../../src/assets/Cavoya_Logo.svg";
+
+// ─── Nav configuration objects ──────────────────────────────────────────────
+
+const STYLES_ITEMS = [
+  {
+    label: "Dresses",
+    categoryKey: "dresses",
+    path: "/products?category=dresses",
+  },
+  {
+    label: "Co-ord Sets",
+    categoryKey: "coord-sets",
+    path: "/products?category=coord-sets",
+  },
+  { label: "Tops", categoryKey: "tops", path: "/products?category=tops" },
+  {
+    label: "Bottomwear",
+    categoryKey: "bottomwear",
+    path: "/products?category=bottomwear",
+  },
+  {
+    label: "Jumpsuits",
+    categoryKey: "jumpsuits",
+    path: "/products?category=jumpsuits",
+  },
+];
+
+const COLLECTION_ITEMS = [
+  // Ocean and Floral commented out as not decided yet
+  {
+    label: "Solset",
+    categoryKey: "solset",
+    collectionKey: "solset",
+    path: "/products?collection=solset",
+  },
+];
+
+// ─── Desktop chevron SVG (reused) ────────────────────────────────────────────
+const ChevronSVG = () => (
+  <svg
+    className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M19 9l-7 7-7-7"
+    />
+  </svg>
+);
+
+// ─── Mobile accordion dropdown ───────────────────────────────────────────────
+const MobileAccordion = ({ label, children }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="flex flex-col">
+      <button
+        className="text-left text-black font-medium flex items-center gap-3"
+        onClick={() => setOpen((o) => !o)}
+      >
+        {label}
+        <ChevronDown
+          className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      <div
+        className={`overflow-hidden transition-all duration-300 ${
+          open ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="flex flex-col space-y-2 pl-4">{children}</div>
+      </div>
+    </div>
+  );
+};
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 const Header = () => {
   const {
@@ -35,10 +106,8 @@ const Header = () => {
   const isProductsPage = location.pathname === "/products";
   const isHomePage = location.pathname === "/";
 
-  // Get category mapping from shared utility
   const categoryMap = getCategoryMap();
 
-  // Consolidated navigation handler to avoid duplication
   const handleNavigateWithFilters = (
     category,
     collection,
@@ -49,51 +118,27 @@ const Header = () => {
     setSelectedCategory(category);
     setSelectedCollection(collection);
     setSelectedNewArrivals(newArrivals);
-    if (closeMobileMenu) {
-      setShowMobileMenu(false);
-    }
+    if (closeMobileMenu) setShowMobileMenu(false);
     navigate(path);
   };
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      // Change background when scrolled more than 50px (you can adjust this value)
-      if (scrollTop > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
-
-    // Clean up the event listener
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Add resize event listener to close mobile menu when going below 768px
   useEffect(() => {
     const handleResize = () => {
-      // Close mobile menu only when screen width is below 768px (mobile breakpoint)
-      if (window.innerWidth > 768) {
-        setShowMobileMenu(false);
-      }
+      if (window.innerWidth > 768) setShowMobileMenu(false);
     };
-
     window.addEventListener("resize", handleResize);
-
-    // Clean up the event listener
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, [setShowMobileMenu]);
 
   return (
     <>
-      {/* Mobile Menu Backdrop - Only render when menu is open */}
+      {/* Mobile Menu Backdrop */}
       {showMobileMenu && (
         <div
           className="max-lg:bg-black/50 min-h-screen fixed top-0 left-0 w-full transition duration-300 ease-linear z-40"
@@ -109,12 +154,13 @@ const Header = () => {
         }`}
       >
         <div className="w-full mx-auto">
-          {/* Main header */}
+          {/* ── Main nav ─────────────────────────────────────────── */}
           <nav
             className={`flex justify-between items-center py-4 px-4 lg:px-4 z-10 relative ${
               showMobileMenu || isScrolled ? "bg-white" : ""
             }`}
           >
+            {/* Hamburger */}
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="lg:hidden hover:text-gray-600 transition-colors"
@@ -128,6 +174,8 @@ const Header = () => {
                 }`}
               />
             </button>
+
+            {/* Logo */}
             <div
               className="text-2xl font-bold text-gray-600"
               onClick={() => navigate("/")}
@@ -139,16 +187,16 @@ const Header = () => {
               />
             </div>
 
-            {/* Desktop Navigation */}
+            {/* ── Desktop Navigation ─────────────────────────────── */}
             <div className="hidden lg:flex space-x-6">
-              <Link to="/" className="hover:text-gray-500 ">
+              <Link to="/" className="hover:text-gray-500">
                 Home
               </Link>
               <button
                 onClick={() =>
                   handleNavigateWithFilters("all", null, false, "/products")
                 }
-                className="hover:text-gray-500 "
+                className="hover:text-gray-500"
               >
                 Shop All
               </button>
@@ -161,158 +209,78 @@ const Header = () => {
                     "/products?newArrivals=true",
                   )
                 }
-                className="hover:text-gray-500 "
+                className="hover:text-gray-500"
               >
                 New Arrivals
               </button>
 
-              {/* Shop by style dropdown */}
+              {/* Shop by Styles — desktop hover dropdown */}
               <div className="relative group">
                 <span className="hover:text-gray-500 transition-colors cursor-pointer flex items-center">
                   Shop by styles
-                  <svg
-                    className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
+                  <ChevronSVG />
                 </span>
                 <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100">
-                  <button
-                    onClick={() =>
-                      handleNavigateWithFilters(
-                        categoryMap["dresses"],
-                        null,
-                        false,
-                        "/products?category=dresses",
-                      )
-                    }
-                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black hover:rounded-lg"
-                  >
-                    Dresses
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleNavigateWithFilters(
-                        categoryMap["coord-sets"],
-                        null,
-                        false,
-                        "/products?category=coord-sets",
-                      )
-                    }
-                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
-                  >
-                    Co-ord Sets
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleNavigateWithFilters(
-                        categoryMap["tops"],
-                        null,
-                        false,
-                        "/products?category=tops",
-                      )
-                    }
-                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
-                  >
-                    Tops
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleNavigateWithFilters(
-                        categoryMap["bottomwear"],
-                        null,
-                        false,
-                        "/products?category=bottomwear",
-                      )
-                    }
-                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
-                  >
-                    Bottomwear
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleNavigateWithFilters(
-                        categoryMap["jumpsuits"],
-                        null,
-                        false,
-                        "/products?category=jumpsuits",
-                      )
-                    }
-                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:rounded-lg hover:text-black"
-                  >
-                    Jumpsuits
-                  </button>
+                  {STYLES_ITEMS.map((item, i) => (
+                    <button
+                      key={item.categoryKey}
+                      onClick={() =>
+                        handleNavigateWithFilters(
+                          categoryMap[item.categoryKey],
+                          null,
+                          false,
+                          item.path,
+                        )
+                      }
+                      className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black ${
+                        i === 0 || i === STYLES_ITEMS.length - 1
+                          ? "hover:rounded-lg"
+                          : ""
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              {/* Shop by collection dropdown */}
+              {/* Shop by Collection — desktop hover dropdown */}
               <div className="relative group">
                 <span className="hover:text-gray-500 transition-colors cursor-pointer flex items-center">
                   Shop by collection
-                  <svg
-                    className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
+                  <ChevronSVG />
                 </span>
                 <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100">
-                  <button
-                    onClick={() =>
-                      handleNavigateWithFilters(
-                        categoryMap["solset"],
-                        categoryMap["solset"],
-                        false,
-                        "/products?collection=solset",
-                      )
-                    }
-                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:rounded-lg hover:text-black"
-                  >
-                    Solset
-                  </button>
-                  {/* Ocean and Floral commented out as not decided yet */}
-                  {/* <button onClick={() => { setSelectedCategory("Ocean"); setSelectedCollection("Ocean"); setSelectedNewArrivals(false); navigate("/products?collection=ocean"); }} className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black">Ocean</button> */}
-                  {/* <button onClick={() => { setSelectedCategory("Floral"); setSelectedCollection("Floral"); setSelectedNewArrivals(false); navigate("/products?collection=floral"); }} className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black">Floral</button> */}
+                  {COLLECTION_ITEMS.map((item) => (
+                    <button
+                      key={item.collectionKey}
+                      onClick={() =>
+                        handleNavigateWithFilters(
+                          categoryMap[item.categoryKey],
+                          categoryMap[item.collectionKey],
+                          false,
+                          item.path,
+                        )
+                      }
+                      className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:rounded-lg hover:text-black"
+                    >
+                      {item.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 
               <Link to="/about" className="hover:text-gray-500">
                 About
               </Link>
+              <Link to="/contact" className="hover:text-gray-500">
+                Contact Us
+              </Link>
             </div>
-
-            {/* Search Bar */}
-            {/* {isProductsPage && (
-              <div className="hidden lg:flex relative">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400"
-                />
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              </div>
-            )} */}
 
             {/* Icons */}
             <div
-              className={`flex items-center space-x-4  ${
+              className={`flex items-center space-x-4 ${
                 showMobileMenu || isScrolled || !isHomePage
                   ? "text-black"
                   : "text-white"
@@ -337,23 +305,17 @@ const Header = () => {
                   </span>
                 )}
               </button>
-              {/* <button
-                onClick={() => navigate("/login")}
-                className="hover:text-gray-500 transition-colors"
-                aria-label="Login"
-              >
-                <User className="h-6 w-6" />
-              </button> */}
             </div>
           </nav>
 
-          {/* Mobile Menu */}
+          {/* ── Mobile Menu ──────────────────────────────────────── */}
           <div
-            className={` lg:hidden border-t border-gray-200 transition-all duration-500 ease-in-out bg-white overflow-hidden ${
-              showMobileMenu ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+            className={`lg:hidden border-t border-gray-200 transition-all duration-500 ease-in-out bg-white overflow-hidden ${
+              showMobileMenu ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0"
             }`}
           >
             <div className="flex flex-col space-y-4 p-4">
+              {/* Search */}
               <div className="relative">
                 <input
                   type="text"
@@ -365,6 +327,7 @@ const Header = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               </div>
 
+              {/* Simple links */}
               <Link
                 to="/"
                 className="text-left text-black hover:text-gray-500"
@@ -401,117 +364,62 @@ const Header = () => {
                 New Arrivals
               </button>
 
-              {/* Shop by style - Mobile */}
-              <div className="flex flex-col space-y-2">
-                <div className="text-left text-black font-medium">
-                  Shop by style
-                </div>
-                <div className="flex flex-col space-y-2 pl-4">
+              {/* Shop by Styles — mobile accordion */}
+              <MobileAccordion label="Shop by style">
+                {STYLES_ITEMS.map((item) => (
                   <button
+                    key={item.categoryKey}
                     onClick={() =>
                       handleNavigateWithFilters(
-                        categoryMap["dresses"],
+                        categoryMap[item.categoryKey],
                         null,
                         false,
-                        "/products?category=dresses",
+                        item.path,
                         true,
                       )
                     }
                     className="text-left text-gray-600 hover:text-black"
                   >
-                    Dresses
+                    {item.label}
                   </button>
-                  <button
-                    onClick={() =>
-                      handleNavigateWithFilters(
-                        categoryMap["coord-sets"],
-                        null,
-                        false,
-                        "/products?category=coord-sets",
-                        true,
-                      )
-                    }
-                    className="text-left text-gray-600 hover:text-black"
-                  >
-                    Co-ord Sets
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleNavigateWithFilters(
-                        categoryMap["tops"],
-                        null,
-                        false,
-                        "/products?category=tops",
-                        true,
-                      )
-                    }
-                    className="text-left text-gray-600 hover:text-black"
-                  >
-                    Tops
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleNavigateWithFilters(
-                        categoryMap["bottomwear"],
-                        null,
-                        false,
-                        "/products?category=bottomwear",
-                        true,
-                      )
-                    }
-                    className="text-left text-gray-600 hover:text-black"
-                  >
-                    Bottomwear
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleNavigateWithFilters(
-                        categoryMap["jumpsuits"],
-                        null,
-                        false,
-                        "/products?category=jumpsuits",
-                        true,
-                      )
-                    }
-                    className="text-left text-gray-600 hover:text-black"
-                  >
-                    Jumpsuits
-                  </button>
-                </div>
-              </div>
+                ))}
+              </MobileAccordion>
 
-              {/* Shop by collecting - Mobile */}
-              <div className="flex flex-col space-y-2">
-                <div className="text-left text-black font-medium">
-                  Shop by collection
-                </div>
-                <div className="flex flex-col space-y-2 pl-4">
+              {/* Shop by Collection — mobile accordion */}
+              <MobileAccordion label="Shop by collection">
+                {COLLECTION_ITEMS.map((item) => (
                   <button
+                    key={item.collectionKey}
                     onClick={() =>
                       handleNavigateWithFilters(
-                        categoryMap["solset"],
-                        categoryMap["solset"],
+                        categoryMap[item.categoryKey],
+                        categoryMap[item.collectionKey],
                         false,
-                        "/products?collection=solset",
+                        item.path,
                         true,
                       )
                     }
                     className="text-left text-gray-600 hover:text-black"
                   >
-                    Solset
+                    {item.label}
                   </button>
-                  {/* Ocean and Floral commented out as not decided yet */}
-                  {/* <Link to="/products?collection=ocean" className="text-gray-600 hover:text-black" onClick={() => setShowMobileMenu(false)}>Ocean</Link> */}
-                  {/* <Link to="/products?collection=floral" className="text-gray-600 hover:text-black" onClick={() => setShowMobileMenu(false)}>Floral</Link> */}
-                </div>
-              </div>
+                ))}
+              </MobileAccordion>
 
+              {/* More links */}
               <Link
                 to="/about"
                 className="text-left text-black hover:text-gray-500"
                 onClick={() => setShowMobileMenu(false)}
               >
                 About
+              </Link>
+              <Link
+                to="/contact"
+                className="text-left text-black hover:text-gray-500"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                Contact Us
               </Link>
             </div>
           </div>
