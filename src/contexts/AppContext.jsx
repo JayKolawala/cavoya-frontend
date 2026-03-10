@@ -24,6 +24,7 @@ const initialState = {
   products: [],
   productsLoading: false,
   productsError: null,
+  isRefetching: false,
   // Pagination state
   nextCursor: null,
   hasMore: true,
@@ -177,6 +178,7 @@ function appReducer(state, action) {
         hasMore:
           action.payload.hasMore !== undefined ? action.payload.hasMore : false,
         productsLoading: false,
+        isRefetching: false,
         productsError: null,
       };
 
@@ -188,15 +190,17 @@ function appReducer(state, action) {
         hasMore:
           action.payload.hasMore !== undefined ? action.payload.hasMore : false,
         productsLoading: false,
+        isRefetching: false,
       };
 
     case "RESET_PRODUCTS":
+      // Keep existing products visible during refetch — prevents blank flash (flicker)
       return {
         ...state,
-        products: [],
         nextCursor: null,
         hasMore: true,
         productsLoading: true,
+        isRefetching: true,
       };
 
     case "SET_PAGINATION":
@@ -783,6 +787,7 @@ export function AppProvider({ children }) {
   };
 
   const value = {
+    isRefetching: state.isRefetching,
     ...state,
     dispatch,
     showCustomAlert,

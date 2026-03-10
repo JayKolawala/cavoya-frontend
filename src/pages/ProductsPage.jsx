@@ -13,6 +13,7 @@ const ProductsPage = () => {
   const {
     sortedProducts,
     productsLoading,
+    isRefetching,
     hasMore,
     loadMoreProducts,
     setSelectedCategory,
@@ -139,15 +140,24 @@ const ProductsPage = () => {
 
           {/* Products Section - 75% */}
           <main className="lg:w-3/4 flex-1">
-            {/* Loading State */}
-            {productsLoading && (
-              <div className="flex justify-center py-20">
-                <LoadingSpinner />
+            {/* Full-page spinner — only on cold first load (no products yet) */}
+            {productsLoading &&
+              !isRefetching &&
+              sortedProducts.length === 0 && (
+                <div className="flex justify-center py-20">
+                  <LoadingSpinner />
+                </div>
+              )}
+
+            {/* Slim refetch indicator — shown during filter/category changes */}
+            {isRefetching && (
+              <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden mb-4">
+                <div className="h-full bg-gradient-to-r from-pink-400 to-rose-500 animate-pulse rounded-full" />
               </div>
             )}
 
             {/* Products Grid with Infinite Scroll */}
-            {!productsLoading && sortedProducts.length > 0 && (
+            {sortedProducts.length > 0 && (
               <InfiniteScroll
                 dataLength={sortedProducts.length}
                 next={loadMoreProducts}

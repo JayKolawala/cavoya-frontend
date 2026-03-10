@@ -94,7 +94,7 @@ const Footer = () => {
         </div>
         <div className=" mt-8 pt-8 flex flex-col md:flex-row justify-between items-center border-t border-gray-800">
           <p className="text-gray-400 text-sm">
-            &copy; 2024 Cavoya. All rights reserved.
+            &copy; 2026 Cavoya. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <button

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Search, X } from "lucide-react";
 import { useAppContext } from "../../contexts/AppContext";
 import { PRODUCT_CATEGORIES } from "../../utils/constants";
@@ -6,14 +6,37 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import { isVideo } from "../../utils/mediaHelpers";
 
 const ProductManagement = () => {
-  const {
-    products,
-    addProduct,
-    updateProduct,
-    deleteProduct,
-    productsLoading,
-    productsError,
-  } = useAppContext();
+  const { addProduct, updateProduct, deleteProduct } = useAppContext();
+
+  // ── Independent admin product fetch (not capped by customer-page limit) ──
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL ||
+    "https://cavoya-backend.onrender.com/api";
+  const [adminProducts, setAdminProducts] = useState([]);
+  const [adminLoading, setAdminLoading] = useState(true);
+  const [adminError, setAdminError] = useState(null);
+
+  const fetchAdminProducts = async () => {
+    setAdminLoading(true);
+    setAdminError(null);
+    try {
+      const res = await fetch(`${API_BASE_URL}/products?limit=1000`);
+      const data = await res.json();
+      if (data?.data) {
+        setAdminProducts(data.data);
+      } else {
+        setAdminError("Unexpected response format");
+      }
+    } catch (err) {
+      setAdminError(err.message || "Failed to load products");
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAdminProducts();
+  }, []);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [editingProduct, setEditingProduct] = useState(null);
@@ -42,7 +65,7 @@ const ProductManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const filteredProducts = products.filter((product) =>
+  const filteredProducts = adminProducts.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
@@ -53,7 +76,7 @@ const ProductManagement = () => {
   const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
 
   // Reset to first page when search term changes
-  React.useEffect(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
 
@@ -111,6 +134,7 @@ const ProductManagement = () => {
         await addProduct(cleanedFormData);
       }
       resetForm();
+      await fetchAdminProducts(); // Refresh admin table
     } catch (error) {
       console.error("Error submitting product:", error);
       alert(error.message || "Failed to save product");
@@ -729,13 +753,14 @@ const ProductManagement = () => {
                         <Edit className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={() => {
+                        onClick={async () => {
                           if (
                             window.confirm(
                               "Are you sure you want to delete this product?",
                             )
                           ) {
-                            deleteProduct(product._id);
+                            await deleteProduct(product._id);
+                            await fetchAdminProducts(); // Refresh admin table
                           }
                         }}
                         className="p-2 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-lg transition-all duration-200"
@@ -747,7 +772,7 @@ const ProductManagement = () => {
                 </tr>
               ))}
 
-              {productsLoading && !submitLoading && (
+              {adminLoading && !submitLoading && (
                 <tr>
                   <td colSpan="7" className="text-center py-8">
                     <div className="flex justify-center items-center">
@@ -757,11 +782,11 @@ const ProductManagement = () => {
                 </tr>
               )}
 
-              {productsError && (
+              {adminError && (
                 <tr>
                   <td colSpan="7" className="p-4">
                     <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg text-center">
-                      Error: {productsError}
+                      Error: {adminError}
                     </div>
                   </td>
                 </tr>
@@ -771,7 +796,7 @@ const ProductManagement = () => {
         </div>
 
         {/* Pagination Controls */}
-        {filteredProducts.length > 0 && !productsLoading && (
+        {filteredProducts.length > 0 && !adminLoading && (
           <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-pink-50/30 border-t border-gray-200">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               {/* Page Info */}
@@ -831,7 +856,7 @@ const ProductManagement = () => {
           </div>
         )}
 
-        {filteredProducts.length === 0 && !productsLoading && (
+        {filteredProducts.length === 0 && !adminLoading && (
           <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-pink-50/30">
             <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg

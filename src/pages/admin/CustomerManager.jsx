@@ -11,7 +11,7 @@ const SAMPLE_CUSTOMERS = [
     name: "Priya Sharma",
     email: "priya.sharma@gmail.com",
     phone: "+91 98765 43210",
-    joinDate: "2024-08-15",
+    joinDate: "2026-08-15",
     status: "active",
     totalOrders: 5,
     totalSpent: 12450,
@@ -72,8 +72,8 @@ const CustomerManager = () => {
   const handleCustomerUpdate = (updatedCustomer) => {
     setCustomers(
       customers.map((customer) =>
-        customer.id === updatedCustomer.id ? updatedCustomer : customer
-      )
+        customer.id === updatedCustomer.id ? updatedCustomer : customer,
+      ),
     );
   };
 
@@ -82,8 +82,8 @@ const CustomerManager = () => {
       customers.map((customer) =>
         customer.id === customerId
           ? { ...customer, status: newStatus }
-          : customer
-      )
+          : customer,
+      ),
     );
   };
 
