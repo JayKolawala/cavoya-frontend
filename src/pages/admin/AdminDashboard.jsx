@@ -1,25 +1,69 @@
 // src/admin/pages/AdminDashboard.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Package, Users, FileText, Settings } from "lucide-react";
+import useApi from "../../hooks/useApi";
 
 const AdminDashboard = () => {
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [totalCustomers, setTotalCustomers] = useState(0);
+
+  const { loading: ordersLoading, get: getOrders } = useApi();
+  const { loading: productsLoading, get: getProducts } = useApi();
+  const { loading: customersLoading, get: getCustomers } = useApi();
+
+  useEffect(() => {
+    // Fetch total orders
+    const fetchStats = async () => {
+      try {
+        // Fetch Orders (we only need the count, so limit 1 is fine to keep query light)
+        const orderRes = await getOrders("/orders");
+        if (orderRes?.success) {
+          setTotalOrders(orderRes.total || orderRes.data?.length || 0);
+        }
+
+        // Fetch Products (use the same capless endpoint from ProductManagement)
+        const productRes = await getProducts("/products");
+        if (productRes?.success || productRes?.data) {
+          // If the API supports pagination metadata use that, else use array length
+          setTotalProducts(productRes.total || productRes.data?.length || 0);
+        }
+
+        // Uncomment and update endpoint when Customer API is ready
+        /*
+        const customerRes = await getCustomers("/customers?limit=1");
+        if (customerRes?.success) {
+          setTotalCustomers(customerRes.total || customerRes.data?.length || 0);
+        }
+        */
+        setTotalCustomers(48); // Temporary static fallback until customer API is wired
+      } catch (error) {
+        console.error("Failed to fetch dashboard stats:", error);
+      }
+    };
+
+    fetchStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const isLoading = ordersLoading || productsLoading;
   const stats = [
     {
       title: "Total Products",
-      value: "24",
+      value: totalProducts,
       icon: Package,
       color: "text-blue-500",
     },
     {
       title: "Total Orders",
-      value: "12",
+      value: totalOrders,
       icon: FileText,
       color: "text-green-500",
     },
     {
       title: "Total Customers",
-      value: "48",
+      value: totalCustomers,
       icon: Users,
       color: "text-purple-500",
     },
@@ -27,9 +71,15 @@ const AdminDashboard = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">
-        Dashboard Overview
-      </h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
+        {isLoading && (
+          <div className="text-sm text-gray-500 flex items-center">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-pink-500 mr-2"></div>
+            Loading stats...
+          </div>
+        )}
+      </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

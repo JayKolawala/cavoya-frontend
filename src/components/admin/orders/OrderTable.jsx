@@ -6,26 +6,24 @@ import OrderDetailsModal from "./OrderDetailsModal";
 import StatusUpdateModal from "./StatusUpdateModal";
 import { formatDate, formatCurrency } from "../../../utils/formatters";
 
-const OrderTable = ({ orders, onOrderUpdate }) => {
+const OrderTable = ({
+  orders,
+  onOrderUpdate,
+  currentPage,
+  totalPages,
+  totalOrders,
+  limit,
+  onPageChange,
+}) => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
   const [showStatusModal, setShowStatusModal] = useState(false);
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  // Calculate pagination
-  const totalPages = Math.ceil(orders.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedOrders = orders.slice(startIndex, endIndex);
-
-  // Reset to page 1 when orders change
-  React.useEffect(() => {
-    setCurrentPage(1);
-  }, [orders.length]);
+  // Use props for pagination logic
+  const startIndex = (currentPage - 1) * limit;
+  // endIndex is just for displaying "Showing X to Y"
+  const endIndex = startIndex + orders.length;
 
   const handleViewOrder = (order) => {
     setSelectedOrder(order);
@@ -106,7 +104,7 @@ const OrderTable = ({ orders, onOrderUpdate }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
-              {paginatedOrders.map((order, index) => (
+              {orders.map((order, index) => (
                 <tr
                   key={order.id}
                   className="hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200 group"
@@ -177,25 +175,26 @@ const OrderTable = ({ orders, onOrderUpdate }) => {
         </div>
 
         {/* Pagination Controls */}
-        {orders.length > 0 && (
+        {totalOrders > 0 && (
           <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-pink-50/30 border-t border-gray-200">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               {/* Page Info */}
               <div className="text-sm text-gray-700">
-                Showing <span className="font-semibold">{startIndex + 1}</span>{" "}
+                Showing{" "}
+                <span className="font-semibold">
+                  {totalOrders === 0 ? 0 : startIndex + 1}
+                </span>{" "}
                 to{" "}
                 <span className="font-semibold">
-                  {Math.min(endIndex, orders.length)}
+                  {Math.min(endIndex, totalOrders)}
                 </span>{" "}
-                of <span className="font-semibold">{orders.length}</span> orders
+                of <span className="font-semibold">{totalOrders}</span> orders
               </div>
 
               {/* Navigation Buttons */}
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
+                  onClick={() => onPageChange((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
@@ -208,7 +207,7 @@ const OrderTable = ({ orders, onOrderUpdate }) => {
                     (page) => (
                       <button
                         key={page}
-                        onClick={() => setCurrentPage(page)}
+                        onClick={() => onPageChange(page)}
                         className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                           currentPage === page
                             ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
@@ -217,15 +216,15 @@ const OrderTable = ({ orders, onOrderUpdate }) => {
                       >
                         {page}
                       </button>
-                    )
+                    ),
                   )}
                 </div>
 
                 <button
                   onClick={() =>
-                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    onPageChange((prev) => Math.min(prev + 1, totalPages))
                   }
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage >= totalPages}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   Next

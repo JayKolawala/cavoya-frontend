@@ -11,12 +11,26 @@ const OrderManager = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const limit = 10;
+
   const { loading, error, get, patch } = useApi();
 
   // Fetch orders from API
   const fetchOrders = async () => {
     try {
-      const response = await get("/orders");
+      // Build query string
+      const queryParams = new URLSearchParams({
+        page: currentPage,
+        limit: limit,
+      });
+      if (searchTerm) queryParams.append("search", searchTerm);
+      if (statusFilter !== "all") queryParams.append("status", statusFilter);
+
+      const response = await get(`/orders?${queryParams.toString()}`);
       if (response.success && response.data) {
         // Transform API response to match the component's expected format
         const transformedOrders = response.data.map((order) => ({
@@ -53,29 +67,30 @@ const OrderManager = () => {
             order.statusHistory?.[order.statusHistory.length - 1]?.note || "",
         }));
         setOrders(transformedOrders);
+        setTotalPages(response.totalPages || 1);
+        setTotalOrders(response.total || response.data.length);
       }
     } catch (err) {
       console.error("Failed to fetch orders:", err);
     }
   };
 
-  // Fetch orders on component mount
+  // Fetch orders on component mount and when dependencies change
   useEffect(() => {
     fetchOrders();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, searchTerm, statusFilter]);
 
-  // Filter orders based on search and status
-  const filteredOrders = orders.filter((order) => {
-    const matchesSearch =
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase());
+  // Handle Search and Filter changes (reset to page 1)
+  const handleSearchChange = (value) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  };
 
-    const matchesStatus =
-      statusFilter === "all" || order.status === statusFilter;
-
-    return matchesSearch && matchesStatus;
-  });
+  const handleStatusFilterChange = (value) => {
+    setStatusFilter(value);
+    setCurrentPage(1);
+  };
 
   const handleOrderUpdate = async (
     orderId,
@@ -133,7 +148,7 @@ const OrderManager = () => {
         </h1>
         <div className="text-sm text-gray-600 bg-gradient-to-r from-pink-50 to-rose-50 px-4 py-2 rounded-lg border border-pink-100">
           <span className="font-medium text-pink-900">Total Orders:</span>{" "}
-          <span className="font-bold text-pink-600">{orders.length}</span>
+          <span className="font-bold text-pink-600">{totalOrders}</span>
         </div>
       </div>
 
@@ -162,15 +177,20 @@ const OrderManager = () => {
           {/* Filters */}
           <OrderFilters
             searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
+            onSearchChange={handleSearchChange}
             statusFilter={statusFilter}
-            onStatusFilterChange={setStatusFilter}
+            onStatusFilterChange={handleStatusFilterChange}
           />
 
           {/* Orders Table */}
           <OrderTable
-            orders={filteredOrders}
+            orders={orders}
             onOrderUpdate={handleOrderUpdate}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalOrders={totalOrders}
+            limit={limit}
+            onPageChange={setCurrentPage}
           />
         </>
       )}
