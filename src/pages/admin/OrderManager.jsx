@@ -81,7 +81,7 @@ const OrderManager = () => {
     orderId,
     newStatus,
     trackingNumber = "",
-    notes = ""
+    notes = "",
   ) => {
     try {
       // Find the order to get its MongoDB _id
@@ -96,7 +96,9 @@ const OrderManager = () => {
       // Call API to update order status using MongoDB _id
       const response = await patch(`/orders/${order._id}/status`, {
         status: newStatus,
+        trackingNumber: trackingNumber || undefined,
         note: notes || `Status changed to ${newStatus}`,
+        notes: notes || undefined,
       });
 
       if (response.success) {
@@ -110,8 +112,8 @@ const OrderManager = () => {
                   trackingNumber: trackingNumber || o.trackingNumber,
                   notes: notes || o.notes,
                 }
-              : o
-          )
+              : o,
+          ),
         );
         // Optionally refetch to ensure sync with server
         // await fetchOrders();

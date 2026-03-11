@@ -1,15 +1,6 @@
 // pages/HomePage.jsx
 import React, { useState, useEffect } from "react";
-import {
-  Truck,
-  RefreshCw,
-  Shield,
-  Star,
-  Sparkles,
-  Heart,
-  ShoppingCart,
-} from "lucide-react";
-import ProductCard from "../components/ProductCard";
+import { Star, Sparkles, Heart, ShoppingCart } from "lucide-react";
 import { useAppContext } from "../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
