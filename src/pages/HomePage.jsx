@@ -6,6 +6,10 @@ import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import bgVideo2 from "../assets/bg-video2.mp4";
 import { isVideo } from "../utils/mediaHelpers";
+import floral1 from "../assets/Midnight-Garden-Floral.jpg";
+import floral2 from "../assets/Midnight-Botanical-Bloom.jpg";
+import solset1 from "../assets/Burning-Horizon.jpg";
+import solset2 from "../assets/Midnight-Aqua.jpg";
 
 const HomePage = () => {
   const {
@@ -250,71 +254,40 @@ const HomePage = () => {
             {/* Print 1 */}
             <div className="group cursor-pointer">
               <div className="aspect-square bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 mb-3 overflow-hidden">
-                <div
-                  className="w-full h-full opacity-60"
-                  style={{
-                    backgroundImage: `repeating-linear-gradient(
-                      45deg,
-                      #374151 0px,
-                      #374151 10px,
-                      #6b7280 10px,
-                      #6b7280 20px
-                    )`,
-                  }}
-                ></div>
+                <img src={floral1} className="w-full h-full" />
               </div>
               <p className="text-center text-sm text-gray-700 font-medium">
-                Geometric
+                Midnight Garden Floral
               </p>
             </div>
 
             {/* Print 2 */}
             <div className="group cursor-pointer">
               <div className="aspect-square bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 mb-3 overflow-hidden">
-                <div
-                  className="w-full h-full opacity-70"
-                  style={{
-                    backgroundImage: `repeating-linear-gradient(
-                      0deg,
-                      #1f2937 0px,
-                      #374151 15px,
-                      #1f2937 30px
-                    )`,
-                  }}
-                ></div>
+                <img src={floral2} className="w-full h-full" />
               </div>
               <p className="text-center text-sm text-gray-700 font-medium">
-                Linear
+                Midnight Botanical Bloom
               </p>
             </div>
 
             {/* Print 3 */}
             <div className="group cursor-pointer">
               <div className="aspect-square bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 mb-3 overflow-hidden">
-                <div className="w-full h-full opacity-60 bg-gradient-to-br from-gray-200 via-white to-gray-300"></div>
+                <img src={solset1} className="w-full h-full" />
               </div>
               <p className="text-center text-sm text-gray-700 font-medium">
-                Minimal
+                Burning Horizon
               </p>
             </div>
 
             {/* Print 4 */}
             <div className="group cursor-pointer">
               <div className="aspect-square bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 mb-3 overflow-hidden">
-                <div
-                  className="w-full h-full opacity-50"
-                  style={{
-                    backgroundImage: `repeating-linear-gradient(
-                      90deg,
-                      #111827 0px,
-                      #374151 8px,
-                      #111827 16px
-                    )`,
-                  }}
-                ></div>
+                <img src={solset2} className="w-full h-full" />
               </div>
               <p className="text-center text-sm text-gray-700 font-medium">
-                Classic
+                Midnight Aqua
               </p>
             </div>
           </div>

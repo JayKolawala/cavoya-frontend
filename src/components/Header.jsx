@@ -41,6 +41,12 @@ const COLLECTION_ITEMS = [
     collectionKey: "solset",
     path: "/products?collection=solset",
   },
+  {
+    label: "Floral",
+    categoryKey: "floral",
+    collectionKey: "floral",
+    path: "/products?collection=floral",
+  },
 ];
 
 // ─── Desktop chevron SVG (reused) ────────────────────────────────────────────
