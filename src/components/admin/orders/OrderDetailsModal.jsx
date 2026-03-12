@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { User, Package, MapPin, CreditCard, Download } from "lucide-react";
 import Modal from "../shared/Modal";
+import AlertModal from "../shared/AlertModal";
 import StatusBadge from "../shared/StatusBadge";
 import { formatDate, formatCurrency } from "../../../utils/formatters";
 import CavoyaLogo from "../../../assets/Cavoya_Logo_Pink.PNG";
@@ -279,7 +280,7 @@ const generateInvoicePDF = async (
         rect(ML + 2, curY + 2, THUMB, THUMB, GRAY_100, null, 1);
         try {
           doc.addImage(imgB64, "PNG", ML + 2, curY + 2, THUMB, THUMB);
-        } catch (_) {}
+        } catch (_) { }
       }
     } else {
       rect(ML + 2, curY + 2, THUMB, THUMB, GRAY_100, null, 1);
@@ -391,6 +392,9 @@ const generateInvoicePDF = async (
 // ─── Component ────────────────────────────────────────────────────────────────
 const OrderDetailsModal = ({ order, onClose }) => {
   const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, title: "", message: "" });
+  const showAlert = (title, message) =>
+    setAlertModal({ isOpen: true, title, message });
 
   const calculateSubtotal = (items) =>
     items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -411,350 +415,359 @@ const OrderDetailsModal = ({ order, onClose }) => {
       doc.save(`Invoice-${order.id}.pdf`);
     } catch (err) {
       console.error("PDF generation failed:", err);
-      alert("Failed to generate PDF. Please try again.");
+      showAlert("PDF Generation Failed", "Failed to generate PDF. Please try again.");
     } finally {
       setGeneratingPdf(false);
     }
   };
 
   return (
-    <Modal
-      isOpen={true}
-      onClose={onClose}
-      title={`Order Details - ${order.id}`}
-      size="lg"
-    >
-      <div className="bg-white">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Customer Information */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <User className="h-5 w-5 mr-2" />
-              Customer Information
-            </h3>
-            <div className="space-y-2">
-              <p>
-                <strong>Name:</strong> {order.customerName}
-              </p>
-              <p>
-                <strong>Email:</strong> {order.customerEmail}
-              </p>
-              <p>
-                <strong>Phone:</strong> {order.customerPhone}
-              </p>
-            </div>
-          </div>
-
-          {/* Order Information */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <Package className="h-5 w-5 mr-2" />
-              Order Information
-            </h3>
-            <div className="space-y-2">
-              <p>
-                <strong>Order Date:</strong> {formatDate(order.orderDate)}
-              </p>
-              <p>
-                <strong>Status:</strong>
-                <StatusBadge
-                  status={order.status}
-                  type="order"
-                  className="ml-2"
-                />
-              </p>
-              <p>
-                <strong>Estimated Delivery:</strong>{" "}
-                {formatDate(order.estimatedDelivery)}
-              </p>
-              {order.trackingNumber && (
+    <>
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal((p) => ({ ...p, isOpen: false }))}
+        title={alertModal.title}
+        message={alertModal.message}
+        type="error"
+      />
+      <Modal
+        isOpen={true}
+        onClose={onClose}
+        title={`Order Details - ${order.id}`}
+        size="lg"
+      >
+        <div className="bg-white">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Customer Information */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold mb-4 flex items-center">
+                <User className="h-5 w-5 mr-2" />
+                Customer Information
+              </h3>
+              <div className="space-y-2">
                 <p>
-                  <strong>Tracking Number:</strong> {order.trackingNumber}
+                  <strong>Name:</strong> {order.customerName}
                 </p>
-              )}
-            </div>
-          </div>
-
-          {/* Shipping Address */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <MapPin className="h-5 w-5 mr-2" />
-              Shipping Address
-            </h3>
-            <div className="text-sm">
-              <p>{order.shippingAddress.street}</p>
-              <p>
-                {order.shippingAddress.city}, {order.shippingAddress.state}
-              </p>
-              <p>{order.shippingAddress.pincode}</p>
-              <p>{order.shippingAddress.country}</p>
-            </div>
-          </div>
-
-          {/* Payment Information */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <CreditCard className="h-5 w-5 mr-2" />
-              Payment Information
-            </h3>
-            <div className="space-y-2">
-              <p>
-                <strong>Method:</strong> {order.paymentMethod}
-              </p>
-              <p>
-                <strong>Status:</strong>
-                <StatusBadge
-                  status={order.paymentStatus}
-                  type="payment"
-                  className="ml-2"
-                />
-              </p>
-              <p>
-                <strong>Total Amount:</strong>{" "}
-                {formatCurrency(order.totalAmount)}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Order Items */}
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-4">Order Items</h3>
-
-          {/* ── MOBILE: card-per-item (hidden on md+) ── */}
-          <div className="md:hidden space-y-3">
-            {order.items.map((item) => (
-              <div
-                key={item.id}
-                className="bg-gray-50 rounded-lg p-3 border border-gray-200"
-              >
-                {/* Product row */}
-                <div className="flex items-center gap-3 mb-3">
-                  {item.video ||
-                  /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(item.image || "") ? (
-                    <video
-                      src={item.video || item.image}
-                      className="h-14 w-14 rounded-lg object-cover flex-shrink-0"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      crossOrigin="anonymous"
-                    />
-                  ) : (
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      crossOrigin="anonymous"
-                      className="h-14 w-14 rounded-lg object-cover flex-shrink-0"
-                    />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-gray-900 truncate">
-                      {item.name}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      {item.size} / {item.color}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Details grid */}
-                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-gray-200">
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
-                      Qty
-                    </p>
-                    <p className="text-sm font-semibold text-gray-800 mt-0.5">
-                      {item.quantity}
-                    </p>
-                  </div>
-                  <div className="text-center border-x border-gray-200">
-                    <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
-                      Price
-                    </p>
-                    <p className="text-sm font-semibold text-gray-800 mt-0.5">
-                      {formatCurrency(item.price)}
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
-                      Total
-                    </p>
-                    <p className="text-sm font-semibold text-pink-600 mt-0.5">
-                      {formatCurrency(item.price * item.quantity)}
-                    </p>
-                  </div>
-                </div>
+                <p>
+                  <strong>Email:</strong> {order.customerEmail}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {order.customerPhone}
+                </p>
               </div>
-            ))}
+            </div>
 
-            {/* Mobile totals */}
-            <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
-              <div className="flex justify-between items-center px-4 py-2.5 border-b border-gray-200">
-                <span className="text-sm text-gray-600 font-medium">
-                  Subtotal
-                </span>
-                <span className="text-sm font-semibold text-gray-800">
-                  {formatCurrency(calculateSubtotal(order.items))}
-                </span>
+            {/* Order Information */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold mb-4 flex items-center">
+                <Package className="h-5 w-5 mr-2" />
+                Order Information
+              </h3>
+              <div className="space-y-2">
+                <p>
+                  <strong>Order Date:</strong> {formatDate(order.orderDate)}
+                </p>
+                <p>
+                  <strong>Status:</strong>
+                  <StatusBadge
+                    status={order.status}
+                    type="order"
+                    className="ml-2"
+                  />
+                </p>
+                <p>
+                  <strong>Estimated Delivery:</strong>{" "}
+                  {formatDate(order.estimatedDelivery)}
+                </p>
+                {order.trackingNumber && (
+                  <p>
+                    <strong>Tracking Number:</strong> {order.trackingNumber}
+                  </p>
+                )}
               </div>
-              <div className="flex justify-between items-center px-4 py-2.5 border-b border-gray-200">
-                <span className="text-sm text-gray-600 font-medium">
-                  Shipping
-                </span>
-                <span className="text-sm font-medium text-gray-800">Free</span>
+            </div>
+
+            {/* Shipping Address */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold mb-4 flex items-center">
+                <MapPin className="h-5 w-5 mr-2" />
+                Shipping Address
+              </h3>
+              <div className="text-sm">
+                <p>{order.shippingAddress.street}</p>
+                <p>
+                  {order.shippingAddress.city}, {order.shippingAddress.state}
+                </p>
+                <p>{order.shippingAddress.pincode}</p>
+                <p>{order.shippingAddress.country}</p>
               </div>
-              <div className="flex justify-between items-center px-4 py-3 bg-pink-50 border-t border-pink-100">
-                <span className="text-base font-bold text-gray-900">Total</span>
-                <span className="text-base font-bold text-pink-600">
+            </div>
+
+            {/* Payment Information */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold mb-4 flex items-center">
+                <CreditCard className="h-5 w-5 mr-2" />
+                Payment Information
+              </h3>
+              <div className="space-y-2">
+                <p>
+                  <strong>Method:</strong> {order.paymentMethod}
+                </p>
+                <p>
+                  <strong>Status:</strong>
+                  <StatusBadge
+                    status={order.paymentStatus}
+                    type="payment"
+                    className="ml-2"
+                  />
+                </p>
+                <p>
+                  <strong>Total Amount:</strong>{" "}
                   {formatCurrency(order.totalAmount)}
-                </span>
+                </p>
               </div>
             </div>
           </div>
 
-          {/* ── DESKTOP: full table (hidden below md) ── */}
-          <div className="hidden md:block bg-gray-50 rounded-lg overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                    Product
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                    Size/Color
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                    Quantity
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                    Price
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                    Total
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {order.items.map((item) => (
-                  <tr key={item.id} className="border-t border-gray-200">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center">
-                        {item.video ||
-                        /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(
-                          item.image || "",
-                        ) ? (
-                          <video
-                            src={item.video || item.image}
-                            className="h-12 w-12 rounded object-cover mr-3"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            crossOrigin="anonymous"
-                          />
-                        ) : (
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            crossOrigin="anonymous"
-                            className="h-12 w-12 rounded object-cover mr-3"
-                          />
-                        )}
-                        <p className="font-medium text-sm">{item.name}</p>
-                      </div>
+          {/* Order Items */}
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-4">Order Items</h3>
+
+            {/* ── MOBILE: card-per-item (hidden on md+) ── */}
+            <div className="md:hidden space-y-3">
+              {order.items.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                >
+                  {/* Product row */}
+                  <div className="flex items-center gap-3 mb-3">
+                    {item.video ||
+                      /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(item.image || "") ? (
+                      <video
+                        src={item.video || item.image}
+                        className="h-14 w-14 rounded-lg object-cover flex-shrink-0"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        crossOrigin="anonymous"
+                      />
+                    ) : (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        crossOrigin="anonymous"
+                        className="h-14 w-14 rounded-lg object-cover flex-shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-gray-900 truncate">
+                        {item.name}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        {item.size} / {item.color}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Details grid */}
+                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-gray-200">
+                    <div className="text-center">
+                      <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
+                        Qty
+                      </p>
+                      <p className="text-sm font-semibold text-gray-800 mt-0.5">
+                        {item.quantity}
+                      </p>
+                    </div>
+                    <div className="text-center border-x border-gray-200">
+                      <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
+                        Price
+                      </p>
+                      <p className="text-sm font-semibold text-gray-800 mt-0.5">
+                        {formatCurrency(item.price)}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
+                        Total
+                      </p>
+                      <p className="text-sm font-semibold text-pink-600 mt-0.5">
+                        {formatCurrency(item.price * item.quantity)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Mobile totals */}
+              <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                <div className="flex justify-between items-center px-4 py-2.5 border-b border-gray-200">
+                  <span className="text-sm text-gray-600 font-medium">
+                    Subtotal
+                  </span>
+                  <span className="text-sm font-semibold text-gray-800">
+                    {formatCurrency(calculateSubtotal(order.items))}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center px-4 py-2.5 border-b border-gray-200">
+                  <span className="text-sm text-gray-600 font-medium">
+                    Shipping
+                  </span>
+                  <span className="text-sm font-medium text-gray-800">Free</span>
+                </div>
+                <div className="flex justify-between items-center px-4 py-3 bg-pink-50 border-t border-pink-100">
+                  <span className="text-base font-bold text-gray-900">Total</span>
+                  <span className="text-base font-bold text-pink-600">
+                    {formatCurrency(order.totalAmount)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* ── DESKTOP: full table (hidden below md) ── */}
+            <div className="hidden md:block bg-gray-50 rounded-lg overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      Product
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      Size/Color
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      Quantity
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      Price
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                      Total
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.items.map((item) => (
+                    <tr key={item.id} className="border-t border-gray-200">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center">
+                          {item.video ||
+                            /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(
+                              item.image || "",
+                            ) ? (
+                            <video
+                              src={item.video || item.image}
+                              className="h-12 w-12 rounded object-cover mr-3"
+                              autoPlay
+                              loop
+                              muted
+                              playsInline
+                              crossOrigin="anonymous"
+                            />
+                          ) : (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              crossOrigin="anonymous"
+                              className="h-12 w-12 rounded object-cover mr-3"
+                            />
+                          )}
+                          <p className="font-medium text-sm">{item.name}</p>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        {item.size} / {item.color}
+                      </td>
+                      <td className="px-4 py-3 text-sm">{item.quantity}</td>
+                      <td className="px-4 py-3 text-sm">
+                        {formatCurrency(item.price)}
+                      </td>
+                      <td className="px-4 py-3 text-sm font-medium">
+                        {formatCurrency(item.price * item.quantity)}
+                      </td>
+                    </tr>
+                  ))}
+                  <tr className="border-t border-gray-200 bg-gray-100">
+                    <td colSpan="4" className="px-4 py-3 text-right font-medium">
+                      Subtotal:
                     </td>
-                    <td className="px-4 py-3 text-sm">
-                      {item.size} / {item.color}
-                    </td>
-                    <td className="px-4 py-3 text-sm">{item.quantity}</td>
-                    <td className="px-4 py-3 text-sm">
-                      {formatCurrency(item.price)}
-                    </td>
-                    <td className="px-4 py-3 text-sm font-medium">
-                      {formatCurrency(item.price * item.quantity)}
+                    <td className="px-4 py-3 font-bold">
+                      {formatCurrency(calculateSubtotal(order.items))}
                     </td>
                   </tr>
-                ))}
-                <tr className="border-t border-gray-200 bg-gray-100">
-                  <td colSpan="4" className="px-4 py-3 text-right font-medium">
-                    Subtotal:
-                  </td>
-                  <td className="px-4 py-3 font-bold">
-                    {formatCurrency(calculateSubtotal(order.items))}
-                  </td>
-                </tr>
-                <tr className="bg-gray-100">
-                  <td colSpan="4" className="px-4 py-3 text-right font-medium">
-                    Shipping:
-                  </td>
-                  <td className="px-4 py-3 font-medium">Free</td>
-                </tr>
-                <tr className="bg-gray-100 border-t border-gray-300">
-                  <td
-                    colSpan="4"
-                    className="px-4 py-3 text-right text-lg font-bold"
-                  >
-                    Total:
-                  </td>
-                  <td className="px-4 py-3 text-lg font-bold">
-                    {formatCurrency(order.totalAmount)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  <tr className="bg-gray-100">
+                    <td colSpan="4" className="px-4 py-3 text-right font-medium">
+                      Shipping:
+                    </td>
+                    <td className="px-4 py-3 font-medium">Free</td>
+                  </tr>
+                  <tr className="bg-gray-100 border-t border-gray-300">
+                    <td
+                      colSpan="4"
+                      className="px-4 py-3 text-right text-lg font-bold"
+                    >
+                      Total:
+                    </td>
+                    <td className="px-4 py-3 text-lg font-bold">
+                      {formatCurrency(order.totalAmount)}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
+
+          {order.notes && (
+            <div className="mt-6 bg-yellow-50 p-4 rounded-lg">
+              <h4 className="font-medium text-yellow-800 mb-2">Notes:</h4>
+              <p className="text-yellow-700 text-sm">{order.notes}</p>
+            </div>
+          )}
         </div>
 
-        {order.notes && (
-          <div className="mt-6 bg-yellow-50 p-4 rounded-lg">
-            <h4 className="font-medium text-yellow-800 mb-2">Notes:</h4>
-            <p className="text-yellow-700 text-sm">{order.notes}</p>
-          </div>
-        )}
-      </div>
-
-      {/* Generate PDF Button */}
-      <div className="mt-6 flex justify-end">
-        <button
-          onClick={handleGeneratePDF}
-          disabled={generatingPdf}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-pink-600 hover:bg-pink-700 disabled:bg-pink-300 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
-        >
-          {generatingPdf ? (
-            <>
-              <svg
-                className="animate-spin h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8H4z"
-                />
-              </svg>
-              Generating…
-            </>
-          ) : (
-            <>
-              <Download className="h-4 w-4" />
-              Generate PDF
-            </>
-          )}
-        </button>
-      </div>
-    </Modal>
+        {/* Generate PDF Button */}
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={handleGeneratePDF}
+            disabled={generatingPdf}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-pink-600 hover:bg-pink-700 disabled:bg-pink-300 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
+          >
+            {generatingPdf ? (
+              <>
+                <svg
+                  className="animate-spin h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  />
+                </svg>
+                Generating…
+              </>
+            ) : (
+              <>
+                <Download className="h-4 w-4" />
+                Generate PDF
+              </>
+            )}
+          </button>
+        </div>
+      </Modal>
+    </>
   );
 };
 

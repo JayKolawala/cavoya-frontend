@@ -34,6 +34,7 @@ import ProductManagement from "./pages/admin/ProductManagement";
 import AdminLayout from "./pages/admin/AdminLayout";
 import OrderManager from "./pages/admin/OrderManager";
 import CustomerManager from "./pages/admin/CustomerManager";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 // Admin Route Protection Component
 const ProtectedAdminRoute = ({ children }) => {
@@ -77,6 +78,7 @@ function App() {
                     <Route path="products" element={<ProductManagement />} />
                     <Route path="orders" element={<OrderManager />} />
                     <Route path="customers" element={<CustomerManager />} />
+                    <Route path="settings" element={<AdminSettings />} />
                   </Route>
 
                   {/* Public Routes with Header/Footer */}

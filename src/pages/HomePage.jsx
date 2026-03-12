@@ -6,10 +6,8 @@ import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import bgVideo2 from "../assets/bg-video2.mp4";
 import { isVideo } from "../utils/mediaHelpers";
-import floral1 from "../assets/Midnight-Garden-Floral.jpg";
-import floral2 from "../assets/Midnight-Botanical-Bloom.jpg";
-import solset1 from "../assets/Burning-Horizon.jpg";
-import solset2 from "../assets/Midnight-Aqua.jpg";
+import { API_BASE_URL, API_ENDPOINTS } from "../utils/apiHelpers";
+
 
 const HomePage = () => {
   const {
@@ -22,10 +20,34 @@ const HomePage = () => {
   } = useAppContext();
   const [_selectedProduct, setSelectedProduct] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [prints, setPrints] = useState([]);
+  const [printsLoading, setPrintsLoading] = useState(true);
+  const [printsError, setPrintsError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     setIsVisible(true);
+  }, []);
+
+  useEffect(() => {
+    const fetchPrints = async () => {
+      try {
+        setPrintsLoading(true);
+        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.PRINTS}`);
+        if (!response.ok) throw new Error("Failed to fetch prints");
+        const data = await response.json();
+        // Handle array or wrapped response: { data: [] } / { prints: [] }
+        const printsArray = Array.isArray(data)
+          ? data
+          : data.data ?? data.prints ?? [];
+        setPrints(printsArray);
+      } catch (err) {
+        setPrintsError(err.message);
+      } finally {
+        setPrintsLoading(false);
+      }
+    };
+    fetchPrints();
   }, []);
 
   const handleProductClick = (product) => {
@@ -54,9 +76,8 @@ const HomePage = () => {
 
         {/* Hero Content */}
         <div
-          className={`relative z-10 text-center px-4 transition-all duration-1000 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
+          className={`relative z-10 text-center px-4 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+            }`}
         >
           <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
             <Sparkles className="w-4 h-4 text-gray-300" />
@@ -152,11 +173,10 @@ const HomePage = () => {
                         className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <Heart
-                          className={`h-4 w-4 ${
-                            isInWishlist
-                              ? "fill-gray-900 text-gray-900"
-                              : "text-gray-600 hover:text-gray-900"
-                          } transition-colors`}
+                          className={`h-4 w-4 ${isInWishlist
+                            ? "fill-gray-900 text-gray-900"
+                            : "text-gray-600 hover:text-gray-900"
+                            } transition-colors`}
                         />
                       </button>
 
@@ -250,47 +270,30 @@ const HomePage = () => {
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto">
-            {/* Print 1 */}
-            <div className="group cursor-pointer">
-              <div className="aspect-square bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 mb-3 overflow-hidden">
-                <img src={floral1} className="w-full h-full" />
-              </div>
-              <p className="text-center text-sm text-gray-700 font-medium">
-                Midnight Garden Floral
-              </p>
+          {printsLoading ? (
+            <div className="flex justify-center py-20">
+              <LoadingSpinner />
             </div>
-
-            {/* Print 2 */}
-            <div className="group cursor-pointer">
-              <div className="aspect-square bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 mb-3 overflow-hidden">
-                <img src={floral2} className="w-full h-full" />
-              </div>
-              <p className="text-center text-sm text-gray-700 font-medium">
-                Midnight Botanical Bloom
-              </p>
+          ) : printsError ? (
+            <p className="text-center text-red-500">{printsError}</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto">
+              {prints.map((print) => (
+                <div key={print._id || print.id} className="group cursor-pointer">
+                  <div className="aspect-square bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 mb-3 overflow-hidden">
+                    <img
+                      src={print.image}
+                      alt={print.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <p className="text-center text-sm text-gray-700 font-medium">
+                    {print.name}
+                  </p>
+                </div>
+              ))}
             </div>
-
-            {/* Print 3 */}
-            <div className="group cursor-pointer">
-              <div className="aspect-square bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 mb-3 overflow-hidden">
-                <img src={solset1} className="w-full h-full" />
-              </div>
-              <p className="text-center text-sm text-gray-700 font-medium">
-                Burning Horizon
-              </p>
-            </div>
-
-            {/* Print 4 */}
-            <div className="group cursor-pointer">
-              <div className="aspect-square bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 mb-3 overflow-hidden">
-                <img src={solset2} className="w-full h-full" />
-              </div>
-              <p className="text-center text-sm text-gray-700 font-medium">
-                Midnight Aqua
-              </p>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 

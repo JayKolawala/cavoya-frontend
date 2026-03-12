@@ -28,6 +28,13 @@ export const API_ENDPOINTS = {
     RATINGS: '/ratings',
     PRODUCT_RATINGS: (productId) => `/ratings/product/${productId}`,
     SUBMIT_RATING: '/ratings',
+
+    // Collections
+    COLLECTIONS: '/collections',
+    COLLECTION_BY_ID: (id) => `/collections/${id}`,
+    PRINTS: '/collections/prints',
+    COLLECTION_PRINTS: (collId) => `/collections/${collId}/prints`,
+    COLLECTION_PRINT_BY_ID: (collId, printId) => `/collections/${collId}/prints/${printId}`,
 };
 
 /**

@@ -101,7 +101,6 @@ export const PRODUCT_CATEGORIES = [
     "Tops",
     "Bottomwear",
     "Jumpsuits",
-    "Solset",
 ];
 
 // Indian States

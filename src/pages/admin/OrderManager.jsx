@@ -5,6 +5,7 @@ import OrderFilters from "../../components/admin/orders/OrderFilters";
 import OrderTable from "../../components/admin/orders/OrderTable";
 import OrderStats from "../../components/admin/orders/OrderStats";
 import useApi from "../../hooks/useApi";
+import AlertModal from "../../components/admin/shared/AlertModal";
 
 const OrderManager = () => {
   const [orders, setOrders] = useState([]);
@@ -16,6 +17,11 @@ const OrderManager = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalOrders, setTotalOrders] = useState(0);
   const limit = 10;
+
+  // Alert modal state
+  const [alertModal, setAlertModal] = useState({ isOpen: false, title: "", message: "", type: "error" });
+  const showAlert = (title, message, type = "error") =>
+    setAlertModal({ isOpen: true, title, message, type });
 
   const { loading, error, get, patch } = useApi();
 
@@ -104,7 +110,7 @@ const OrderManager = () => {
 
       if (!order || !order._id) {
         console.error("Order not found or missing _id:", orderId);
-        alert("Failed to update order: Order not found");
+        showAlert("Order Not Found", "Failed to update order: the order could not be found.");
         return;
       }
 
@@ -122,11 +128,11 @@ const OrderManager = () => {
           orders.map((o) =>
             o.id === orderId
               ? {
-                  ...o,
-                  status: newStatus,
-                  trackingNumber: trackingNumber || o.trackingNumber,
-                  notes: notes || o.notes,
-                }
+                ...o,
+                status: newStatus,
+                trackingNumber: trackingNumber || o.trackingNumber,
+                notes: notes || o.notes,
+              }
               : o,
           ),
         );
@@ -135,12 +141,21 @@ const OrderManager = () => {
       }
     } catch (err) {
       console.error("Failed to update order status:", err);
-      alert("Failed to update order status. Please try again.");
+      showAlert("Update Failed", "Failed to update order status. Please try again.");
     }
   };
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
+      {/* Alert Modal */}
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal((p) => ({ ...p, isOpen: false }))}
+        title={alertModal.title}
+        message={alertModal.message}
+        type={alertModal.type}
+      />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-6">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-800">

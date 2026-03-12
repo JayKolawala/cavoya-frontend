@@ -84,9 +84,9 @@ function appReducer(state, action) {
         cartItems: state.cartItems.map((item) =>
           item.id === action.payload.id
             ? {
-                ...item,
-                quantity: Math.max(1, item.quantity + action.payload.change),
-              }
+              ...item,
+              quantity: Math.max(1, item.quantity + action.payload.change),
+            }
             : item,
         ),
       };
@@ -430,6 +430,13 @@ export function AppProvider({ children }) {
       if (productData.bestSeller !== undefined) {
         formData.append("bestSeller", productData.bestSeller);
       }
+      // Print collection fields
+      if (productData.printCollectionId) {
+        formData.append("printCollectionId", productData.printCollectionId);
+      }
+      if (productData.printId) {
+        formData.append("printId", productData.printId);
+      }
 
       // Add multiple image/video files
       if (productData.imageFiles && productData.imageFiles.length > 0) {
@@ -498,6 +505,13 @@ export function AppProvider({ children }) {
       }
       if (productData.bestSeller !== undefined) {
         formData.append("bestSeller", productData.bestSeller);
+      }
+      // Print collection fields
+      if (productData.printCollectionId) {
+        formData.append("printCollectionId", productData.printCollectionId);
+      }
+      if (productData.printId) {
+        formData.append("printId", productData.printId);
       }
 
       // Handle images - if new files uploaded, they replace existing ones
@@ -648,14 +662,14 @@ export function AppProvider({ children }) {
     const matchesCategory =
       state.selectedCategory === "all" ||
       product.category?.toLowerCase().trim() ===
-        state.selectedCategory?.toLowerCase().trim();
+      state.selectedCategory?.toLowerCase().trim();
 
     // Collection filtering - check category field since collection field doesn't exist in API
     // "Solset" is actually stored as a category in the database
     const matchesCollection =
       !state.selectedCollection ||
       product.category?.toLowerCase().trim() ===
-        state.selectedCollection?.toLowerCase().trim();
+      state.selectedCollection?.toLowerCase().trim();
 
     // New arrivals - use isFeatured since isNew field doesn't exist in API
     const matchesNewArrivals =

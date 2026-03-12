@@ -17,7 +17,6 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import StarDisplay from "../components/StarDisplay";
 import ReviewsDisplay from "../components/ReviewsDisplay";
 import { isVideo } from "../utils/mediaHelpers";
-import { getColorClasses } from "../utils/colorHelpers";
 import { API_BASE_URL } from "../utils/apiHelpers";
 
 const ProductPage = () => {
@@ -30,12 +29,12 @@ const ProductPage = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  
+
   // Check URL params to auto-open reviews section
   const searchParams = new URLSearchParams(location.search);
   const shouldShowReviews = searchParams.get("rate") === "true" || searchParams.get("showReviews") === "true";
   const [activeAccordion, setActiveAccordion] = useState(shouldShowReviews ? "reviews" : null);
-  
+
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
 
@@ -83,36 +82,36 @@ const ProductPage = () => {
   // If no related products, fallback to any other products
   const relatedProducts = selectedProduct
     ? (() => {
-        // First, try to find products in the same category
-        const sameCategory = products.filter(
-          (p) =>
-            p.category === selectedProduct.category &&
-            p.id !== selectedProduct.id &&
-            p._id !== selectedProduct._id,
-        );
+      // First, try to find products in the same category
+      const sameCategory = products.filter(
+        (p) =>
+          p.category === selectedProduct.category &&
+          p.id !== selectedProduct.id &&
+          p._id !== selectedProduct._id,
+      );
 
-        // If we have related products from same category, use them
-        if (sameCategory.length > 0) {
-          return sameCategory.slice(0, 4);
-        }
+      // If we have related products from same category, use them
+      if (sameCategory.length > 0) {
+        return sameCategory.slice(0, 4);
+      }
 
-        // Otherwise, show any other products (excluding current)
-        return products
-          .filter(
-            (p) => p.id !== selectedProduct.id && p._id !== selectedProduct._id,
-          )
-          .slice(0, 4);
-      })()
+      // Otherwise, show any other products (excluding current)
+      return products
+        .filter(
+          (p) => p.id !== selectedProduct.id && p._id !== selectedProduct._id,
+        )
+        .slice(0, 4);
+    })()
     : [];
 
   // Determine section title based on whether we found related products
   const productsSectionTitle = selectedProduct
     ? products.some(
-        (p) =>
-          p.category === selectedProduct.category &&
-          p.id !== selectedProduct.id &&
-          p._id !== selectedProduct._id,
-      )
+      (p) =>
+        p.category === selectedProduct.category &&
+        p.id !== selectedProduct.id &&
+        p._id !== selectedProduct._id,
+    )
       ? "Related Products"
       : "You May Also Like"
     : "Related Products";
@@ -261,9 +260,8 @@ const ProductPage = () => {
         )}
       </button>
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-[2000px] pb-4 px-4" : "max-h-0"
-        }`}
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-[2000px] pb-4 px-4" : "max-h-0"
+          }`}
       >
         <div className="text-gray-600 text-sm leading-relaxed">{children}</div>
       </div>
@@ -316,11 +314,10 @@ const ProductPage = () => {
               {productMedia.map((media, index) => (
                 <div
                   key={index}
-                  className={`relative flex-shrink-0 w-24 h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${
-                    activeMediaIndex === index
+                  className={`relative flex-shrink-0 w-24 h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${activeMediaIndex === index
                       ? "ring-4 ring-gray-700 shadow-lg scale-105"
                       : "hover:opacity-80 hover:scale-105 shadow-md"
-                  }`}
+                    }`}
                   onClick={() => setActiveMediaIndex(index)}
                 >
                   {media.type === "video" ? (
@@ -466,11 +463,10 @@ const ProductPage = () => {
                 {selectedProduct.sizes.map((size) => (
                   <button
                     key={size}
-                    className={`px-4 py-2 border rounded-md transition-colors ${
-                      selectedSize === size
+                    className={`px-4 py-2 border rounded-md transition-colors ${selectedSize === size
                         ? "border-gray-900 bg-gray-100 text-gray-900"
                         : "border-gray-300 hover:border-gray-500"
-                    }`}
+                      }`}
                     onClick={() => setSelectedSize(size)}
                   >
                     {size}
@@ -486,11 +482,10 @@ const ProductPage = () => {
               addToCart(selectedProduct, selectedColor, selectedSize)
             }
             disabled={selectedProduct.inventory?.stock <= 0}
-            className={`w-full py-4 rounded-lg font-bold transition-transform transform ${
-              selectedProduct.inventory?.stock > 0
+            className={`w-full py-4 rounded-lg font-bold transition-transform transform ${selectedProduct.inventory?.stock > 0
                 ? "bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            } mb-4`}
+              } mb-4`}
           >
             {selectedProduct.inventory?.stock > 0
               ? "Add to Cart"
@@ -635,14 +630,14 @@ const ProductPage = () => {
 
       {/* Reviews Display Section - Only show reviews, no rating form */}
       <div className="border-b border-gray-200">
-              <div className="py-4 px-4 ">
-                <h3 className="text-gray-700 text-center font-medium text-2xl mb-6">Customer Reviews ({reviews.length})</h3>
-                <div className="space-y-6">
-                  {/* Reviews Display */}
-                  <ReviewsDisplay reviews={reviews} loading={reviewsLoading} />
-                </div>
-              </div>
-            </div>
+        <div className="py-4 px-4 ">
+          <h3 className="text-gray-700 text-center font-medium text-2xl mb-6">Customer Reviews ({reviews.length})</h3>
+          <div className="space-y-6">
+            {/* Reviews Display */}
+            <ReviewsDisplay reviews={reviews} loading={reviewsLoading} />
+          </div>
+        </div>
+      </div>
 
       {/* Related Products Section */}
       {relatedProducts.length > 0 && (

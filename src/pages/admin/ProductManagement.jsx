@@ -4,6 +4,8 @@ import { useAppContext } from "../../contexts/AppContext";
 import { PRODUCT_CATEGORIES } from "../../utils/constants";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { isVideo } from "../../utils/mediaHelpers";
+import AlertModal from "../../components/admin/shared/AlertModal";
+import { API_BASE_URL } from "../../utils/apiHelpers";
 
 const ProductManagement = () => {
   const { addProduct, updateProduct, deleteProduct } = useAppContext();
@@ -41,6 +43,23 @@ const ProductManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [editingProduct, setEditingProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
+
+  // Alert / confirm modal state
+  const [alertModal, setAlertModal] = useState({ isOpen: false, title: "", message: "", type: "error" });
+  const showAlert = (title, message, type = "error") =>
+    setAlertModal({ isOpen: true, title, message, type });
+
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, productId: null });
+  const openDeleteConfirm = (productId) =>
+    setConfirmModal({ isOpen: true, productId });
+  const handleDeleteConfirmed = async () => {
+    const { productId } = confirmModal;
+    setConfirmModal({ isOpen: false, productId: null });
+    if (productId) {
+      await deleteProduct(productId);
+      await fetchAdminProducts();
+    }
+  };
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -55,7 +74,43 @@ const ProductManagement = () => {
     inventory: {
       stock: 0,
     },
+    printCollectionId: "",
+    printId: "",
   });
+
+  // ── Collections & Prints state ─────────────────────────────────────────
+  const [collections, setCollections] = useState([]);
+  const [prints, setPrints] = useState([]);
+  const [collectionsLoading, setCollectionsLoading] = useState(false);
+  const [printsLoading, setPrintsLoading] = useState(false);
+
+  // Fetch all collections on mount
+  useEffect(() => {
+    setCollectionsLoading(true);
+    fetch(`${API_BASE_URL}/collections`)
+      .then((r) => r.json())
+      .then((data) => {
+        const arr = Array.isArray(data) ? data : data.data ?? data.collections ?? [];
+        setCollections(arr);
+      })
+      .catch(console.error)
+      .finally(() => setCollectionsLoading(false));
+  }, []);
+
+  // Fetch prints whenever the selected collection changes
+  useEffect(() => {
+    const collId = formData.printCollectionId;
+    if (!collId) { setPrints([]); return; }
+    setPrintsLoading(true);
+    fetch(`${API_BASE_URL}/collections/${collId}/prints`)
+      .then((r) => r.json())
+      .then((data) => {
+        const arr = Array.isArray(data) ? data : data.data ?? data.prints ?? [];
+        setPrints(arr);
+      })
+      .catch(console.error)
+      .finally(() => setPrintsLoading(false));
+  }, [formData.printCollectionId]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -114,8 +169,10 @@ const ProductManagement = () => {
     try {
       // Validate that we have images
       if (selectedFiles.length === 0 && !formData.image) {
-        alert(
-          "Please provide an image URL or upload at least one image/video file",
+        showAlert(
+          "Image Required",
+          "Please provide an image URL or upload at least one image/video file.",
+          "warning",
         );
         setSubmitLoading(false);
         return;
@@ -137,7 +194,7 @@ const ProductManagement = () => {
       await fetchAdminProducts(); // Refresh admin table
     } catch (error) {
       console.error("Error submitting product:", error);
-      alert(error.message || "Failed to save product");
+      showAlert("Save Failed", error.message || "Failed to save product.");
     } finally {
       setSubmitLoading(false);
     }
@@ -160,7 +217,9 @@ const ProductManagement = () => {
       inventory: {
         stock: product.inventory?.stock || 0,
       },
-      existingImages: product.images || [], // Store existing additional images
+      existingImages: product.images || [],
+      printCollectionId: product.printCollectionId || "",
+      printId: product.printId || "",
     };
 
     setFormData(editFormData);
@@ -214,7 +273,10 @@ const ProductManagement = () => {
         stock: 0,
       },
       existingImages: [],
+      printCollectionId: "",
+      printId: "",
     });
+    setPrints([]);
     setSelectedFiles([]);
     setImagePreviews([]);
     setEditingProduct(null);
@@ -246,6 +308,27 @@ const ProductManagement = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
+      {/* Alert Modal */}
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal((p) => ({ ...p, isOpen: false }))}
+        title={alertModal.title}
+        message={alertModal.message}
+        type={alertModal.type}
+      />
+
+      {/* Delete Confirm Modal */}
+      <AlertModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false, productId: null })}
+        onConfirm={handleDeleteConfirmed}
+        title="Delete Product"
+        message="Are you sure you want to delete this product? This action cannot be undone."
+        type="warning"
+        mode="confirm"
+        confirmLabel="Delete"
+      />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-6">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
@@ -323,6 +406,69 @@ const ProductManagement = () => {
                     placeholder="Product description..."
                   />
                 </div>
+
+                {/* Print Collection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Print Collection *
+                    {collectionsLoading && <span className="ml-2 text-xs text-gray-400">Loading…</span>}
+                  </label>
+                  <select
+                    required
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                    value={formData.printCollectionId}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        printCollectionId: e.target.value,
+                        printId: "", // reset print when collection changes
+                      })
+                    }
+                  >
+                    <option value="">— None —</option>
+                    {collections.map((col) => (
+                      <option key={col._id} value={col._id}>
+                        {col.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Print */}
+                {formData.printCollectionId && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Print *
+                      {printsLoading && <span className="ml-2 text-xs text-gray-400">Loading…</span>}
+                    </label>
+                    <select
+                      required
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                      value={formData.printId}
+                      onChange={(e) =>
+                        setFormData({ ...formData, printId: e.target.value })
+                      }
+                    >
+                      <option value="">— None —</option>
+                      {prints.map((p) => (
+                        <option key={p._id} value={p._id}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </select>
+                    {/* Preview selected print image */}
+                    {formData.printId && (() => {
+                      const found = prints.find((p) => p._id === formData.printId);
+                      return found?.image ? (
+                        <img
+                          src={found.image}
+                          alt={found.name}
+                          className="mt-2 h-16 w-16 rounded-lg object-cover border border-pink-200"
+                        />
+                      ) : null;
+                    })()}
+                  </div>
+                )}
 
                 {/* Category */}
                 <div>
@@ -539,9 +685,8 @@ const ProductManagement = () => {
                         onChange={(e) =>
                           handleColorChange(index, e.target.value)
                         }
-                        placeholder={`Color ${
-                          index + 1
-                        } (e.g., pink, white, black)`}
+                        placeholder={`Color ${index + 1
+                          } (e.g., pink, white, black)`}
                       />
                       <button
                         type="button"
@@ -565,11 +710,10 @@ const ProductManagement = () => {
                         key={size}
                         type="button"
                         onClick={() => handleSizeToggle(size)}
-                        className={`px-4 py-2 border rounded-md ${
-                          formData.sizes.includes(size)
-                            ? "bg-pink-500 text-white border-pink-500"
-                            : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
-                        }`}
+                        className={`px-4 py-2 border rounded-md ${formData.sizes.includes(size)
+                          ? "bg-pink-500 text-white border-pink-500"
+                          : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
+                          }`}
                       >
                         {size}
                       </button>
@@ -616,6 +760,8 @@ const ProductManagement = () => {
                     </span>
                   </label>
                 </div>
+
+
               </div>
 
               {/* Form Actions */}
@@ -753,16 +899,7 @@ const ProductManagement = () => {
                         <Edit className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={async () => {
-                          if (
-                            window.confirm(
-                              "Are you sure you want to delete this product?",
-                            )
-                          ) {
-                            await deleteProduct(product._id);
-                            await fetchAdminProducts(); // Refresh admin table
-                          }
-                        }}
+                        onClick={() => openDeleteConfirm(product._id)}
                         className="p-2 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-lg transition-all duration-200"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -830,11 +967,10 @@ const ProductManagement = () => {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                          currentPage === page
-                            ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
-                            : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
-                        }`}
+                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${currentPage === page
+                          ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
+                          : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                          }`}
                       >
                         {page}
                       </button>

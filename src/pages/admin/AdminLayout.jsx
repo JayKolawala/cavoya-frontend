@@ -23,7 +23,7 @@ const AdminLayout = () => {
     { name: "Products", href: "/admin/products", icon: Package },
     { name: "Orders", href: "/admin/orders", icon: FileText },
     // { name: "Customers", href: "/admin/customers", icon: Users },
-    // { name: "Settings", href: "/admin/settings", icon: Settings },
+    { name: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
   const handleLogout = () => {
@@ -37,9 +37,8 @@ const AdminLayout = () => {
     <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-72 transform ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
+        className={`fixed inset-y-0 left-0 z-50 w-72 transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
       >
         {/* Gradient Background */}
         <div className="h-full bg-gradient-to-br from-pink-600 via-pink-500 to-rose-600 shadow-2xl">
@@ -75,11 +74,10 @@ const AdminLayout = () => {
                   key={item.name}
                   to={item.href}
                   onClick={() => setSidebarOpen(false)}
-                  className={`group relative flex items-center px-4 py-3.5 rounded-xl font-medium transition-all duration-300 ${
-                    active
+                  className={`group relative flex items-center px-4 py-3.5 rounded-xl font-medium transition-all duration-300 ${active
                       ? "bg-white text-pink-600 shadow-lg shadow-pink-900/30"
                       : "text-pink-50 hover:bg-white/10 hover:text-white"
-                  }`}
+                    }`}
                 >
                   {/* Active indicator */}
                   {active && (
@@ -87,11 +85,10 @@ const AdminLayout = () => {
                   )}
 
                   <IconComponent
-                    className={`h-5 w-5 mr-3.5 transition-all duration-300 ${
-                      active
+                    className={`h-5 w-5 mr-3.5 transition-all duration-300 ${active
                         ? "text-pink-600"
                         : "text-pink-100 group-hover:text-white group-hover:scale-110"
-                    }`}
+                      }`}
                   />
                   <span className="text-sm tracking-wide">{item.name}</span>
 
