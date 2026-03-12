@@ -18,6 +18,7 @@ const initialState = {
   searchQuery: "",
   selectedCategory: "all",
   selectedCollection: null,
+  selectedPrint: null,
   selectedNewArrivals: false,
   sortBy: "featured",
   showMobileMenu: false,
@@ -123,6 +124,9 @@ function appReducer(state, action) {
 
     case "SET_COLLECTION":
       return { ...state, selectedCollection: action.payload };
+
+    case "SET_PRINT":
+      return { ...state, selectedPrint: action.payload };
 
     case "SET_NEW_ARRIVALS":
       return { ...state, selectedNewArrivals: action.payload };
@@ -315,7 +319,10 @@ export function AppProvider({ children }) {
         limit = state.productsLimit,
         cursor = null,
         category = null,
+        collection = null,
+        printId = null,
         isFeatured = null,
+        newArrivals = null,
         append = false,
       } = options;
 
@@ -325,15 +332,12 @@ export function AppProvider({ children }) {
       const queryParams = new URLSearchParams();
       queryParams.append("limit", limit);
 
-      if (cursor) {
-        queryParams.append("cursor", cursor);
-      }
-      if (category && category !== "all") {
-        queryParams.append("category", category);
-      }
-      if (isFeatured !== null) {
-        queryParams.append("isFeatured", isFeatured);
-      }
+      if (cursor) queryParams.append("cursor", cursor);
+      if (category && category !== "all") queryParams.append("category", category);
+      if (collection) queryParams.append("collection", collection);
+      if (printId) queryParams.append("printId", printId);
+      if (isFeatured !== null) queryParams.append("isFeatured", isFeatured);
+      if (newArrivals) queryParams.append("newArrivals", newArrivals);
 
       const response = await apiRequest(`/products?${queryParams.toString()}`);
 
@@ -381,8 +385,10 @@ export function AppProvider({ children }) {
 
     await fetchProducts({
       cursor: state.nextCursor,
-      category:
-        state.selectedCategory !== "all" ? state.selectedCategory : null,
+      category: state.selectedCategory !== "all" ? state.selectedCategory : null,
+      collection: state.selectedCollection || null,
+      printId: state.selectedPrint || null,
+      newArrivals: state.selectedNewArrivals || null,
       append: true,
     });
   };
@@ -391,8 +397,10 @@ export function AppProvider({ children }) {
   const resetAndFetchProducts = async () => {
     dispatch({ type: "RESET_PRODUCTS" });
     await fetchProducts({
-      category:
-        state.selectedCategory !== "all" ? state.selectedCategory : null,
+      category: state.selectedCategory !== "all" ? state.selectedCategory : null,
+      collection: state.selectedCollection || null,
+      printId: state.selectedPrint || null,
+      newArrivals: state.selectedNewArrivals || null,
     });
   };
 
@@ -584,13 +592,11 @@ export function AppProvider({ children }) {
   // Reset pagination when filters change (but not on initial mount)
   useEffect(() => {
     if (hasMountedRef.current) {
-      // Only reset if filters have changed after initial mount
       resetAndFetchProducts();
     } else {
-      // Mark as mounted after initial render
       hasMountedRef.current = true;
     }
-  }, [state.selectedCategory, state.sortBy]);
+  }, [state.selectedCategory, state.selectedCollection, state.selectedPrint, state.selectedNewArrivals, state.sortBy]);
 
   const showCustomAlert = (message, callback) => {
     dispatch({ type: "SHOW_ALERT", payload: message });
@@ -654,33 +660,21 @@ export function AppProvider({ children }) {
   };
 
   const filteredProducts = state.products.filter((product) => {
+    // Search filter — always client-side
     const matchesSearch = product.name
       .toLowerCase()
       .includes(state.searchQuery.toLowerCase());
 
-    // Case-insensitive category matching - normalize both values to lowercase for comparison
+    // Category filter — only apply client-side when NOT filtering by collection/print/newArrivals
+    // (those are handled by the API; mixing them with category would kill all results)
     const matchesCategory =
-      state.selectedCategory === "all" ||
-      product.category?.toLowerCase().trim() ===
-      state.selectedCategory?.toLowerCase().trim();
+      state.selectedCollection || state.selectedPrint || state.selectedNewArrivals
+        ? true // API already filtered — let everything through
+        : state.selectedCategory === "all" ||
+        product.category?.toLowerCase().trim() ===
+        state.selectedCategory?.toLowerCase().trim();
 
-    // Collection filtering - check category field since collection field doesn't exist in API
-    // "Solset" is actually stored as a category in the database
-    const matchesCollection =
-      !state.selectedCollection ||
-      product.category?.toLowerCase().trim() ===
-      state.selectedCollection?.toLowerCase().trim();
-
-    // New arrivals - use isFeatured since isNew field doesn't exist in API
-    const matchesNewArrivals =
-      !state.selectedNewArrivals || product.isFeatured === true;
-
-    return (
-      matchesSearch &&
-      matchesCategory &&
-      matchesCollection &&
-      matchesNewArrivals
-    );
+    return matchesSearch && matchesCategory;
   });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -830,6 +824,8 @@ export function AppProvider({ children }) {
       dispatch({ type: "SET_CATEGORY", payload: category }),
     setSelectedCollection: (collection) =>
       dispatch({ type: "SET_COLLECTION", payload: collection }),
+    setSelectedPrint: (print) =>
+      dispatch({ type: "SET_PRINT", payload: print }),
     setSelectedNewArrivals: (isNew) =>
       dispatch({ type: "SET_NEW_ARRIVALS", payload: isNew }),
     setSortBy: (sortBy) => dispatch({ type: "SET_SORT_BY", payload: sortBy }),

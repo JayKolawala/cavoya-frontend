@@ -33,22 +33,6 @@ const STYLES_ITEMS = [
   },
 ];
 
-const COLLECTION_ITEMS = [
-  // Ocean and Floral commented out as not decided yet
-  {
-    label: "Solset",
-    categoryKey: "solset",
-    collectionKey: "solset",
-    path: "/products?collection=solset",
-  },
-  {
-    label: "Floral",
-    categoryKey: "floral",
-    collectionKey: "floral",
-    path: "/products?collection=floral",
-  },
-];
-
 // ─── Desktop chevron SVG (reused) ────────────────────────────────────────────
 const ChevronSVG = () => (
   <svg
@@ -81,9 +65,8 @@ const MobileAccordion = ({ label, children }) => {
         />
       </button>
       <div
-        className={`overflow-hidden transition-all duration-300 ${
-          open ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0"
-        }`}
+        className={`overflow-hidden transition-all duration-300 ${open ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0"
+          }`}
       >
         <div className="flex flex-col space-y-2 pl-4">{children}</div>
       </div>
@@ -108,11 +91,45 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [collectionItems, setCollectionItems] = useState([]);
+  const [collectionPrints, setCollectionPrints] = useState({});
+  const [hoveredColId, setHoveredColId] = useState(null);
 
   const isProductsPage = location.pathname === "/products";
   const isHomePage = location.pathname === "/";
 
   const categoryMap = getCategoryMap();
+
+  // Fetch active collections from API
+  useEffect(() => {
+    const API_BASE_URL =
+      import.meta.env.VITE_API_BASE_URL ||
+      "https://cavoya-backend.onrender.com/api";
+    fetch(`${API_BASE_URL}/collections`)
+      .then((r) => r.json())
+      .then((data) => {
+        const arr = Array.isArray(data) ? data : data.data ?? data.collections ?? [];
+        setCollectionItems(arr.filter((c) => c.isActive !== false));
+      })
+      .catch(console.error);
+  }, []);
+
+  // Fetch prints for each collection after collections load
+  useEffect(() => {
+    if (collectionItems.length === 0) return;
+    const API_BASE_URL =
+      import.meta.env.VITE_API_BASE_URL ||
+      "https://cavoya-backend.onrender.com/api";
+    collectionItems.forEach((col) => {
+      fetch(`${API_BASE_URL}/collections/${col._id}/prints`)
+        .then((r) => r.json())
+        .then((data) => {
+          const arr = Array.isArray(data) ? data : data.data ?? data.prints ?? [];
+          setCollectionPrints((prev) => ({ ...prev, [col._id]: arr }));
+        })
+        .catch(console.error);
+    });
+  }, [collectionItems]);
 
   const handleNavigateWithFilters = (
     category,
@@ -153,18 +170,16 @@ const Header = () => {
       )}
 
       <header
-        className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${
-          isScrolled || !isHomePage
+        className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${isScrolled || !isHomePage
             ? "bg-white shadow-lg shadow-black/10"
             : "bg-transparent text-white"
-        }`}
+          }`}
       >
         <div className="w-full mx-auto">
           {/* ── Main nav ─────────────────────────────────────────── */}
           <nav
-            className={`flex justify-between items-center py-4 px-4 lg:px-4 z-10 relative ${
-              showMobileMenu || isScrolled ? "bg-white" : ""
-            }`}
+            className={`flex justify-between items-center py-4 px-4 lg:px-4 z-10 relative ${showMobileMenu || isScrolled ? "bg-white" : ""
+              }`}
           >
             {/* Hamburger */}
             <button
@@ -173,11 +188,10 @@ const Header = () => {
               aria-label="Menu"
             >
               <Menu
-                className={`h-6 w-6 ${
-                  !isHomePage || showMobileMenu || isScrolled
+                className={`h-6 w-6 ${!isHomePage || showMobileMenu || isScrolled
                     ? "text-black"
                     : "text-white"
-                }`}
+                  }`}
               />
             </button>
 
@@ -238,11 +252,10 @@ const Header = () => {
                           item.path,
                         )
                       }
-                      className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black ${
-                        i === 0 || i === STYLES_ITEMS.length - 1
+                      className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black ${i === 0 || i === STYLES_ITEMS.length - 1
                           ? "hover:rounded-lg"
                           : ""
-                      }`}
+                        }`}
                     >
                       {item.label}
                     </button>
@@ -250,29 +263,78 @@ const Header = () => {
                 </div>
               </div>
 
-              {/* Shop by Collection — desktop hover dropdown */}
+              {/* Shop by Collection — desktop hover dropdown (inline expand) */}
               <div className="relative group">
                 <span className="hover:text-gray-500 transition-colors cursor-pointer flex items-center">
                   Shop by collection
                   <ChevronSVG />
                 </span>
-                <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100">
-                  {COLLECTION_ITEMS.map((item) => (
-                    <button
-                      key={item.collectionKey}
-                      onClick={() =>
-                        handleNavigateWithFilters(
-                          categoryMap[item.categoryKey],
-                          categoryMap[item.collectionKey],
-                          false,
-                          item.path,
-                        )
-                      }
-                      className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:rounded-lg hover:text-black"
-                    >
-                      {item.label}
-                    </button>
-                  ))}
+                <div className="absolute left-0 mt-2 w-56 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100 py-1">
+                  {collectionItems.length === 0 ? (
+                    <p className="px-4 py-2 text-sm text-gray-400">No collections</p>
+                  ) : (
+                    collectionItems.map((col) => {
+                      const prints = collectionPrints[col._id] || [];
+                      const isHovered = hoveredColId === col._id;
+                      return (
+                        <div
+                          key={col._id}
+                          onMouseEnter={() => setHoveredColId(col._id)}
+                          onMouseLeave={() => setHoveredColId(null)}
+                        >
+                          {/* Collection row */}
+                          <button
+                            onClick={() =>
+                              handleNavigateWithFilters(
+                                "all",
+                                col.name,
+                                false,
+                                `/products?collection=${encodeURIComponent(col.name)}`,
+                              )
+                            }
+                            className="w-full text-left flex items-center justify-between px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
+                          >
+                            <span>{col.name}</span>
+                            {prints.length > 0 && (
+                              <ChevronDown
+                                className={`h-3.5 w-3.5 text-gray-400 flex-shrink-0 transition-transform duration-200 ${isHovered ? "rotate-180" : ""
+                                  }`}
+                              />
+                            )}
+                          </button>
+
+                          {/* Prints — expand inline below on hover */}
+                          {isHovered && prints.length > 0 && (
+                            <div className="bg-gray-50 border-t border-b border-gray-100">
+                              {prints.map((print) => (
+                                <button
+                                  key={print._id}
+                                  onClick={() =>
+                                    handleNavigateWithFilters(
+                                      "all",
+                                      col.name,
+                                      false,
+                                      `/products?collection=${encodeURIComponent(col.name)}&print=${encodeURIComponent(print.name)}`,
+                                    )
+                                  }
+                                  className="w-full text-left flex items-center gap-2.5 pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black"
+                                >
+                                  {print.image && (
+                                    <img
+                                      src={print.image}
+                                      alt={print.name}
+                                      className="h-5 w-5 rounded object-cover flex-shrink-0 border border-gray-200"
+                                    />
+                                  )}
+                                  {print.name}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </div>
 
@@ -286,11 +348,10 @@ const Header = () => {
 
             {/* Icons */}
             <div
-              className={`flex items-center space-x-4 ${
-                showMobileMenu || isScrolled || !isHomePage
+              className={`flex items-center space-x-4 ${showMobileMenu || isScrolled || !isHomePage
                   ? "text-black"
                   : "text-white"
-              }`}
+                }`}
             >
               <button
                 onClick={() => navigate("/wishlist")}
@@ -316,9 +377,8 @@ const Header = () => {
 
           {/* ── Mobile Menu ──────────────────────────────────────── */}
           <div
-            className={`lg:hidden border-t border-gray-200 transition-all duration-500 ease-in-out bg-white overflow-hidden ${
-              showMobileMenu ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0"
-            }`}
+            className={`lg:hidden border-t border-gray-200 transition-all duration-500 ease-in-out bg-white overflow-hidden ${showMobileMenu ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0"
+              }`}
           >
             <div className="flex flex-col space-y-4 p-4">
               {/* Search */}
@@ -391,25 +451,61 @@ const Header = () => {
                 ))}
               </MobileAccordion>
 
-              {/* Shop by Collection — mobile accordion */}
+              {/* Shop by Collection — mobile: outer accordion, nested accordion per collection for prints */}
               <MobileAccordion label="Shop by collection">
-                {COLLECTION_ITEMS.map((item) => (
-                  <button
-                    key={item.collectionKey}
-                    onClick={() =>
-                      handleNavigateWithFilters(
-                        categoryMap[item.categoryKey],
-                        categoryMap[item.collectionKey],
-                        false,
-                        item.path,
-                        true,
-                      )
-                    }
-                    className="text-left text-gray-600 hover:text-black"
-                  >
-                    {item.label}
-                  </button>
-                ))}
+                {collectionItems.length === 0 ? (
+                  <p className="text-sm text-gray-400">No collections</p>
+                ) : (
+                  collectionItems.map((col) => {
+                    const prints = collectionPrints[col._id] || [];
+                    return prints.length > 0 ? (
+                      // Collection with prints — nested MobileAccordion
+                      <MobileAccordion key={col._id} label={col.name}>
+                        {prints.map((print) => (
+                          <button
+                            key={print._id}
+                            onClick={() =>
+                              handleNavigateWithFilters(
+                                "all",
+                                col.name,
+                                false,
+                                `/products?collection=${encodeURIComponent(col.name)}&print=${encodeURIComponent(print.name)}`,
+                                true,
+                              )
+                            }
+                            className="flex items-center gap-2 text-left text-sm text-gray-500 hover:text-black w-full py-0.5"
+                          >
+                            {print.image && (
+                              <img
+                                src={print.image}
+                                alt={print.name}
+                                className="h-5 w-5 rounded object-cover flex-shrink-0 border border-gray-100"
+                              />
+                            )}
+                            {print.name}
+                          </button>
+                        ))}
+                      </MobileAccordion>
+                    ) : (
+                      // Collection without prints — plain button
+                      <button
+                        key={col._id}
+                        onClick={() =>
+                          handleNavigateWithFilters(
+                            "all",
+                            col.name,
+                            false,
+                            `/products?collection=${encodeURIComponent(col.name)}`,
+                            true,
+                          )
+                        }
+                        className="text-left text-gray-600 hover:text-black w-full"
+                      >
+                        {col.name}
+                      </button>
+                    );
+                  })
+                )}
               </MobileAccordion>
 
               {/* More links */}

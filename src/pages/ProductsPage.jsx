@@ -18,6 +18,7 @@ const ProductsPage = () => {
     loadMoreProducts,
     setSelectedCategory,
     setSelectedCollection,
+    setSelectedPrint,
     setSelectedNewArrivals,
   } = useAppContext();
   const [_selectedProduct, setSelectedProduct] = useState(null);
@@ -31,14 +32,14 @@ const ProductsPage = () => {
   // Get filter type from URL query parameters
   const category = searchParams.get("category");
   const collection = searchParams.get("collection");
+  const print = searchParams.get("print");
   const newArrivals = searchParams.get("newArrivals");
 
   // Memoized dynamic title based on URL parameters - recalculates when params change
   const pageTitle = useMemo(() => {
     if (newArrivals === "true") return "New Arrivals";
-    if (collection) {
-      return collection.charAt(0).toUpperCase() + collection.slice(1);
-    }
+    if (print) return `${collection ? collection + " — " : ""}${print} Print`;
+    if (collection) return collection.charAt(0).toUpperCase() + collection.slice(1);
     if (category && category !== "all") {
       const categoryDisplayMap = {
         dresses: "Dresses",
@@ -53,47 +54,53 @@ const ProductsPage = () => {
       );
     }
     return "Shop All Products";
-  }, [category, collection, newArrivals]);
+  }, [category, collection, print, newArrivals]);
 
   const pageSubtitle = useMemo(() => {
     if (newArrivals === "true") {
       return "Explore our latest collection of premium fashion";
     }
-    if (collection) {
-      return `Explore our ${collection} collection`;
-    }
+    if (print) return `Showing products with the "${print}" print from the ${collection} collection`;
+    if (collection) return `Explore our ${collection} collection`;
     if (category && category !== "all") {
       return `Browse our collection of premium ${category.replace("-", " ")}`;
     }
     return "Discover our complete collection of premium fashion";
-  }, [category, collection, newArrivals]);
+  }, [category, collection, print, newArrivals]);
 
-  // Apply filters based on URL parameters
-  // Map URL slugs to actual database category names
+  // Apply filters based on URL parameters and trigger API refetch via context state
   useEffect(() => {
     if (newArrivals === "true") {
       setSelectedNewArrivals(true);
       setSelectedCollection(null);
+      setSelectedPrint(null);
       setSelectedCategory("all");
+    } else if (print && collection) {
+      // Print filter
+      setSelectedCollection(collection);
+      setSelectedPrint(print);
+      setSelectedCategory("all");
+      setSelectedNewArrivals(false);
     } else if (collection) {
-      // Map collection slug to database name
-      const dbCollectionName = categoryMap[collection] || collection;
-      setSelectedCollection(dbCollectionName);
-      setSelectedCategory(dbCollectionName);
+      // Collection filter: only set selectedCollection, category stays "all"
+      setSelectedCollection(collection);
+      setSelectedPrint(null);
+      setSelectedCategory("all");
       setSelectedNewArrivals(false);
     } else if (category) {
-      // Map category slug to database name (includes hidden characters)
       const dbCategoryName = categoryMap[category] || category;
       setSelectedCategory(dbCategoryName);
       setSelectedCollection(null);
+      setSelectedPrint(null);
       setSelectedNewArrivals(false);
     } else {
       setSelectedCategory("all");
       setSelectedCollection(null);
+      setSelectedPrint(null);
       setSelectedNewArrivals(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, collection, newArrivals]);
+  }, [category, collection, print, newArrivals]);
 
   const handleProductClick = (product) => {
     setSelectedProduct(product);
