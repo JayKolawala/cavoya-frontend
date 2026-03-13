@@ -287,9 +287,9 @@ const Header = () => {
                             onClick={() =>
                               handleNavigateWithFilters(
                                 "all",
-                                col.name,
+                                col._id,
                                 false,
-                                `/products?collection=${encodeURIComponent(col.name)}`,
+                                `/products?collectionId=${col._id}`,
                               )
                             }
                             className="w-full text-left flex items-center justify-between px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black"
@@ -312,9 +312,9 @@ const Header = () => {
                                   onClick={() =>
                                     handleNavigateWithFilters(
                                       "all",
-                                      col.name,
+                                      col._id,
                                       false,
-                                      `/products?collection=${encodeURIComponent(col.name)}&print=${encodeURIComponent(print.name)}`,
+                                      `/products?collectionId=${col._id}&printId=${print._id}`,
                                     )
                                   }
                                   className="w-full text-left flex items-center gap-2.5 pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black"
@@ -467,9 +467,9 @@ const Header = () => {
                             onClick={() =>
                               handleNavigateWithFilters(
                                 "all",
-                                col.name,
+                                col._id,
                                 false,
-                                `/products?collection=${encodeURIComponent(col.name)}&print=${encodeURIComponent(print.name)}`,
+                                `/products?collectionId=${col._id}&printId=${print._id}`,
                                 true,
                               )
                             }
@@ -493,9 +493,9 @@ const Header = () => {
                         onClick={() =>
                           handleNavigateWithFilters(
                             "all",
-                            col.name,
+                            col._id,
                             false,
-                            `/products?collection=${encodeURIComponent(col.name)}`,
+                            `/products?collectionId=${col._id}`,
                             true,
                           )
                         }

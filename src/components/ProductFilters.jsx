@@ -7,23 +7,63 @@ import {
   Filter,
   X,
   ChevronDown,
+  Layers,
+  Palette,
 } from "lucide-react";
+import { API_BASE_URL } from "../utils/apiHelpers";
 
 const ProductFilters = () => {
-  const { selectedCategory, setSelectedCategory, sortBy, setSortBy } =
-    useAppContext();
+  const {
+    selectedCategory,
+    setSelectedCategory,
+    sortBy,
+    setSortBy,
+    selectedCollection,
+    setSelectedCollection,
+    selectedPrint,
+    setSelectedPrint,
+    collections, // Pull collections from context
+  } = useAppContext();
 
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = React.useState(false);
 
   // Temporary state for mobile filter selections (only applied on "Apply" click)
   const [tempCategory, setTempCategory] = React.useState(selectedCategory);
   const [tempSort, setTempSort] = React.useState(sortBy);
+  const [tempCollection, setTempCollection] = React.useState(selectedCollection);
+  const [tempPrint, setTempPrint] = React.useState(selectedPrint);
+
+  // Collections & prints state
+  const [prints, setPrints] = React.useState([]);
+
+  // Active collection ID (desktop uses selectedCollection directly, mobile uses tempCollection)
+  // This is now an ObjectId string instead of a name string
+  const activeCollection = window.innerWidth < 1024 ? tempCollection : selectedCollection;
+
+  // Fetch prints whenever active collection changes
+  React.useEffect(() => {
+    const colId = activeCollection;
+    if (!colId) { setPrints([]); return; }
+    // activeCollection is now the _id
+    const col = collections.find((c) => c._id === colId);
+    if (!col) return;
+    fetch(`${API_BASE_URL}/collections/${col._id}/prints`)
+      .then((r) => r.json())
+      .then((data) => {
+        const arr = Array.isArray(data) ? data : data.data ?? data.prints ?? [];
+        // Only show active prints
+        setPrints(arr.filter((p) => p.isActive !== false));
+      })
+      .catch(console.error);
+  }, [activeCollection, collections]);
 
   // Update temp state when actual filters change (for sync)
   React.useEffect(() => {
     setTempCategory(selectedCategory);
     setTempSort(sortBy);
-  }, [selectedCategory, sortBy]);
+    setTempCollection(selectedCollection);
+    setTempPrint(selectedPrint);
+  }, [selectedCategory, sortBy, selectedCollection, selectedPrint]);
 
   // Build categories array with "All Products" option first
   const categories = [
@@ -42,25 +82,48 @@ const ProductFilters = () => {
     { id: "rating", name: "Highest Rated" },
   ];
 
+  const isMobile = () => window.innerWidth < 1024;
+
   // Handle category selection
   const handleCategorySelect = (categoryId) => {
-    if (window.innerWidth < 1024) {
-      // On mobile, update temporary state only
+    if (isMobile()) {
       setTempCategory(categoryId);
     } else {
-      // On desktop, apply immediately
       setSelectedCategory(categoryId);
     }
   };
 
   // Handle sort selection
   const handleSortSelect = (sortId) => {
-    if (window.innerWidth < 1024) {
-      // On mobile, update temporary state only
+    if (isMobile()) {
       setTempSort(sortId);
     } else {
-      // On desktop, apply immediately
       setSortBy(sortId);
+    }
+  };
+
+  // Handle collection selection (toggles off if already selected)
+  // Now uses col._id instead of col.name
+  const handleCollectionSelect = (colId) => {
+    const next = activeCollection === colId ? null : colId;
+    if (isMobile()) {
+      setTempCollection(next);
+      setTempPrint(null); // reset print when collection changes
+    } else {
+      setSelectedCollection(next);
+      setSelectedPrint(null);
+    }
+  };
+
+  // Handle print selection — store the print _id (not name) because
+  // AppContext sends selectedPrint to the API as ?printId=<ObjectId>
+  const handlePrintSelect = (printId) => {
+    const current = isMobile() ? tempPrint : selectedPrint;
+    const next = current === printId ? null : printId;
+    if (isMobile()) {
+      setTempPrint(next);
+    } else {
+      setSelectedPrint(next);
     }
   };
 
@@ -68,19 +131,27 @@ const ProductFilters = () => {
   const handleApplyFilters = () => {
     setSelectedCategory(tempCategory);
     setSortBy(tempSort);
+    setSelectedCollection(tempCollection);
+    setSelectedPrint(tempPrint);
     setIsMobileFiltersOpen(false);
   };
 
   // Clear all filters
   const handleClearAll = () => {
-    if (window.innerWidth < 1024) {
+    if (isMobile()) {
       setTempCategory("all");
       setTempSort("featured");
+      setTempCollection(null);
+      setTempPrint(null);
     } else {
       setSelectedCategory("all");
       setSortBy("featured");
+      setSelectedCollection(null);
+      setSelectedPrint(null);
     }
   };
+
+  const activePrint = isMobile() ? tempPrint : selectedPrint;
 
   return (
     <>
@@ -92,19 +163,17 @@ const ProductFilters = () => {
         >
           <div className="flex items-center gap-3">
             <Filter className="w-5 h-5 text-gray-700" />
-            <span className="font-semibold text-gray-800">Filters & Sort</span>
+            <span className="font-semibold text-gray-800">Filters &amp; Sort</span>
           </div>
           <ChevronDown
-            className={`w-5 h-5 text-gray-600 transition-transform ${isMobileFiltersOpen ? "rotate-180" : ""
-              }`}
+            className={`w-5 h-5 text-gray-600 transition-transform ${isMobileFiltersOpen ? "rotate-180" : ""}`}
           />
         </button>
       </div>
 
       {/* Filters Sidebar */}
       <div
-        className={`bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 ${isMobileFiltersOpen ? "block" : "hidden lg:block"
-          } lg:sticky lg:top-24`}
+        className={`bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 ${isMobileFiltersOpen ? "block" : "hidden lg:block"} lg:sticky lg:top-24`}
       >
         {/* Header */}
         <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
@@ -141,25 +210,99 @@ const ProductFilters = () => {
                 <button
                   key={category.id}
                   onClick={() => handleCategorySelect(category.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${(window.innerWidth < 1024
-                    ? tempCategory
-                    : selectedCategory) === category.id
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${(isMobile() ? tempCategory : selectedCategory) === category.id
                     ? "bg-black text-white shadow-md"
                     : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                     }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-sm">{category.name}</span>
-                    {(window.innerWidth < 1024
-                      ? tempCategory
-                      : selectedCategory) === category.id && (
-                        <div className="w-2 h-2 bg-white rounded-full"></div>
-                      )}
+                    {(isMobile() ? tempCategory : selectedCategory) === category.id && (
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                    )}
                   </div>
                 </button>
               ))}
             </div>
           </div>
+
+          {/* Divider */}
+          <div className="border-t border-gray-200"></div>
+
+          {/* Collection Section */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Layers className="w-4 h-4 text-gray-700" />
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+                Collection
+              </h3>
+            </div>
+
+            <div className="space-y-2">
+              {collections.map((col) => (
+                <button
+                  key={col._id}
+                  onClick={() => handleCollectionSelect(col._id)}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${activeCollection === col._id
+                    ? "bg-black text-white shadow-md"
+                    : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-sm">{col.name}</span>
+                    {activeCollection === col._id && (
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                    )}
+                  </div>
+                </button>
+              ))}
+              {collections.length === 0 && (
+                <p className="text-xs text-gray-400 px-2">No collections available</p>
+              )}
+            </div>
+          </div>
+
+          {/* Print Section — only visible when a collection is selected */}
+          {activeCollection && prints.length > 0 && (
+            <>
+              <div className="border-t border-gray-200"></div>
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <Palette className="w-4 h-4 text-gray-700" />
+                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+                    Print Type
+                  </h3>
+                </div>
+
+                <div className="space-y-2">
+                  {prints.map((p) => (
+                    <button
+                      key={p._id}
+                      onClick={() => handlePrintSelect(p._id)}
+                      className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${activePrint === p._id
+                        ? "bg-black text-white shadow-md"
+                        : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {p.image && (
+                          <img
+                            src={p.image}
+                            alt={p.name}
+                            className="w-8 h-8 rounded-md object-cover flex-shrink-0"
+                          />
+                        )}
+                        <span className="font-medium text-sm">{p.name}</span>
+                        {activePrint === p._id && (
+                          <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Divider */}
           <div className="border-t border-gray-200"></div>
@@ -179,17 +322,16 @@ const ProductFilters = () => {
                 <button
                   key={option.id}
                   onClick={() => handleSortSelect(option.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${(window.innerWidth < 1024 ? tempSort : sortBy) === option.id
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${(isMobile() ? tempSort : sortBy) === option.id
                     ? "bg-gray-100 text-gray-900 border-2 border-gray-400"
                     : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent"
                     }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-sm">{option.name}</span>
-                    {(window.innerWidth < 1024 ? tempSort : sortBy) ===
-                      option.id && (
-                        <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
-                      )}
+                    {(isMobile() ? tempSort : sortBy) === option.id && (
+                      <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
+                    )}
                   </div>
                 </button>
               ))}

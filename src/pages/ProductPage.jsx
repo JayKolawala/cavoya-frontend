@@ -146,12 +146,17 @@ const ProductPage = () => {
     const loadProduct = async () => {
       setLoading(true);
 
-      // First, try to find the product in the loaded products array
-      let product = products.find((p) => p.id === id || p._id === id);
+      // Always fetch from API to get full data including collectionName & printName.
+      // The cached products array does not have these fields.
+      let product = null;
 
-      // If product not found in array, fetch it directly from API
-      if (!product && id && fetchProductById) {
+      if (id && fetchProductById) {
         product = await fetchProductById(id);
+      }
+
+      // Fallback to cached products array if API fetch failed
+      if (!product) {
+        product = products.find((p) => p.id === id || p._id === id);
       }
 
       if (product) {
@@ -171,7 +176,7 @@ const ProductPage = () => {
     };
 
     loadProduct();
-  }, [id, products, fetchProductById]);
+  }, [id]);
 
   const toggleAccordion = (section) => {
     setActiveAccordion(activeAccordion === section ? null : section);
@@ -315,8 +320,8 @@ const ProductPage = () => {
                 <div
                   key={index}
                   className={`relative flex-shrink-0 w-24 h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${activeMediaIndex === index
-                      ? "ring-4 ring-gray-700 shadow-lg scale-105"
-                      : "hover:opacity-80 hover:scale-105 shadow-md"
+                    ? "ring-4 ring-gray-700 shadow-lg scale-105"
+                    : "hover:opacity-80 hover:scale-105 shadow-md"
                     }`}
                   onClick={() => setActiveMediaIndex(index)}
                 >
@@ -464,8 +469,8 @@ const ProductPage = () => {
                   <button
                     key={size}
                     className={`px-4 py-2 border rounded-md transition-colors ${selectedSize === size
-                        ? "border-gray-900 bg-gray-100 text-gray-900"
-                        : "border-gray-300 hover:border-gray-500"
+                      ? "border-gray-900 bg-gray-100 text-gray-900"
+                      : "border-gray-300 hover:border-gray-500"
                       }`}
                     onClick={() => setSelectedSize(size)}
                   >
@@ -483,8 +488,8 @@ const ProductPage = () => {
             }
             disabled={selectedProduct.inventory?.stock <= 0}
             className={`w-full py-4 rounded-lg font-bold transition-transform transform ${selectedProduct.inventory?.stock > 0
-                ? "bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              ? "bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
               } mb-4`}
           >
             {selectedProduct.inventory?.stock > 0
@@ -492,14 +497,24 @@ const ProductPage = () => {
               : "Out of Stock"}
           </button>
 
-          {/* Category Badge */}
-          {selectedProduct.category && (
-            <div className="mb-4">
-              <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
-                Category: {selectedProduct.category}
+          {/* Product Badges: Category, Collection, Print */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {selectedProduct.category && (
+              <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
+                🏷️ {selectedProduct.category}
               </span>
-            </div>
-          )}
+            )}
+            {selectedProduct.collectionName && (
+              <span className="inline-block bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-full text-sm font-medium">
+                🗂️ test{selectedProduct.collectionName}
+              </span>
+            )}
+            {selectedProduct.printName && (
+              <span className="inline-block bg-purple-50 text-purple-700 border border-purple-200 px-3 py-1 rounded-full text-sm font-medium">
+                🎨 {selectedProduct.printName}
+              </span>
+            )}
+          </div>
 
 
           {/* Enhanced Accordion Sections */}
@@ -526,6 +541,18 @@ const ProductPage = () => {
                     </p>
                   </div>
                   <div className="bg-white p-3 rounded-lg">
+                    <p className="font-semibold text-gray-800 mb-1">Collection:</p>
+                    <p className="text-gray-600">
+                      {selectedProduct.collectionName || "N/A"}
+                    </p>
+                  </div>
+                  <div className="bg-white p-3 rounded-lg">
+                    <p className="font-semibold text-gray-800 mb-1">Print Type:</p>
+                    <p className="text-gray-600">
+                      {selectedProduct.printName || "N/A"}
+                    </p>
+                  </div>
+                  <div className="bg-white p-3 rounded-lg">
                     <p className="font-semibold text-gray-800 mb-1">Colors:</p>
                     <p className="text-gray-600">
                       {selectedProduct.colors?.join(", ") || "N/A"}
@@ -538,14 +565,7 @@ const ProductPage = () => {
                     </p>
                   </div>
                 </div>
-                <div className="bg-white p-3 rounded-lg">
-                  <p className="font-semibold text-gray-800 mb-1">
-                    Product ID:
-                  </p>
-                  <p className="text-gray-500 text-xs font-mono">
-                    {selectedProduct._id || selectedProduct.id}
-                  </p>
-                </div>
+
               </div>
             </AccordionSection>
 

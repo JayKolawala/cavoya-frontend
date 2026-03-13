@@ -30,6 +30,8 @@ const initialState = {
   nextCursor: null,
   hasMore: true,
   productsLimit: 12,
+  // Collections list (fetched once on mount)
+  collections: [],
   shippingInfo: {
     firstName: "",
     lastName: "",
@@ -124,6 +126,9 @@ function appReducer(state, action) {
 
     case "SET_COLLECTION":
       return { ...state, selectedCollection: action.payload };
+
+    case "SET_COLLECTIONS":
+      return { ...state, collections: action.payload };
 
     case "SET_PRINT":
       return { ...state, selectedPrint: action.payload };
@@ -310,6 +315,12 @@ export function AppProvider({ children }) {
     inventory: product.inventory,
     isFeatured: product.isFeatured || false,
     bestSeller: product.bestSeller || false,
+    // Support both populated names (from /products/:id) and raw IDs (from /products list)
+    collectionName: product.collectionName || product.print?.collectionId || null,
+    printName: product.printName || product.print?.printId || null,
+    // Raw IDs for filter matching
+    collectionId: product.print?.collectionId || null,
+    printId: product.print?.printId || null,
   });
 
   // Fetch products from API with pagination support
@@ -319,7 +330,7 @@ export function AppProvider({ children }) {
         limit = state.productsLimit,
         cursor = null,
         category = null,
-        collection = null,
+        collectionId = null,
         printId = null,
         isFeatured = null,
         newArrivals = null,
@@ -334,10 +345,12 @@ export function AppProvider({ children }) {
 
       if (cursor) queryParams.append("cursor", cursor);
       if (category && category !== "all") queryParams.append("category", category);
-      if (collection) queryParams.append("collection", collection);
+      // API expects collectionId (ObjectId), not collection name
+      if (collectionId) queryParams.append("collectionId", collectionId);
       if (printId) queryParams.append("printId", printId);
       if (isFeatured !== null) queryParams.append("isFeatured", isFeatured);
       if (newArrivals) queryParams.append("newArrivals", newArrivals);
+
 
       const response = await apiRequest(`/products?${queryParams.toString()}`);
 
@@ -386,7 +399,7 @@ export function AppProvider({ children }) {
     await fetchProducts({
       cursor: state.nextCursor,
       category: state.selectedCategory !== "all" ? state.selectedCategory : null,
-      collection: state.selectedCollection || null,
+      collectionId: state.selectedCollection || null,
       printId: state.selectedPrint || null,
       newArrivals: state.selectedNewArrivals || null,
       append: true,
@@ -394,13 +407,21 @@ export function AppProvider({ children }) {
   };
 
   // Reset and fetch products (used when filters change)
-  const resetAndFetchProducts = async () => {
+  // Accepts explicit filter params to avoid stale-closure bug (state in closure lags one render)
+  const resetAndFetchProducts = async (filters = {}) => {
+    const {
+      category = state.selectedCategory,
+      collection = state.selectedCollection,
+      printId = state.selectedPrint,
+      newArrivals = state.selectedNewArrivals,
+    } = filters;
+
     dispatch({ type: "RESET_PRODUCTS" });
     await fetchProducts({
-      category: state.selectedCategory !== "all" ? state.selectedCategory : null,
-      collection: state.selectedCollection || null,
-      printId: state.selectedPrint || null,
-      newArrivals: state.selectedNewArrivals || null,
+      category: category !== "all" ? category : null,
+      collectionId: collection || null,
+      printId: printId || null,
+      newArrivals: newArrivals || null,
     });
   };
 
@@ -581,18 +602,40 @@ export function AppProvider({ children }) {
     }
   };
 
+  // Fetch collections list (used by ProductFilters and ProductsPage for name → ID resolution)
+  const fetchCollections = async () => {
+    try {
+      const response = await apiRequest("/collections");
+      const arr = Array.isArray(response)
+        ? response
+        : response.data ?? response.collections ?? [];
+      dispatch({ type: "SET_COLLECTIONS", payload: arr });
+      return arr;
+    } catch (error) {
+      console.error("Error fetching collections:", error);
+      return [];
+    }
+  };
+
   // Load products on component mount
   useEffect(() => {
     fetchProducts();
+    fetchCollections();
   }, []);
 
   // Track if component has mounted (to prevent filter useEffect from running on initial render)
   const hasMountedRef = useRef(false);
 
   // Reset pagination when filters change (but not on initial mount)
+  // Pass the new filter values explicitly to avoid the stale-closure bug
   useEffect(() => {
     if (hasMountedRef.current) {
-      resetAndFetchProducts();
+      resetAndFetchProducts({
+        category: state.selectedCategory,
+        collection: state.selectedCollection,
+        printId: state.selectedPrint,
+        newArrivals: state.selectedNewArrivals,
+      });
     } else {
       hasMountedRef.current = true;
     }
@@ -709,7 +752,7 @@ export function AppProvider({ children }) {
           console.error("Missing product ID for item:", item);
         }
         return {
-          productId: item.productId, // Changed from product to productId based on user request
+          productId: item.productId,
           name: item.name,
           image: item.image,
           price: item.price,
@@ -813,6 +856,7 @@ export function AppProvider({ children }) {
     resetCheckout,
     fetchProducts,
     fetchProductById,
+    fetchCollections,
     loadMoreProducts,
     resetAndFetchProducts,
     addProduct,

@@ -41,6 +41,9 @@ const ProductManagement = () => {
   }, []);
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterCollection, setFilterCollection] = useState("");
+  const [filterPrint, setFilterPrint] = useState("");
+  const [filterPrints, setFilterPrints] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -97,6 +100,20 @@ const ProductManagement = () => {
       .finally(() => setCollectionsLoading(false));
   }, []);
 
+  // Fetch prints for the filter collection dropdown
+  useEffect(() => {
+    if (!filterCollection) { setFilterPrints([]); setFilterPrint(""); return; }
+    // filterCollection is now a collection ID
+    fetch(`${API_BASE_URL}/collections/${filterCollection}/prints`)
+      .then((r) => r.json())
+      .then((data) => {
+        const arr = Array.isArray(data) ? data : data.data ?? data.prints ?? [];
+        setFilterPrints(arr);
+      })
+      .catch(console.error);
+    setFilterPrint("");
+  }, [filterCollection]);
+
   // Fetch prints whenever the selected collection changes
   useEffect(() => {
     const collId = formData.printCollectionId;
@@ -120,9 +137,19 @@ const ProductManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const filteredProducts = adminProducts.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredProducts = adminProducts.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    // product list returns print.collectionId as a raw ID string
+    const productCollectionId =
+      product.print?.collectionId?._id || // populated object
+      product.print?.collectionId ||       // raw string
+      product.printCollectionId || "";
+    const productPrintId =
+      product.print?.printId || product.printId || "";
+    const matchesCollection = !filterCollection || productCollectionId === filterCollection;
+    const matchesPrint = !filterPrint || productPrintId === filterPrint;
+    return matchesSearch && matchesCollection && matchesPrint;
+  });
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
@@ -130,10 +157,10 @@ const ProductManagement = () => {
   const endIndex = startIndex + itemsPerPage;
   const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
 
-  // Reset to first page when search term changes
+  // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, filterCollection, filterPrint]);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -200,26 +227,52 @@ const ProductManagement = () => {
     }
   };
 
-  const handleEdit = (product) => {
+  const handleEdit = async (product) => {
     setEditingProduct(product);
+    setShowForm(true); // Open modal immediately so user sees it loading
+
+    // Fetch full product data from the single-product API to get populated
+    // printCollectionId, printId, collectionName, printName etc.
+    let fullProduct = product;
+    try {
+      const res = await fetch(`${API_BASE_URL}/products/${product._id}`);
+      const data = await res.json();
+      if (data?.success && data?.data) {
+        fullProduct = data.data;
+      }
+    } catch (e) {
+      console.warn("[handleEdit] Failed to fetch full product, using list data", e);
+    }
+
+    // Read printCollectionId: prefer populated nested object, then raw string, then flat field
+    const rawCollId = fullProduct.print?.collectionId;
+    const printCollectionId =
+      fullProduct.printCollectionId ||
+      (typeof rawCollId === "object" ? rawCollId?._id : rawCollId) ||
+      "";
+
+    const printId =
+      fullProduct.printId ||
+      fullProduct.print?.printId ||
+      "";
 
     const editFormData = {
-      name: product.name,
-      description: product.description || "",
-      price: product.price,
-      originalPrice: product.originalPrice || "",
-      image: product.image,
-      colors: product.colors || [],
-      sizes: product.sizes || ["S", "M", "L", "XL"],
-      category: product.category,
-      isFeatured: product.isFeatured || false,
-      bestSeller: product.bestSeller || false,
+      name: fullProduct.name,
+      description: fullProduct.description || "",
+      price: fullProduct.price,
+      originalPrice: fullProduct.originalPrice || "",
+      image: fullProduct.image,
+      colors: fullProduct.colors || [],
+      sizes: fullProduct.sizes || ["S", "M", "L", "XL"],
+      category: fullProduct.category,
+      isFeatured: fullProduct.isFeatured || false,
+      bestSeller: fullProduct.bestSeller || false,
       inventory: {
-        stock: product.inventory?.stock || 0,
+        stock: fullProduct.inventory?.stock || 0,
       },
-      existingImages: product.images || [],
-      printCollectionId: product.printCollectionId || "",
-      printId: product.printId || "",
+      existingImages: fullProduct.images || [],
+      printCollectionId,
+      printId,
     };
 
     setFormData(editFormData);
@@ -343,17 +396,57 @@ const ProductManagement = () => {
         </button>
       </div>
 
-      {/* Search Bar */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-        <input
-          type="text"
-          placeholder="Search products..."
-          className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      {/* Search & Filter Bar */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        {/* Search */}
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+          <input
+            type="text"
+            placeholder="Search products..."
+            className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        {/* Collection Filter */}
+        <select
+          className="py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white text-sm min-w-[160px]"
+          value={filterCollection}
+          onChange={(e) => setFilterCollection(e.target.value)}
+        >
+          <option value="">All Collections</option>
+          {collections.map((col) => (
+            <option key={col._id} value={col._id}>{col.name}</option>
+          ))}
+        </select>
+
+        {/* Print Filter — only shown when a collection is selected */}
+        {filterCollection && (
+          <select
+            className="py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white text-sm min-w-[160px]"
+            value={filterPrint}
+            onChange={(e) => setFilterPrint(e.target.value)}
+          >
+            <option value="">All Prints</option>
+            {filterPrints.map((p) => (
+              <option key={p._id} value={p._id}>{p.name}</option>
+            ))}
+          </select>
+        )}
+
+        {/* Clear Filters */}
+        {(filterCollection || filterPrint || searchTerm) && (
+          <button
+            onClick={() => { setFilterCollection(""); setFilterPrint(""); setSearchTerm(""); }}
+            className="flex items-center gap-1 px-3 py-2 text-sm text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all whitespace-nowrap"
+          >
+            <X className="h-4 w-4" /> Clear
+          </button>
+        )}
       </div>
+
 
       {/* Product Form Modal */}
       {showForm && (
