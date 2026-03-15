@@ -6,128 +6,176 @@ const TermsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 pt-24">
       <div className="container mx-auto px-4 py-12">
+
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-5xl font-light mb-4 text-gray-800">
-            Terms of Service
+            Terms & Conditions
           </h1>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Please read these terms carefully before using our services. Last
-            updated: January 2026
+            Please read these terms carefully before using Cavoya or placing an
+            order through our website.
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto space-y-8">
-          {/* Acceptance */}
+
+          {/* Introduction */}
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-tangerine-400 to-tangerine-600 rounded-xl flex items-center justify-center">
                 <FileText className="h-6 w-6 text-white" />
               </div>
               <h2 className="text-3xl font-light text-gray-800">
-                Acceptance of Terms
+                Introduction
               </h2>
             </div>
+
             <p className="text-gray-600 leading-relaxed">
-              By accessing and using the Cavoya website, you accept and agree to
-              be bound by these Terms of Service and our Privacy Policy. If you
-              do not agree to these terms, please do not use our website or
-              services.
+              Welcome to Cavoya. These Terms and Conditions govern your access
+              to and use of our website and the purchase of products offered
+              through our platform. By accessing, browsing, or using this
+              website, you agree to comply with and be bound by these Terms and
+              Conditions. If you do not agree with any part of these terms,
+              please do not use this website.
             </p>
           </div>
 
           {/* Use of Website */}
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <h2 className="text-3xl font-light text-gray-800 mb-6">
-              Use of Website
+              Use of the Website
             </h2>
+
             <div className="space-y-4 text-gray-600">
               <p>
-                You agree to use this website only for lawful purposes and in a
-                way that does not infringe the rights of others or restrict or
-                inhibit their use of the website.
+                By using this website, you confirm that all information you
+                provide is accurate, current, and complete.
               </p>
+
               <p>
-                <strong className="text-gray-800">
-                  Prohibited activities include:
-                </strong>
+                You agree to use this website only for lawful purposes and in a
+                manner that does not violate any applicable laws or regulations.
               </p>
-              <ul className="list-disc list-inside pl-4 space-y-2">
-                <li>Using the website for any illegal purpose</li>
-                <li>Attempting to gain unauthorized access to our systems</li>
-                <li>Interfering with the proper functioning of the website</li>
-                <li>Uploading malicious code or viruses</li>
-                <li>Collecting user data without permission</li>
-                <li>Impersonating another person or entity</li>
+
+              <p className="font-medium text-gray-800">
+                You must not misuse this website by:
+              </p>
+
+              <ul className="list-disc list-inside space-y-2 pl-4">
+                <li>Introducing malicious software or viruses</li>
+                <li>Attempting unauthorized access to our systems</li>
+                <li>Interfering with the website’s functionality</li>
+                <li>Violating any applicable laws or regulations</li>
               </ul>
             </div>
           </div>
 
-          {/* Products & Orders */}
+          {/* Products */}
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-blush-400 to-blush-600 rounded-xl flex items-center justify-center">
                 <Shield className="h-6 w-6 text-white" />
               </div>
+
               <h2 className="text-3xl font-light text-gray-800">
-                Products and Orders
+                Products & Product Information
               </h2>
             </div>
-            <div className="space-y-4 text-gray-600">
-              <div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  Product Information
-                </h3>
-                <p>
-                  We strive to display product colors and images as accurately
-                  as possible. However, we cannot guarantee that your device's
-                  display of colors accurately reflects the actual product
-                  color. All measurements are approximate.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  Pricing
-                </h3>
-                <p>
-                  All prices are in Indian Rupees (INR) and are subject to
-                  change without notice. We reserve the right to modify prices
-                  at any time. However, we will honor the price displayed at the
-                  time of your order.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  Order Acceptance
-                </h3>
-                <p>
-                  We reserve the right to refuse or cancel any order for any
-                  reason, including but not limited to product availability,
-                  errors in pricing or product information, or suspected
-                  fraudulent activity.
-                </p>
-              </div>
-            </div>
+
+            <p className="text-gray-600 leading-relaxed">
+              Cavoya offers printed western garments through its online store.
+              We make every effort to display product colors, prints, and
+              details as accurately as possible. However, actual colors may vary
+              slightly depending on device screens, lighting conditions, or
+              photography.
+            </p>
+
+            <p className="text-gray-600 leading-relaxed mt-4">
+              Product descriptions, images, and pricing may change at any time
+              without prior notice.
+            </p>
           </div>
 
-          {/* Account Responsibilities */}
+          {/* Pricing */}
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <h2 className="text-3xl font-light text-gray-800 mb-6">
-              Account Responsibilities
+              Pricing
             </h2>
-            <div className="space-y-3 text-gray-600">
-              <p>
-                When you create an account with us, you are responsible for:
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-2">
-                <li>
-                  Maintaining the confidentiality of your account credentials
-                </li>
-                <li>All activities that occur under your account</li>
-                <li>Notifying us immediately of any unauthorized use</li>
-                <li>Providing accurate and current information</li>
-              </ul>
-            </div>
+
+            <p className="text-gray-600 leading-relaxed">
+              All prices listed on our website are in Indian Rupees (INR). Prices
+              may be inclusive or exclusive of applicable taxes depending on the
+              product page.
+            </p>
+
+            <p className="text-gray-600 leading-relaxed mt-4">
+              Cavoya reserves the right to modify product prices at any time
+              without prior notice. In the event of a pricing error or incorrect
+              product information, we reserve the right to cancel or refuse any
+              order placed for that product.
+            </p>
+          </div>
+
+          {/* Orders */}
+          <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <h2 className="text-3xl font-light text-gray-800 mb-6">
+              Orders
+            </h2>
+
+            <p className="text-gray-600 leading-relaxed">
+              When placing an order on our website, you agree that the
+              information provided during checkout is accurate and complete.
+              All orders are subject to acceptance and product availability.
+            </p>
+
+            <p className="text-gray-600 leading-relaxed mt-4">
+              Cavoya reserves the right to cancel or refuse any order due to
+              suspected fraud, pricing errors, product unavailability, or
+              technical issues.
+            </p>
+
+            <p className="text-gray-600 leading-relaxed mt-4">
+              An order confirmation email only confirms that your request has
+              been received and does not guarantee order acceptance.
+            </p>
+          </div>
+
+          {/* Payments */}
+          <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <h2 className="text-3xl font-light text-gray-800 mb-6">
+              Payments
+            </h2>
+
+            <p className="text-gray-600 leading-relaxed">
+              Payments can be made using available payment methods such as
+              credit cards, debit cards, UPI, net banking, or other digital
+              payment options.
+            </p>
+
+            <p className="text-gray-600 leading-relaxed mt-4">
+              All payment transactions are securely processed through trusted
+              third-party payment gateways. Cavoya does not store your complete
+              card details.
+            </p>
+          </div>
+
+          {/* Shipping */}
+          <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <h2 className="text-3xl font-light text-gray-800 mb-6">
+              Shipping & Delivery
+            </h2>
+
+            <p className="text-gray-600 leading-relaxed">
+              Orders are processed and shipped within the timeframe mentioned in
+              our Shipping Policy. Delivery times may vary depending on your
+              location and courier services.
+            </p>
+
+            <p className="text-gray-600 leading-relaxed mt-4">
+              Cavoya is not responsible for delays caused by courier companies,
+              natural events, or circumstances beyond our control.
+            </p>
           </div>
 
           {/* Intellectual Property */}
@@ -135,35 +183,42 @@ const TermsPage = () => {
             <h2 className="text-3xl font-light text-gray-800 mb-6">
               Intellectual Property
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
-              All content on this website, including but not limited to text,
-              graphics, logos, images, and software, is the property of Cavoya
-              or its content suppliers and is protected by Indian and
-              international copyright laws.
-            </p>
+
             <p className="text-gray-600 leading-relaxed">
-              You may not reproduce, distribute, modify, or create derivative
-              works of any content from this website without our express written
-              permission.
+              All content on this website including images, graphics, logos,
+              text, designs, and layout is the intellectual property of Cavoya
+              and is protected under applicable copyright and intellectual
+              property laws.
+            </p>
+
+            <p className="text-gray-600 leading-relaxed mt-4">
+              You may not reproduce, copy, distribute, or modify any content
+              without written permission from Cavoya.
             </p>
           </div>
 
-          {/* Limitation of Liability */}
+          {/* Liability */}
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-matcha-400 to-matcha-600 rounded-xl flex items-center justify-center">
                 <AlertCircle className="h-6 w-6 text-white" />
               </div>
+
               <h2 className="text-3xl font-light text-gray-800">
                 Limitation of Liability
               </h2>
             </div>
+
             <p className="text-gray-600 leading-relaxed">
-              Cavoya shall not be liable for any indirect, incidental, special,
-              consequential, or punitive damages arising out of or relating to
-              your use of the website or products purchased through the website.
-              Our total liability shall not exceed the amount paid by you for
-              the product in question.
+              Cavoya shall not be liable for any direct, indirect, incidental,
+              or consequential damages resulting from the use of this website or
+              the purchase of our products.
+            </p>
+
+            <p className="text-gray-600 leading-relaxed mt-4">
+              While we aim to keep information accurate and updated, we do not
+              guarantee that the website will always be free from errors or
+              interruptions.
             </p>
           </div>
 
@@ -172,43 +227,51 @@ const TermsPage = () => {
             <h2 className="text-3xl font-light text-gray-800 mb-6">
               Governing Law
             </h2>
+
             <p className="text-gray-600 leading-relaxed">
-              These Terms of Service shall be governed by and construed in
-              accordance with the laws of India. Any disputes arising from these
-              terms or your use of the website shall be subject to the exclusive
-              jurisdiction of the courts of Surat, Gujarat.
+              These Terms and Conditions shall be governed by the laws of India.
+              Any disputes related to the use of this website or purchase of
+              products shall fall under the jurisdiction of the appropriate
+              courts in India.
             </p>
           </div>
 
-          {/* Changes to Terms */}
+          {/* Changes */}
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <h2 className="text-3xl font-light text-gray-800 mb-6">
               Changes to Terms
             </h2>
+
             <p className="text-gray-600 leading-relaxed">
-              We reserve the right to modify these Terms of Service at any time.
-              Changes will be effective immediately upon posting to the website.
-              Your continued use of the website following any changes
-              constitutes your acceptance of the new terms.
+              Cavoya reserves the right to update or modify these Terms and
+              Conditions at any time. Updates will be posted on this page and
+              continued use of the website constitutes acceptance of the
+              revised terms.
             </p>
           </div>
 
           {/* Contact */}
           <div className="bg-gradient-to-br from-blush-50 to-tangerine-50 p-8 rounded-2xl border border-blush-200">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              Questions About Our Terms?
+              Contact Us
             </h2>
+
             <p className="text-gray-700">
-              If you have any questions about these Terms of Service, please
-              contact us at{" "}
-              <a
-                href="mailto:legal@cavoya.com"
-                className="text-tangerine-600 hover:text-tangerine-700 font-medium"
-              >
-                legal@cavoya.com
-              </a>
+              If you have questions regarding these Terms and Conditions,
+              please contact us at:
             </p>
+
+            <div className="mt-4 space-y-2 text-gray-800">
+              <p>
+                <strong>Email:</strong> support@cavoya.in
+              </p>
+
+              <p>
+                <strong>WhatsApp:</strong> +91 XXXXX XXXXX
+              </p>
+            </div>
           </div>
+
         </div>
       </div>
     </div>

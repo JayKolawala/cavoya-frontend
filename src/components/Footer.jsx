@@ -52,12 +52,28 @@ const Footer = () => {
                   Contact Us
                 </button>
               </li>
-              <li>
+              {/* <li>
                 <button
                   onClick={() => navigate("/shipping")}
                   className="hover:text-white transition-colors"
                 >
                   Shipping Info
+                </button>
+              </li> */}
+              <li>
+                <button
+                  onClick={() => navigate("/privacy-policy")}
+                  className="hover:text-white transition-colors"
+                >
+                  Privacy Policy
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigate("/terms-and-conditions")}
+                  className="hover:text-white transition-colors"
+                >
+                  Terms & Conditions
                 </button>
               </li>
               <li>
@@ -65,9 +81,17 @@ const Footer = () => {
                   onClick={() => navigate("/returns")}
                   className="hover:text-white transition-colors"
                 >
-                  Returns
+                  Refund and Return Policy
                 </button>
               </li>
+              {/* <li>
+                <button
+                  onClick={() => navigate("/returns")}
+                  className="hover:text-white transition-colors"
+                >
+                  Returns
+                </button>
+              </li> */}
             </ul>
           </div>
           <div>
@@ -98,16 +122,22 @@ const Footer = () => {
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <button
-              onClick={() => navigate("/privacy")}
+              onClick={() => navigate("/privacy-policy")}
               className="text-gray-400 hover:text-white transition-colors text-sm"
             >
               Privacy Policy
             </button>
             <button
-              onClick={() => navigate("/terms")}
+              onClick={() => navigate("terms-and-conditions")}
               className="text-gray-400 hover:text-white transition-colors text-sm"
             >
-              Terms of Service
+              Terms & Conditions
+            </button>
+            <button
+              onClick={() => navigate("/refund")}
+              className="text-gray-400 hover:text-white transition-colors text-sm"
+            >
+              Refund Policy
             </button>
           </div>
         </div>

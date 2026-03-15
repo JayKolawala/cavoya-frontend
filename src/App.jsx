@@ -111,11 +111,11 @@ function App() {
                             />
                             <Route path="/returns" element={<ReturnsPage />} />
                             <Route
-                              path="/privacy"
+                              path="/privacy-policy"
                               element={<PrivacyPolicyPage />}
                             />
-                            <Route path="/terms" element={<TermsPage />} />
-
+                            <Route path="/terms-and-conditions" element={<TermsPage />} />
+                            <Route path="/refund-and-return-policy" element={<ReturnsPage />} />
                             {/* Protected User Routes */}
                             <Route
                               path="/checkout"

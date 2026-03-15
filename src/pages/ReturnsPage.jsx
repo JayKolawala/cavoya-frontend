@@ -1,190 +1,245 @@
 // pages/ReturnsPage.jsx
 import React from "react";
-import { RotateCcw, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { RotateCcw, CheckCircle, XCircle, AlertCircle, Truck } from "lucide-react";
 
 const ReturnsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 pt-24">
       <div className="container mx-auto px-4 py-12">
+
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-5xl font-light mb-4 text-gray-800">
-            Returns & Exchanges
+            Refund & Return Policy
           </h1>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Your satisfaction is our priority. Easy 30-day returns.
+            At Cavoya, we strive to provide high-quality garments and a smooth
+            shopping experience for every customer.
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto space-y-8">
-          {/* Return Policy */}
+
+          {/* Intro */}
+          <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <p className="text-gray-600 leading-relaxed">
+              All products are carefully checked before dispatch. However,
+              if you receive a damaged or incorrect product, we will assist you
+              with a return or refund according to the policy outlined below.
+            </p>
+          </div>
+
+          {/* Eligibility */}
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-tangerine-400 to-tangerine-600 rounded-xl flex items-center justify-center">
                 <RotateCcw className="h-6 w-6 text-white" />
               </div>
+
               <h2 className="text-3xl font-light text-gray-800">
-                30-Day Return Policy
+                Eligibility for Returns
               </h2>
             </div>
-            <div className="space-y-4 text-gray-600">
-              <p>
-                We want you to be completely satisfied with your purchase. If
-                for any reason you're not happy with your order, you can return
-                it within 30 days of delivery for a full refund or exchange.
-              </p>
-              <p>
-                All items must be returned in their original condition, unworn,
-                unwashed, and with all tags attached.
-              </p>
-            </div>
+
+            <p className="text-gray-600 mb-4">
+              Returns are accepted only in the following situations:
+            </p>
+
+            <ul className="list-disc list-inside text-gray-600 space-y-2">
+              <li>The product received is damaged or defective</li>
+              <li>The wrong product has been delivered</li>
+            </ul>
+
+            <p className="text-gray-600 mt-4">
+              All return requests must be raised within <strong>7 days</strong> of receiving the order.
+            </p>
+
+            <p className="text-gray-600 mt-4">
+              To claim a return for a damaged or incorrect product, an
+              <strong> unboxing video is mandatory</strong>. The video must show
+              the unopened package being opened and the condition of the
+              product.
+            </p>
+
+            <p className="text-gray-600 mt-4">
+              The product must be unused, unwashed, with original tags and
+              packaging intact.
+            </p>
           </div>
 
-          {/* How to Return */}
+          {/* Non Returnable */}
+          <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <div className="flex items-center gap-3 mb-6">
+              <XCircle className="h-6 w-6 text-red-500" />
+              <h2 className="text-3xl font-light text-gray-800">
+                Non-Returnable Situations
+              </h2>
+            </div>
+
+            <ul className="space-y-3 text-gray-600 list-disc list-inside">
+              <li>Incorrect size selected by the customer</li>
+              <li>Minor color differences due to screen or lighting</li>
+              <li>Change of mind after purchase</li>
+              <li>Products worn, washed, or altered</li>
+              <li>Products purchased during sales or promotions</li>
+            </ul>
+
+            <p className="text-gray-600 mt-4">
+              Customers are advised to carefully review product descriptions,
+              images, and size details before placing an order.
+            </p>
+          </div>
+
+          {/* Return Process */}
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <h2 className="text-3xl font-light text-gray-800 mb-6">
-              How to Return an Item
+              Return Request Process
             </h2>
-            <div className="space-y-6">
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-blush-100 rounded-full flex items-center justify-center text-blush-600 font-semibold">
-                  1
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    Initiate Return Request
-                  </h3>
-                  <p className="text-gray-600">
-                    Log into your account and go to "My Orders". Select the item
-                    you wish to return and click "Return Item".
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-blush-100 rounded-full flex items-center justify-center text-blush-600 font-semibold">
-                  2
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    Pack the Item
-                  </h3>
-                  <p className="text-gray-600">
-                    Pack the item securely in its original packaging. Include
-                    all tags, labels, and accessories.
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-blush-100 rounded-full flex items-center justify-center text-blush-600 font-semibold">
-                  3
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    Schedule Pickup
-                  </h3>
-                  <p className="text-gray-600">
-                    Our courier partner will pick up the item from your address
-                    within 2-3 business days.
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-blush-100 rounded-full flex items-center justify-center text-blush-600 font-semibold">
-                  4
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    Get Your Refund
-                  </h3>
-                  <p className="text-gray-600">
-                    Once we receive and inspect your return, your refund will be
-                    processed within 5-7 business days.
-                  </p>
-                </div>
-              </div>
-            </div>
+
+            <p className="text-gray-600 mb-4">
+              If you receive a damaged or incorrect product, contact our support
+              team and provide the following details:
+            </p>
+
+            <ul className="list-disc list-inside text-gray-600 space-y-2">
+              <li>Order number</li>
+              <li>Description of the issue</li>
+              <li>Clear photos of the product</li>
+              <li>Unboxing video of the package</li>
+            </ul>
+
+            <p className="text-gray-600 mt-4">
+              Our team will review the request and confirm whether the return
+              request has been approved.
+            </p>
           </div>
 
-          {/* Eligible vs Non-Eligible */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-2xl shadow-lg">
-              <div className="flex items-center gap-2 mb-4">
-                <CheckCircle className="h-6 w-6 text-matcha-500" />
-                <h3 className="text-xl font-semibold text-gray-800">
-                  Eligible for Return
-                </h3>
-              </div>
-              <ul className="space-y-2 text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-matcha-500 mt-1">✓</span>
-                  <span>Items with original tags attached</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-matcha-500 mt-1">✓</span>
-                  <span>Unworn and unwashed products</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-matcha-500 mt-1">✓</span>
-                  <span>Items in original packaging</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-matcha-500 mt-1">✓</span>
-                  <span>Returned within 30 days</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white p-6 rounded-2xl shadow-lg">
-              <div className="flex items-center gap-2 mb-4">
-                <XCircle className="h-6 w-6 text-red-500" />
-                <h3 className="text-xl font-semibold text-gray-800">
-                  Not Eligible for Return
-                </h3>
-              </div>
-              <ul className="space-y-2 text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-red-500 mt-1">✗</span>
-                  <span>Items without tags</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-red-500 mt-1">✗</span>
-                  <span>Worn, used, or washed items</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-red-500 mt-1">✗</span>
-                  <span>Damaged or altered products</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-red-500 mt-1">✗</span>
-                  <span>Sale or clearance items</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Exchange Policy */}
-          <div className="bg-gradient-to-br from-blush-50 to-tangerine-50 p-8 rounded-2xl border border-blush-200">
+          {/* Inspection */}
+          <div className="bg-white p-8 rounded-2xl shadow-lg">
             <div className="flex items-center gap-3 mb-4">
-              <AlertCircle className="h-6 w-6 text-tangerine-600" />
-              <h2 className="text-2xl font-semibold text-gray-800">
-                Exchange Policy
+              <CheckCircle className="h-6 w-6 text-matcha-500" />
+              <h2 className="text-3xl font-light text-gray-800">
+                Inspection & Approval
               </h2>
             </div>
-            <p className="text-gray-700 mb-4">
-              We're happy to exchange your item for a different size or color,
-              subject to availability. Simply select "Exchange" when initiating
-              your return request.
-            </p>
-            <p className="text-gray-700">
-              For any questions about returns or exchanges, please contact us at{" "}
-              <a
-                href="mailto:support@cavoya.com"
-                className="text-tangerine-600 hover:text-tangerine-700 font-medium"
-              >
-                support@cavoya.com
-              </a>
+
+            <p className="text-gray-600 leading-relaxed">
+              Once the returned product is received, it will be inspected by our
+              team to ensure it meets the return conditions mentioned in this
+              policy. Cavoya reserves the right to approve or reject a return
+              request if the product does not meet these requirements.
             </p>
           </div>
+
+          {/* Refund */}
+          <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <h2 className="text-3xl font-light text-gray-800 mb-6">
+              Refund Process
+            </h2>
+
+            <p className="text-gray-600">
+              After the returned item has been inspected and approved, the
+              refund will be processed to the original payment method used
+              during purchase.
+            </p>
+
+            <p className="text-gray-600 mt-4">
+              Refunds are generally processed within
+              <strong> 10-12 business days</strong>.
+            </p>
+
+            <p className="text-gray-600 mt-4">
+              Courier charges for returning the product may be deducted from the
+              refund amount depending on the situation.
+            </p>
+          </div>
+
+          {/* Cancellation */}
+          <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertCircle className="h-6 w-6 text-tangerine-600" />
+              <h2 className="text-3xl font-light text-gray-800">
+                Order Cancellation
+              </h2>
+            </div>
+
+            <p className="text-gray-600">
+              Orders can only be cancelled before they are shipped. Once an
+              order has been dispatched, cancellation will not be possible.
+            </p>
+          </div>
+
+          {/* Shipping Policy */}
+          <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <div className="flex items-center gap-3 mb-6">
+              <Truck className="h-6 w-6 text-blue-500" />
+              <h2 className="text-3xl font-light text-gray-800">
+                Shipping Policy
+              </h2>
+            </div>
+
+            <div className="space-y-4 text-gray-600">
+
+              <p>
+                Once an order is placed and payment is confirmed, the order
+                enters our processing stage where garments are prepared and
+                quality checked.
+              </p>
+
+              <p>
+                Orders are processed only on business days and not on Sundays or
+                public holidays.
+              </p>
+
+              <p>
+                The estimated delivery time is approximately
+                <strong> 12–15 business days</strong> from order confirmation.
+              </p>
+
+              <p>
+                Delivery timelines may vary depending on location, courier
+                service availability, weather conditions, or public holidays.
+              </p>
+
+              <p>
+                Once the order is shipped, customers will receive a tracking
+                number to monitor their shipment.
+              </p>
+
+              <p>
+                Customers must provide accurate delivery information. Cavoya is
+                not responsible for delays caused by incorrect addresses.
+              </p>
+
+              <p>
+                If a package appears lost or arrives damaged, customers should
+                contact our support team immediately with their order details.
+              </p>
+
+            </div>
+          </div>
+
+          {/* Contact */}
+          <div className="bg-gradient-to-br from-blush-50 to-tangerine-50 p-8 rounded-2xl border border-blush-200">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Contact Us
+            </h2>
+
+            <p className="text-gray-700">
+              If you have any questions regarding returns, refunds, or shipping,
+              please contact us:
+            </p>
+
+            <div className="mt-4 space-y-2 text-gray-800">
+              <p>
+                <strong>Email:</strong> support@cavoya.in
+              </p>
+              <p>
+                <strong>WhatsApp:</strong> Cavoya
+              </p>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

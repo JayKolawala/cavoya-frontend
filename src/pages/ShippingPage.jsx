@@ -132,10 +132,10 @@ const ShippingPage = () => {
                 If you have any questions about your shipment, please contact
                 our customer service team at{" "}
                 <a
-                  href="mailto:support@cavoya.com"
+                  href="mailto:support@cavoya.in"
                   className="text-black hover:text-gray-700 font-medium underline"
                 >
-                  support@cavoya.com
+                  support@cavoya.in
                 </a>
               </p>
             </div>

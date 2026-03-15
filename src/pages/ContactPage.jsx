@@ -58,7 +58,7 @@ const ContactPage = () => {
               <h3 className="text-xl font-semibold mb-2 text-gray-800">
                 Email
               </h3>
-              <p className="text-gray-600">support@cavoya.com</p>
+              <p className="text-gray-600">support@cavoya.in</p>
               <p className="text-gray-600">info@cavoya.com</p>
             </div>
 
@@ -70,7 +70,7 @@ const ContactPage = () => {
                 Phone
               </h3>
               <p className="text-gray-600">+91 98765 43210</p>
-              <p className="text-gray-600">Mon-Sat: 9AM - 6PM IST</p>
+              <p className="text-gray-600">Mon-Sat: 10AM - 7PM IST</p>
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
@@ -81,7 +81,7 @@ const ContactPage = () => {
                 Address
               </h3>
               <p className="text-gray-600">
-                123 Fashion Street
+                142, Puna kumbhariya Road, Bhagyoday Industrial Estate, Parvat Patiya,
                 <br />
                 Surat, Gujarat 395010
                 <br />
