@@ -4,14 +4,14 @@ import { Truck, Clock, MapPin, Package } from "lucide-react";
 
 const ShippingPage = () => {
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 pt-24">
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-light mb-4 text-gray-800">
+          <h1 className="text-5xl font-light mb-4 text-white">
             Shipping Information
           </h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-200 text-lg max-w-2xl mx-auto">
             Fast, reliable delivery to your doorstep
           </p>
         </div>

@@ -8,6 +8,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { Sparkles, Package } from "lucide-react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { getCategoryMap } from "../utils/categoryHelpers";
+import AOS from "aos";
 
 const ProductsPage = () => {
   const {
@@ -26,6 +27,10 @@ const ProductsPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const location = useLocation();
+
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
 
   // Get category mapping from shared utility
   const categoryMap = getCategoryMap();
@@ -132,7 +137,7 @@ const ProductsPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Header Section */}
-      <div className="relative bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white py-20 px-4 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white pb-20 pt-32 px-4 overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 right-10 w-80 h-80 bg-gray-400/5 rounded-full blur-3xl animate-pulse delay-700"></div>
@@ -141,13 +146,8 @@ const ProductsPage = () => {
         <div className="absolute inset-0 bg-black/30"></div>
 
         {/* Header Content */}
-        <div className="relative z-10 container mx-auto text-center">
-          <div className="mb-4 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-            <Sparkles className="w-4 h-4 text-gray-300" />
-            <span className="text-gray-200 text-sm font-light tracking-wider">
-              Curated Collection
-            </span>
-          </div>
+        <div className="relative z-10 container mx-auto text-center" data-aos="fade-down">
+
 
           <h1 className="text-4xl md:text-6xl font-extralight tracking-wide mb-4">
             {pageTitle}

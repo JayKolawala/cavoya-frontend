@@ -5,7 +5,8 @@ import { useAppContext } from "../contexts/AppContext";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import { getCategoryMap } from "../utils/categoryHelpers";
-import logoBlack from "../../src/assets/Cavoya_Logo.svg";
+import logoBlack from "../../src/assets/cavoya_black.PNG";
+import logoWhite from "../../src/assets/cavoya_white.PNG";
 
 // ─── Nav configuration objects ──────────────────────────────────────────────
 
@@ -170,9 +171,9 @@ const Header = () => {
       )}
 
       <header
-        className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${isScrolled || !isHomePage
-            ? "bg-white shadow-lg shadow-black/10"
-            : "bg-transparent text-white"
+        className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${isScrolled
+          ? "bg-white shadow-lg shadow-black/10"
+          : "bg-transparent text-white"
           }`}
       >
         <div className="w-full mx-auto">
@@ -188,9 +189,9 @@ const Header = () => {
               aria-label="Menu"
             >
               <Menu
-                className={`h-6 w-6 ${!isHomePage || showMobileMenu || isScrolled
-                    ? "text-black"
-                    : "text-white"
+                className={`h-6 w-6 ${showMobileMenu || isScrolled
+                  ? "text-black"
+                  : "text-white"
                   }`}
               />
             </button>
@@ -200,8 +201,9 @@ const Header = () => {
               className="text-2xl font-bold text-gray-600"
               onClick={() => navigate("/")}
             >
+
               <img
-                src={logoBlack}
+                src={(isScrolled || showMobileMenu) ? logoBlack : logoWhite}
                 alt="cavoya-logo"
                 className="h-10 w-40 rounded-full object-cover cursor-pointer"
               />
@@ -253,8 +255,8 @@ const Header = () => {
                         )
                       }
                       className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black ${i === 0 || i === STYLES_ITEMS.length - 1
-                          ? "hover:rounded-lg"
-                          : ""
+                        ? "hover:rounded-lg"
+                        : ""
                         }`}
                     >
                       {item.label}
@@ -348,9 +350,8 @@ const Header = () => {
 
             {/* Icons */}
             <div
-              className={`flex items-center space-x-4 ${showMobileMenu || isScrolled || !isHomePage
-                  ? "text-black"
-                  : "text-white"
+              className={`flex items-center space-x-4 ${showMobileMenu || isScrolled ? "text-black"
+                : "text-white"
                 }`}
             >
               <button

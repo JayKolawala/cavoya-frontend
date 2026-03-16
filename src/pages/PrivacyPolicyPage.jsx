@@ -4,15 +4,15 @@ import { Shield, Eye, Lock, UserCheck } from "lucide-react";
 
 const PrivacyPolicyPage = () => {
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 pt-24">
       <div className="container mx-auto px-4 py-12">
 
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-light mb-4 text-gray-800">
+          <h1 className="text-5xl font-light mb-4 text-white">
             Privacy Policy
           </h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-200 text-lg max-w-2xl mx-auto">
             Your privacy is important to us. This policy explains how Cavoya
             collects, uses, and protects your personal information.
           </p>
@@ -202,7 +202,7 @@ const PrivacyPolicyPage = () => {
               </p>
 
               <p>
-                <strong>WhatsApp:</strong> Cavoya
+                <strong>WhatsApp:</strong> +91 7383096696
               </p>
             </div>
           </div>

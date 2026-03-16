@@ -274,147 +274,151 @@ const ProductPage = () => {
   );
 
   return (
-    <section className="container mx-auto px-4 pt-24 pb-16">
-      <div className="flex flex-col lg:flex-row gap-12">
-        {/* Enhanced Media Gallery */}
-        <div className="lg:w-1/2">
-          <div className="w-full h-[500px] bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden mb-6 relative shadow-xl">
-            {productMedia[activeMediaIndex].type === "video" ? (
-              <video
-                src={productMedia[activeMediaIndex].url}
-                className="w-full h-full object-contain"
-                controls
-                autoPlay
-                muted
-                loop
-              />
-            ) : (
-              <img
-                src={productMedia[activeMediaIndex].url}
-                alt={productMedia[activeMediaIndex].alt}
-                className="w-full h-full object-contain transition-transform duration-300 hover:scale-105"
-              />
-            )}
-          </div>
 
-          {/* Enhanced Thumbnails with Horizontal Scroll */}
-          <div className="relative px-2">
-            {/* Left Arrow */}
-            {showLeftArrow && (
-              <button
-                onClick={() => scrollThumbnails("left")}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 transition-all duration-200 hover:scale-110"
-                aria-label="Scroll left"
-              >
-                <ChevronLeft className="h-5 w-5 text-gray-700" />
-              </button>
-            )}
+    <>
+      <div className="bg-gradient-to-br from-black via-gray-900 to-gray-800 h-[72px]"></div>
+      <section className="container mx-auto px-4 pt-24 pb-16">
 
-            {/* Scrollable Thumbnail Container */}
-            <div
-              ref={thumbnailScrollRef}
-              className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth p-2 px-2"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-            >
-              {productMedia.map((media, index) => (
-                <div
-                  key={index}
-                  className={`relative flex-shrink-0 w-24 h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${activeMediaIndex === index
-                    ? "ring-4 ring-gray-700 shadow-lg scale-105"
-                    : "hover:opacity-80 hover:scale-105 shadow-md"
-                    }`}
-                  onClick={() => setActiveMediaIndex(index)}
+        <div className="flex flex-col lg:flex-row gap-12">
+          {/* Enhanced Media Gallery */}
+          <div className="lg:w-1/2">
+            <div className="w-full h-[500px] bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden mb-6 relative shadow-xl">
+              {productMedia[activeMediaIndex].type === "video" ? (
+                <video
+                  src={productMedia[activeMediaIndex].url}
+                  className="w-full h-full object-contain"
+                  controls
+                  autoPlay
+                  muted
+                  loop
+                />
+              ) : (
+                <img
+                  src={productMedia[activeMediaIndex].url}
+                  alt={productMedia[activeMediaIndex].alt}
+                  className="w-full h-full object-contain transition-transform duration-300 hover:scale-105"
+                />
+              )}
+            </div>
+
+            {/* Enhanced Thumbnails with Horizontal Scroll */}
+            <div className="relative px-2">
+              {/* Left Arrow */}
+              {showLeftArrow && (
+                <button
+                  onClick={() => scrollThumbnails("left")}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 transition-all duration-200 hover:scale-110"
+                  aria-label="Scroll left"
                 >
-                  {media.type === "video" ? (
-                    <>
-                      <video
-                        src={media.url}
-                        className="w-full h-full object-cover"
-                        muted
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
-                        <Play className="h-8 w-8 text-white drop-shadow-lg" />
-                      </div>
-                    </>
-                  ) : (
-                    <img
-                      src={media.url}
-                      alt={`Thumbnail ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
+                  <ChevronLeft className="h-5 w-5 text-gray-700" />
+                </button>
+              )}
 
-            {/* Right Arrow */}
-            {showRightArrow && (
-              <button
-                onClick={() => scrollThumbnails("right")}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 transition-all duration-200 hover:scale-110"
-                aria-label="Scroll right"
+              {/* Scrollable Thumbnail Container */}
+              <div
+                ref={thumbnailScrollRef}
+                className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth p-2 px-2"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
               >
-                <ChevronRight className="h-5 w-5 text-gray-700" />
-              </button>
-            )}
+                {productMedia.map((media, index) => (
+                  <div
+                    key={index}
+                    className={`relative flex-shrink-0 w-24 h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${activeMediaIndex === index
+                      ? "ring-4 ring-gray-700 shadow-lg scale-105"
+                      : "hover:opacity-80 hover:scale-105 shadow-md"
+                      }`}
+                    onClick={() => setActiveMediaIndex(index)}
+                  >
+                    {media.type === "video" ? (
+                      <>
+                        <video
+                          src={media.url}
+                          className="w-full h-full object-cover"
+                          muted
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+                          <Play className="h-8 w-8 text-white drop-shadow-lg" />
+                        </div>
+                      </>
+                    ) : (
+                      <img
+                        src={media.url}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Right Arrow */}
+              {showRightArrow && (
+                <button
+                  onClick={() => scrollThumbnails("right")}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 transition-all duration-200 hover:scale-110"
+                  aria-label="Scroll right"
+                >
+                  <ChevronRight className="h-5 w-5 text-gray-700" />
+                </button>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Enhanced Product Details */}
-        <div className="lg:w-1/2">
-          <h1 className="text-4xl md:text-5xl font-light mb-3 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent capitalize">
-            {selectedProduct.name}
-          </h1>
+          {/* Enhanced Product Details */}
+          <div className="lg:w-1/2">
+            <h1 className="text-4xl md:text-5xl font-light mb-3 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent capitalize">
+              {selectedProduct.name}
+            </h1>
 
-          {/* Enhanced Rating - Use backend avgRating and totalRatings */}
-          {selectedProduct.totalRatings > 0 ? (
-            <div className="flex items-center mb-6">
-              <StarDisplay
-                rating={selectedProduct.avgRating || 0}
-                size="h-5 w-5"
-                showHalfStars={true}
-              />
-              <span className="ml-3 text-gray-600 font-medium">
-                {selectedProduct.avgRating?.toFixed(1) || "0.0"} (
-                {selectedProduct.totalRatings}{" "}
-                {selectedProduct.totalRatings === 1 ? "review" : "reviews"})
+            {/* Enhanced Rating - Use backend avgRating and totalRatings */}
+            {selectedProduct.totalRatings > 0 ? (
+              <div className="flex items-center mb-6">
+                <StarDisplay
+                  rating={selectedProduct.avgRating || 0}
+                  size="h-5 w-5"
+                  showHalfStars={true}
+                />
+                <span className="ml-3 text-gray-600 font-medium">
+                  {selectedProduct.avgRating?.toFixed(1) || "0.0"} (
+                  {selectedProduct.totalRatings}{" "}
+                  {selectedProduct.totalRatings === 1 ? "review" : "reviews"})
+                </span>
+              </div>
+            ) : (
+              <div className="mb-6">
+                <span className="text-gray-500 text-sm italic">
+                  No reviews yet
+                </span>
+              </div>
+            )}
+
+            {/* Enhanced Price */}
+            <div className="flex items-center space-x-4 mb-8">
+              <span className="text-4xl font-bold text-gray-900">
+                ₹{selectedProduct.price}
               </span>
-            </div>
-          ) : (
-            <div className="mb-6">
-              <span className="text-gray-500 text-sm italic">
-                No reviews yet
-              </span>
-            </div>
-          )}
-
-          {/* Enhanced Price */}
-          <div className="flex items-center space-x-4 mb-8">
-            <span className="text-4xl font-bold text-gray-900">
-              ₹{selectedProduct.price}
-            </span>
-            {selectedProduct.originalPrice &&
-              selectedProduct.originalPrice > selectedProduct.price && (
-                <span className="text-xl text-gray-400 line-through">
-                  ₹{selectedProduct.originalPrice}
+              {selectedProduct.originalPrice &&
+                selectedProduct.originalPrice > selectedProduct.price && (
+                  <span className="text-xl text-gray-400 line-through">
+                    ₹{selectedProduct.originalPrice}
+                  </span>
+                )}
+              {selectedProduct.isSale && (
+                <span className="bg-black text-white px-3 py-1.5 text-sm font-semibold rounded-full shadow-md">
+                  SALE
                 </span>
               )}
-            {selectedProduct.isSale && (
-              <span className="bg-black text-white px-3 py-1.5 text-sm font-semibold rounded-full shadow-md">
-                SALE
-              </span>
-            )}
-          </div>
+            </div>
 
-          {/* Enhanced Description */}
-          <div className="bg-gray-50 rounded-2xl py-6">
-            <p className="text-gray-700 font-bold leading-relaxed">
-              {selectedProduct.description || "No description available."}
-            </p>
-          </div>
+            {/* Enhanced Description */}
+            <div className="bg-gray-50 rounded-2xl py-6">
+              <p className="text-gray-700 font-bold leading-relaxed">
+                {selectedProduct.description || "No description available."}
+              </p>
+            </div>
 
-          {/* Stock Status */}
-          {/* <div className="mb-6">
+            {/* Stock Status */}
+            {/* <div className="mb-6">
             <p
               className={`text-sm font-medium ${
                 selectedProduct.inventory?.stock > 0
@@ -428,8 +432,8 @@ const ProductPage = () => {
             </p>
           </div> */}
 
-          {/* Color Selection */}
-          {/* {selectedProduct.colors && selectedProduct.colors.length > 0 && (
+            {/* Color Selection */}
+            {/* {selectedProduct.colors && selectedProduct.colors.length > 0 && (
             <div className="mb-6">
               <h4 className="font-medium text-lg mb-3">
                 Color:{" "}
@@ -455,237 +459,238 @@ const ProductPage = () => {
             </div>
           )} */}
 
-          {/* Size Selection */}
-          {selectedProduct.sizes && selectedProduct.sizes.length > 0 && (
-            <div className="mb-8">
-              <h4 className="font-medium text-lg mb-3">
-                Size:{" "}
-                <span className="text-gray-600 font-normal">
-                  {selectedSize}
+            {/* Size Selection */}
+            {selectedProduct.sizes && selectedProduct.sizes.length > 0 && (
+              <div className="mb-8">
+                <h4 className="font-medium text-lg mb-3">
+                  Size:{" "}
+                  <span className="text-gray-600 font-normal">
+                    {selectedSize}
+                  </span>
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedProduct.sizes.map((size) => (
+                    <button
+                      key={size}
+                      className={`px-4 py-2 border rounded-md transition-colors ${selectedSize === size
+                        ? "border-gray-900 bg-gray-100 text-gray-900"
+                        : "border-gray-300 hover:border-gray-500"
+                        }`}
+                      onClick={() => setSelectedSize(size)}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Add to Cart Button */}
+            <button
+              onClick={() =>
+                addToCart(selectedProduct, selectedColor, selectedSize)
+              }
+              disabled={selectedProduct.inventory?.stock <= 0}
+              className={`w-full py-4 rounded-lg font-bold transition-transform transform ${selectedProduct.inventory?.stock > 0
+                ? "bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                } mb-4`}
+            >
+              {selectedProduct.inventory?.stock > 0
+                ? "Add to Cart"
+                : "Out of Stock"}
+            </button>
+
+            {/* Product Badges: Category, Collection, Print */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {selectedProduct.category && (
+                <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
+                  🏷️ {selectedProduct.category}
                 </span>
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {selectedProduct.sizes.map((size) => (
-                  <button
-                    key={size}
-                    className={`px-4 py-2 border rounded-md transition-colors ${selectedSize === size
-                      ? "border-gray-900 bg-gray-100 text-gray-900"
-                      : "border-gray-300 hover:border-gray-500"
-                      }`}
-                    onClick={() => setSelectedSize(size)}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
+              )}
+              {selectedProduct.collectionName && (
+                <span className="inline-block bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-full text-sm font-medium">
+                  🗂️ test{selectedProduct.collectionName}
+                </span>
+              )}
+              {selectedProduct.printName && (
+                <span className="inline-block bg-purple-50 text-purple-700 border border-purple-200 px-3 py-1 rounded-full text-sm font-medium">
+                  🎨 {selectedProduct.printName}
+                </span>
+              )}
             </div>
-          )}
-
-          {/* Add to Cart Button */}
-          <button
-            onClick={() =>
-              addToCart(selectedProduct, selectedColor, selectedSize)
-            }
-            disabled={selectedProduct.inventory?.stock <= 0}
-            className={`w-full py-4 rounded-lg font-bold transition-transform transform ${selectedProduct.inventory?.stock > 0
-              ? "bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              } mb-4`}
-          >
-            {selectedProduct.inventory?.stock > 0
-              ? "Add to Cart"
-              : "Out of Stock"}
-          </button>
-
-          {/* Product Badges: Category, Collection, Print */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {selectedProduct.category && (
-              <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
-                🏷️ {selectedProduct.category}
-              </span>
-            )}
-            {selectedProduct.collectionName && (
-              <span className="inline-block bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-full text-sm font-medium">
-                🗂️ test{selectedProduct.collectionName}
-              </span>
-            )}
-            {selectedProduct.printName && (
-              <span className="inline-block bg-purple-50 text-purple-700 border border-purple-200 px-3 py-1 rounded-full text-sm font-medium">
-                🎨 {selectedProduct.printName}
-              </span>
-            )}
-          </div>
 
 
-          {/* Enhanced Accordion Sections */}
-          <div className="border-t border-gray-200 bg-white rounded-2xl shadow-sm overflow-hidden" id="reviews-section">
-            <AccordionSection
-              title="Product Details"
-              isOpen={activeAccordion === "details"}
-              onToggle={() => toggleAccordion("details")}
-            >
-              <div className="space-y-4 bg-gray-50 p-4 rounded-xl">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white p-3 rounded-lg">
-                    <p className="font-semibold text-gray-800 mb-1">
-                      Category:
-                    </p>
-                    <p className="text-gray-600">
-                      {selectedProduct.category || "N/A"}
-                    </p>
+            {/* Enhanced Accordion Sections */}
+            <div className="border-t border-gray-200 bg-white rounded-2xl shadow-sm overflow-hidden" id="reviews-section">
+              <AccordionSection
+                title="Product Details"
+                isOpen={activeAccordion === "details"}
+                onToggle={() => toggleAccordion("details")}
+              >
+                <div className="space-y-4 bg-gray-50 p-4 rounded-xl">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white p-3 rounded-lg">
+                      <p className="font-semibold text-gray-800 mb-1">
+                        Category:
+                      </p>
+                      <p className="text-gray-600">
+                        {selectedProduct.category || "N/A"}
+                      </p>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg">
+                      <p className="font-semibold text-gray-800 mb-1">Stock:</p>
+                      <p className="text-gray-600">
+                        {selectedProduct.inventory?.stock || 0} units
+                      </p>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg">
+                      <p className="font-semibold text-gray-800 mb-1">Collection:</p>
+                      <p className="text-gray-600">
+                        {selectedProduct.collectionName || "N/A"}
+                      </p>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg">
+                      <p className="font-semibold text-gray-800 mb-1">Print Type:</p>
+                      <p className="text-gray-600">
+                        {selectedProduct.printName || "N/A"}
+                      </p>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg">
+                      <p className="font-semibold text-gray-800 mb-1">Colors:</p>
+                      <p className="text-gray-600">
+                        {selectedProduct.colors?.join(", ") || "N/A"}
+                      </p>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg">
+                      <p className="font-semibold text-gray-800 mb-1">Sizes:</p>
+                      <p className="text-gray-600">
+                        {selectedProduct.sizes?.join(", ") || "N/A"}
+                      </p>
+                    </div>
                   </div>
-                  <div className="bg-white p-3 rounded-lg">
-                    <p className="font-semibold text-gray-800 mb-1">Stock:</p>
-                    <p className="text-gray-600">
-                      {selectedProduct.inventory?.stock || 0} units
-                    </p>
+
+                </div>
+              </AccordionSection>
+
+              <AccordionSection
+                title="Product Description"
+                isOpen={activeAccordion === "description"}
+                onToggle={() => toggleAccordion("description")}
+              >
+                <div className="space-y-4">
+                  <p className="text-gray-700 leading-relaxed">
+                    {selectedProduct.description ||
+                      "No detailed description available."}
+                  </p>
+
+                  {selectedProduct.isFeatured && (
+                    <div className="bg-gradient-to-r from-gray-100 to-gray-50 p-4 rounded-xl border-l-4 border-gray-700 shadow-sm">
+                      <p className="font-semibold text-gray-800 mb-1 flex items-center gap-2">
+                        <Star className="w-4 h-4 fill-gray-700 text-gray-700" />
+                        Featured Product
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        This is one of our featured items, handpicked for quality
+                        and style.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </AccordionSection>
+
+              <AccordionSection
+                title="Shipping & Returns"
+                isOpen={activeAccordion === "shipping"}
+                onToggle={() => toggleAccordion("shipping")}
+              >
+                <div className="space-y-5">
+                  <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-xl">
+                    <div className="w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Truck className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800 mb-1">
+                        Free Shipping
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Complimentary delivery on all orders over ₹999 across
+                        India
+                      </p>
+                    </div>
                   </div>
-                  <div className="bg-white p-3 rounded-lg">
-                    <p className="font-semibold text-gray-800 mb-1">Collection:</p>
-                    <p className="text-gray-600">
-                      {selectedProduct.collectionName || "N/A"}
-                    </p>
+                  <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-xl">
+                    <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <RefreshCw className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800 mb-1">
+                        Easy Returns
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Hassle-free 30-day return policy for complete peace of
+                        mind
+                      </p>
+                    </div>
                   </div>
-                  <div className="bg-white p-3 rounded-lg">
-                    <p className="font-semibold text-gray-800 mb-1">Print Type:</p>
-                    <p className="text-gray-600">
-                      {selectedProduct.printName || "N/A"}
-                    </p>
-                  </div>
-                  <div className="bg-white p-3 rounded-lg">
-                    <p className="font-semibold text-gray-800 mb-1">Colors:</p>
-                    <p className="text-gray-600">
-                      {selectedProduct.colors?.join(", ") || "N/A"}
-                    </p>
-                  </div>
-                  <div className="bg-white p-3 rounded-lg">
-                    <p className="font-semibold text-gray-800 mb-1">Sizes:</p>
-                    <p className="text-gray-600">
-                      {selectedProduct.sizes?.join(", ") || "N/A"}
-                    </p>
+                  <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-xl">
+                    <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-black rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Shield className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800 mb-1">
+                        Secure Payment
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Bank-grade encryption keeps your payment information safe
+                      </p>
+                    </div>
                   </div>
                 </div>
-
-              </div>
-            </AccordionSection>
-
-            <AccordionSection
-              title="Product Description"
-              isOpen={activeAccordion === "description"}
-              onToggle={() => toggleAccordion("description")}
-            >
-              <div className="space-y-4">
-                <p className="text-gray-700 leading-relaxed">
-                  {selectedProduct.description ||
-                    "No detailed description available."}
-                </p>
-
-                {selectedProduct.isFeatured && (
-                  <div className="bg-gradient-to-r from-gray-100 to-gray-50 p-4 rounded-xl border-l-4 border-gray-700 shadow-sm">
-                    <p className="font-semibold text-gray-800 mb-1 flex items-center gap-2">
-                      <Star className="w-4 h-4 fill-gray-700 text-gray-700" />
-                      Featured Product
-                    </p>
-                    <p className="text-gray-600 text-sm">
-                      This is one of our featured items, handpicked for quality
-                      and style.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </AccordionSection>
-
-            <AccordionSection
-              title="Shipping & Returns"
-              isOpen={activeAccordion === "shipping"}
-              onToggle={() => toggleAccordion("shipping")}
-            >
-              <div className="space-y-5">
-                <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-xl">
-                  <div className="w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Truck className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-800 mb-1">
-                      Free Shipping
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Complimentary delivery on all orders over ₹999 across
-                      India
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-xl">
-                  <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <RefreshCw className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-800 mb-1">
-                      Easy Returns
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Hassle-free 30-day return policy for complete peace of
-                      mind
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-xl">
-                  <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-black rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Shield className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-800 mb-1">
-                      Secure Payment
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Bank-grade encryption keeps your payment information safe
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </AccordionSection>
+              </AccordionSection>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Reviews Display Section - Only show reviews, no rating form */}
-      <div className="border-b border-gray-200">
-        <div className="py-4 px-4 ">
-          <h3 className="text-gray-700 text-center font-medium text-2xl mb-6">Customer Reviews ({reviews.length})</h3>
-          <div className="space-y-6">
-            {/* Reviews Display */}
-            <ReviewsDisplay reviews={reviews} loading={reviewsLoading} />
+        {/* Reviews Display Section - Only show reviews, no rating form */}
+        <div className="border-b border-gray-200">
+          <div className="py-4 px-4 ">
+            <h3 className="text-gray-700 text-center font-medium text-2xl mb-6">Customer Reviews ({reviews.length})</h3>
+            <div className="space-y-6">
+              {/* Reviews Display */}
+              <ReviewsDisplay reviews={reviews} loading={reviewsLoading} />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Related Products Section */}
-      {relatedProducts.length > 0 && (
-        <div className="mt-20">
-          <h2 className="text-3xl font-light mb-8 text-center text-gray-900">
-            {productsSectionTitle}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedProducts.map((product, index) => (
-              <div
-                key={product.id || product._id}
-                className={`
+        {/* Related Products Section */}
+        {relatedProducts.length > 0 && (
+          <div className="mt-20">
+            <h2 className="text-3xl font-light mb-8 text-center text-gray-900">
+              {productsSectionTitle}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {relatedProducts.map((product, index) => (
+                <div
+                  key={product.id || product._id}
+                  className={`
                   ${index >= 2 ? "hidden md:block" : ""}
                   ${index >= 3 ? "lg:block" : ""}
                 `}
-              >
-                <ProductCard
-                  product={product}
-                  onProductClick={(product) =>
-                    navigate(`/product/${product.id || product._id}`)
-                  }
-                />
-              </div>
-            ))}
+                >
+                  <ProductCard
+                    product={product}
+                    onProductClick={(product) =>
+                      navigate(`/product/${product.id || product._id}`)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
-    </section>
+        )}
+      </section>
+    </>
   );
 };
 

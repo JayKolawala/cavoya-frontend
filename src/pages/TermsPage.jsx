@@ -4,15 +4,15 @@ import { FileText, AlertCircle, Shield } from "lucide-react";
 
 const TermsPage = () => {
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 pt-24">
       <div className="container mx-auto px-4 py-12">
 
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-light mb-4 text-gray-800">
+          <h1 className="text-5xl font-light mb-4 text-white">
             Terms & Conditions
           </h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-200 text-lg max-w-2xl mx-auto">
             Please read these terms carefully before using Cavoya or placing an
             order through our website.
           </p>
@@ -267,7 +267,7 @@ const TermsPage = () => {
               </p>
 
               <p>
-                <strong>WhatsApp:</strong> +91 XXXXX XXXXX
+                <strong>WhatsApp:</strong> +91 7383096696
               </p>
             </div>
           </div>

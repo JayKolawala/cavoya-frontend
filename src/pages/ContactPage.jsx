@@ -1,8 +1,8 @@
-// pages/ContactPage.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
+import AOS from "aos";
 
-const WHATSAPP_NUMBER = "919426631080"; // Replace with actual number (country code + number)
+const WHATSAPP_NUMBER = "917383096696"; // Replace with actual number (country code + number)
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +12,12 @@ const ContactPage = () => {
     message: "",
   });
 
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
+
   const handleSubmit = (e) => {
+    // ... existing submit logic ...
     e.preventDefault();
 
     const phone = WHATSAPP_NUMBER;
@@ -35,18 +40,33 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
-      <div className="container mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-light mb-4 text-gray-800">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Hero Section - Synced with HomePage */}
+      <div className="relative pt-32 pb-20 flex items-center justify-center overflow-hidden bg-gradient-to-br from-black via-gray-900 to-gray-800">
+        {/* Animated Background Pulse Elements */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-gray-400/5 rounded-full blur-3xl animate-pulse delay-700"></div>
+
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/40"></div>
+
+        {/* Hero Content */}
+        <div
+          className="relative z-10 text-center px-4"
+          data-aos="fade-down"
+        >
+          <h1 className="text-4xl md:text-6xl font-extralight tracking-wide mb-6 text-white">
             Get in Touch
           </h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+
+          <p className="text-lg md:text-xl font-light text-gray-300 max-w-2xl mx-auto">
             Have questions? We'd love to hear from you. Send us a message and
             we'll respond as soon as possible.
           </p>
         </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-20 flex-grow">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Contact Information Cards */}
