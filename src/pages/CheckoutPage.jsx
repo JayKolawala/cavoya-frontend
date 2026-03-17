@@ -34,7 +34,9 @@ const CheckoutPage = () => {
         <div className="absolute inset-0 bg-black/40"></div>
 
         {/* Empty Cart Content */}
-        <div className={`relative z-10 text-center px-4 max-w-lg transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`relative z-10 text-center px-4 max-w-lg transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+        >
           <div className="mb-8 inline-flex items-center justify-center w-32 h-32 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
             <ShoppingCart className="h-16 w-16 text-gray-300" />
           </div>
@@ -64,78 +66,86 @@ const CheckoutPage = () => {
   const total = (parseFloat(getTotalPrice()) * 1.18).toFixed(2);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-gray-50 to-white">
-      {/* Floating Background Elements */}
-      <div className="absolute top-20 right-10 w-96 h-96 bg-gray-200/30 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-40 left-10 w-80 h-80 bg-gray-300/20 rounded-full blur-3xl"></div>
+    <>
+      <div className="bg-gradient-to-br from-black via-gray-900 to-gray-800 h-[72px]"></div>
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-gray-50 to-white">
+        {/* Floating Background Elements */}
+        <div className="absolute top-20 right-10 w-96 h-96 bg-gray-200/30 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-40 left-10 w-80 h-80 bg-gray-300/20 rounded-full blur-3xl"></div>
 
-      <section className={`relative container mx-auto px-4 pt-28 pb-20 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full mb-4">
-            <Sparkles className="w-4 h-4 text-gray-700" />
-            <span className="text-gray-700 text-sm font-semibold tracking-wider">
-              CHECKOUT PROCESS
-            </span>
+        <section
+          className={`relative container mx-auto px-4 pt-28 pb-20 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+        >
+          {/* Header */}
+          <div className="mb-12 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full mb-4">
+              <Sparkles className="w-4 h-4 text-gray-700" />
+              <span className="text-gray-700 text-sm font-semibold tracking-wider">
+                CHECKOUT PROCESS
+              </span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-light mb-3 text-gray-900">
+              Complete Your Order
+            </h1>
+            <p className="text-gray-600 text-lg">
+              Just a few steps away from your purchase
+            </p>
           </div>
-          <h1 className="text-4xl md:text-5xl font-light mb-3 text-gray-900">
-            Complete Your Order
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Just a few steps away from your purchase
-          </p>
-        </div>
 
-        {/* Progress Steps */}
-        <div className="max-w-4xl mx-auto mb-12">
-          <div className="flex justify-between items-center mb-8">
-            {[1, 2, 3].map((step) => (
-              <div key={step} className="flex flex-col items-center flex-1">
-                <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${currentStep >= step
-                    ? "bg-black border-transparent text-white shadow-lg"
-                    : "border-gray-300 text-gray-400 bg-white"
+          {/* Progress Steps */}
+          <div className="max-w-4xl mx-auto mb-12">
+            <div className="flex justify-between items-center mb-8">
+              {[1, 2, 3].map((step) => (
+                <div key={step} className="flex flex-col items-center flex-1">
+                  <div
+                    className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                      currentStep >= step
+                        ? "bg-black border-transparent text-white shadow-lg"
+                        : "border-gray-300 text-gray-400 bg-white"
                     }`}
-                >
-                  <span className="font-semibold">{step}</span>
+                  >
+                    <span className="font-semibold">{step}</span>
+                  </div>
+                  <span
+                    className={`text-sm mt-2 font-medium transition-colors ${currentStep >= step ? "text-gray-900" : "text-gray-500"}`}
+                  >
+                    {step === 1 && "Shipping"}
+                    {step === 2 && "Review"}
+                    {step === 3 && "Confirm"}
+                  </span>
                 </div>
-                <span className={`text-sm mt-2 font-medium transition-colors ${currentStep >= step ? 'text-gray-900' : 'text-gray-500'}`}>
-                  {step === 1 && "Shipping"}
-                  {step === 2 && "Review"}
-                  {step === 3 && "Confirm"}
-                </span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {/* Progress Bar */}
-          <div className="relative mb-12">
-            <div className="absolute top-1/2 left-0 right-0 h-2 bg-gray-200 rounded-full transform -translate-y-1/2"></div>
-            <div
-              className="absolute top-1/2 left-0 h-2 bg-black rounded-full transform -translate-y-1/2 transition-all duration-500 shadow-lg"
-              style={{ width: `${((currentStep - 1) / 2) * 100}%` }}
-            ></div>
-          </div>
+            {/* Progress Bar */}
+            <div className="relative mb-12">
+              <div className="absolute top-1/2 left-0 right-0 h-2 bg-gray-200 rounded-full transform -translate-y-1/2"></div>
+              <div
+                className="absolute top-1/2 left-0 h-2 bg-black rounded-full transform -translate-y-1/2 transition-all duration-500 shadow-lg"
+                style={{ width: `${((currentStep - 1) / 2) * 100}%` }}
+              ></div>
+            </div>
 
-          {/* Step Content */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
-            <ScrollToTop key={currentStep}>
-              {currentStep === 1 && (
-                <CheckoutStep1 onNext={() => setCurrentStep(2)} />
-              )}
-              {currentStep === 2 && (
-                <CheckoutStep3
-                  onNext={() => setCurrentStep(3)}
-                  onBack={() => setCurrentStep(1)}
-                  total={total}
-                />
-              )}
-              {currentStep === 3 && <CheckoutStep4 total={total} />}
-            </ScrollToTop>
+            {/* Step Content */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
+              <ScrollToTop key={currentStep}>
+                {currentStep === 1 && (
+                  <CheckoutStep1 onNext={() => setCurrentStep(2)} />
+                )}
+                {currentStep === 2 && (
+                  <CheckoutStep3
+                    onNext={() => setCurrentStep(3)}
+                    onBack={() => setCurrentStep(1)}
+                    total={total}
+                  />
+                )}
+                {currentStep === 3 && <CheckoutStep4 total={total} />}
+              </ScrollToTop>
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </>
   );
 };
 

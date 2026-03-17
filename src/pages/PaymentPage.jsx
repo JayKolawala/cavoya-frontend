@@ -71,7 +71,7 @@ const PaymentPage = () => {
       if (!orderId) {
         console.error("Invalid order data:", razorpayOrderData);
         throw new Error(
-          "Failed to retrieve Razorpay order ID from backend response"
+          "Failed to retrieve Razorpay order ID from backend response",
         );
       }
 
@@ -123,8 +123,9 @@ const PaymentPage = () => {
             setStatus("error");
             setIsProcessing(false);
             setError(
-              `Payment successful but verification/order creation failed: ${err.message
-              }. Response: ${JSON.stringify(paymentResponse)}`
+              `Payment successful but verification/order creation failed: ${
+                err.message
+              }. Response: ${JSON.stringify(paymentResponse)}`,
             );
             console.error("Post-payment error:", err);
           }
@@ -170,7 +171,9 @@ const PaymentPage = () => {
         {status === "processing" || status === "initializing" ? (
           <div className="py-8">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-700 mx-auto mb-6"></div>
-            <h2 className="text-2xl font-light mb-2 text-gray-900">Processing Payment</h2>
+            <h2 className="text-2xl font-light mb-2 text-gray-900">
+              Processing Payment
+            </h2>
             <p className="text-gray-600">Please do not close this window...</p>
             <div className="mt-6 flex items-center justify-center text-sm text-gray-500">
               <Lock className="h-4 w-4 mr-1" />
@@ -182,7 +185,9 @@ const PaymentPage = () => {
             <div className="animate-pulse rounded-full h-16 w-16 bg-gray-100 flex items-center justify-center mx-auto mb-6">
               <Shield className="h-8 w-8 text-gray-700" />
             </div>
-            <h2 className="text-2xl font-light mb-2 text-gray-900">Verifying Payment</h2>
+            <h2 className="text-2xl font-light mb-2 text-gray-900">
+              Verifying Payment
+            </h2>
             <p className="text-gray-600">Confirming your transaction...</p>
           </div>
         ) : status === "success" ? (
@@ -202,7 +207,9 @@ const PaymentPage = () => {
                 />
               </svg>
             </div>
-            <h2 className="text-2xl font-light mb-2 text-gray-900">Payment Successful!</h2>
+            <h2 className="text-2xl font-light mb-2 text-gray-900">
+              Payment Successful!
+            </h2>
             <p className="text-gray-600">
               Redirecting to order confirmation...
             </p>
@@ -212,16 +219,18 @@ const PaymentPage = () => {
             <div className="rounded-full h-16 w-16 bg-gray-100 flex items-center justify-center mx-auto mb-6">
               <AlertCircle className="h-8 w-8 text-gray-700" />
             </div>
-            <h2 className="text-2xl font-light mb-2 text-gray-900">Payment Failed</h2>
+            <h2 className="text-2xl font-light mb-2 text-gray-900">
+              Payment Failed
+            </h2>
             <p className="text-gray-600 mb-6">{error}</p>
 
             <div className="flex flex-col space-y-3">
-              <button
+              {/* <button
                 onClick={handleRetry}
                 className="w-full px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
               >
                 Try Again
-              </button>
+              </button> */}
               <button
                 onClick={handleCancel}
                 className="w-full px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
