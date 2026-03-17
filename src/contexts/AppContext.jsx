@@ -639,7 +639,7 @@ export function AppProvider({ children }) {
     } else {
       hasMountedRef.current = true;
     }
-  }, [state.selectedCategory, state.selectedCollection, state.selectedPrint, state.selectedNewArrivals, state.sortBy]);
+  }, [state.selectedCategory, state.selectedCollection, state.selectedPrint, state.selectedNewArrivals]);
 
   const showCustomAlert = (message, callback) => {
     dispatch({ type: "SHOW_ALERT", payload: message });

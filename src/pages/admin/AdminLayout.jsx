@@ -1,6 +1,7 @@
 // src/admin/components/AdminLayout.jsx
 import React, { useState } from "react";
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 import {
   Menu,
   X,
@@ -17,6 +18,7 @@ const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   const navigation = [
     { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
@@ -26,8 +28,8 @@ const AdminLayout = () => {
     { name: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("adminAuth");
+  const handleLogout = async () => {
+    await logout(); // clears HTTP-only cookie via POST /api/admin/logout
     navigate("/");
   };
 

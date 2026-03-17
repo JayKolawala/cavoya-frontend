@@ -1,38 +1,46 @@
 // src/admin/pages/AdminLogin.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useApi from "../../hooks/useApi";
+import useAuth from "../../hooks/useAuth";
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
 const AdminLogin = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { post, loading } = useApi();
+  const { confirmLogin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
+    setLoading(true);
     try {
-      // POST https://api.cavoya.in/api/admin/login
-      const response = await post("/admin/login", {
-        email: credentials.email,
-        password: credentials.password,
+      const res = await fetch(`${API_BASE}/admin/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // browser will store the HTTP-only cookie from Set-Cookie header
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+        }),
       });
 
-      // Handle token from response (supports { token }, { data: { token } })
-      const token = response.token || response.data?.token;
+      const data = await res.json();
 
-      if (token) {
-        localStorage.setItem("adminAuth", "true");
-        localStorage.setItem("adminToken", token);
+      if (res.ok && data.success) {
+        // Token is in the HTTP-only cookie — JS never sees it.
+        // Just update local auth state and navigate.
+        confirmLogin();
         navigate("/admin/dashboard");
       } else {
-        setErrorMsg(
-          response.message || "Invalid credentials. Please try again.",
-        );
+        setErrorMsg(data.message || "Invalid credentials. Please try again.");
       }
-    } catch (err) {
-      setErrorMsg("Invalid email or password. Please try again.");
+    } catch {
+      setErrorMsg("Network error. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
