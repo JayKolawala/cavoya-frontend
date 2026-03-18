@@ -6,7 +6,7 @@ const AboutPage = () => {
   // Data array for dynamic rendering
   const aboutData = {
     header: {
-      title: "About Cavoya",
+      title: "About Us",
       tagline: "Crafting elegance, one thread at a time",
     },
     story: {

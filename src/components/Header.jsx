@@ -171,7 +171,7 @@ const Header = () => {
       )}
 
       <header
-        className={`transition duration-300 ease-linear fixed top-0 z-50 w-full ${isScrolled
+        className={`fixed top-0 z-50 w-full ${isScrolled
           ? "bg-white shadow-lg shadow-black/10"
           : "bg-transparent text-white"
           }`}
