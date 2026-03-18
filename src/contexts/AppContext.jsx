@@ -337,7 +337,13 @@ export function AppProvider({ children }) {
         append = false,
       } = options;
 
-      dispatch({ type: "SET_PRODUCTS_LOADING", payload: true });
+      // Only signal global loading for fresh fetches, not append/load-more.
+      // During append the InfiniteScroll loader prop handles the UI; firing
+      // SET_PRODUCTS_LOADING causes an extra re-render that visually jitters
+      // the already-rendered product grid.
+      if (!append) {
+        dispatch({ type: "SET_PRODUCTS_LOADING", payload: true });
+      }
 
       // Build query string
       const queryParams = new URLSearchParams();

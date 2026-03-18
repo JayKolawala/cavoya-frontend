@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useAppContext } from "../contexts/AppContext";
 import { PRODUCT_CATEGORIES } from "../utils/constants";
 import ProductFilters from "../components/ProductFilters";
@@ -24,6 +24,13 @@ const ProductsPage = () => {
     collections,
   } = useAppContext();
   const [_selectedProduct, setSelectedProduct] = useState(null);
+  // Track how many products were already rendered before the latest load-more batch.
+  // Only newly appended cards (index >= prevProductCount) get the entrance animation;
+  // already-visible cards skip it so they don't flicker/replay on every append.
+  const prevProductCountRef = useRef(0);
+  useEffect(() => {
+    prevProductCountRef.current = sortedProducts.length;
+  });
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const location = useLocation();
@@ -212,18 +219,21 @@ const ProductsPage = () => {
                 }
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {sortedProducts.map((product, index) => (
-                    <div
-                      key={product.id}
-                      className="animate-slide-up"
-                      style={{ animationDelay: `${(index % 9) * 100}ms` }}
-                    >
-                      <ProductCard
-                        product={product}
-                        onProductClick={handleProductClick}
-                      />
-                    </div>
-                  ))}
+                  {sortedProducts.map((product, index) => {
+                    const isNew = index >= prevProductCountRef.current;
+                    return (
+                      <div
+                        key={product.id}
+                        className={isNew ? "animate-slide-up" : undefined}
+                        style={isNew ? { animationDelay: `${(index % 9) * 100}ms` } : undefined}
+                      >
+                        <ProductCard
+                          product={product}
+                          onProductClick={handleProductClick}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </InfiniteScroll>
             )}

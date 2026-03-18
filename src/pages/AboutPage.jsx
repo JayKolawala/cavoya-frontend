@@ -55,7 +55,7 @@ const AboutPage = () => {
         role: "Founder",
         description:
           "Zeel jariwala leads with a strong focus on quality, production, and execution. With deep involvement in sourcing and manufacturing, she ensures every piece reflects purity of material, fine craftsmanship, and consistent standards the brand stands for.",
-        image: "/founder1.jpg",
+        image: "/zeel_jariwala.JPEG",
         whatsapp: "https://wa.me/917383096696",
         email: "support@cavoya.in",
       },
@@ -64,7 +64,7 @@ const AboutPage = () => {
         role: "Founder",
         description:
           "Riya chevli is the creative force behind the brand, bringing a sharp eye for design, colour, and contemporary styling. Her passion for textiles and aesthetics shapes collections that feel fresh, vibrant, and emotionally connected to the modern woman.",
-        image: "/founder2.jpg",
+        image: "/riya_chevli.JPEG",
         whatsapp: "https://wa.me/917383096696",
         email: "support@cavoya.in",
       },
@@ -142,52 +142,8 @@ const AboutPage = () => {
             </div>
           </div>
 
-          {/* Values Section */}
-          <div className="mb-12 text-center" data-aos="fade-up">
-            <h2 className="text-3xl md:text-4xl font-light mb-4 text-gray-900">
-              Our Core Values
-            </h2>
-            <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-              The principles that guide everything we do
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            {aboutData.values.map((value, index) => {
-              const IconComponent = value.icon;
-              return (
-                <div
-                  key={index}
-                  className="group relative"
-                  data-aos="fade-up"
-                  data-aos-delay={index * 100}
-                >
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${value.gradientFrom} ${value.gradientTo} rounded-2xl opacity-0 group-hover:opacity-10 blur transition-all duration-300`}
-                  ></div>
-
-                  <div className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
-                    <div
-                      className={`w-16 h-16 mx-auto mb-6 bg-gradient-to-br ${value.gradientFrom} ${value.gradientTo} rounded-2xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300 shadow-md`}
-                    >
-                      <IconComponent className={`h-8 w-8 ${value.iconColor}`} />
-                    </div>
-
-                    <h3 className="text-2xl font-semibold mb-3 text-gray-900 text-center">
-                      {value.title}
-                    </h3>
-
-                    <p className="text-gray-500 leading-relaxed text-center">
-                      {value.description}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
           {/* Founders Section */}
-          <div className="mb-12 text-center" data-aos="fade-up">
+          <div className=" mb-12 text-center" data-aos="fade-up">
             <div className="inline-block mb-4">
               <span className="px-4 py-2 bg-gray-900 text-white rounded-full text-sm font-semibold tracking-wider">
                 LEADERSHIP
@@ -274,6 +230,51 @@ const AboutPage = () => {
                 </div>
               </div>
             ))}
+          </div>
+
+
+          {/* Values Section */}
+          <div className="mt-20 mb-12 text-center" data-aos="fade-up">
+            <h2 className="text-3xl md:text-4xl font-light mb-4 text-gray-900">
+              Our Core Values
+            </h2>
+            <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+              The principles that guide everything we do
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {aboutData.values.map((value, index) => {
+              const IconComponent = value.icon;
+              return (
+                <div
+                  key={index}
+                  className="group relative"
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
+                >
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${value.gradientFrom} ${value.gradientTo} rounded-2xl opacity-0 group-hover:opacity-10 blur transition-all duration-300`}
+                  ></div>
+
+                  <div className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                    <div
+                      className={`w-16 h-16 mx-auto mb-6 bg-gradient-to-br ${value.gradientFrom} ${value.gradientTo} rounded-2xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300 shadow-md`}
+                    >
+                      <IconComponent className={`h-8 w-8 ${value.iconColor}`} />
+                    </div>
+
+                    <h3 className="text-2xl font-semibold mb-3 text-gray-900 text-center">
+                      {value.title}
+                    </h3>
+
+                    <p className="text-gray-500 leading-relaxed text-center">
+                      {value.description}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
