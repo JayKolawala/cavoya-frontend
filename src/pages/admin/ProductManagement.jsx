@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Search, X } from "lucide-react";
-import { useAppContext } from "../../contexts/AppContext";
+import useProductStore from "../../store/useProductStore";
 import { PRODUCT_CATEGORIES } from "../../utils/constants";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { isVideo } from "../../utils/mediaHelpers";
@@ -8,7 +8,7 @@ import AlertModal from "../../components/admin/shared/AlertModal";
 import { API_BASE_URL } from "../../utils/apiHelpers";
 
 const ProductManagement = () => {
-  const { addProduct, updateProduct, deleteProduct } = useAppContext();
+  const { addProduct, updateProduct, deleteProduct } = useProductStore();
 
   // ── Independent admin product fetch (not capped by customer-page limit) ──
   const API_BASE_URL =

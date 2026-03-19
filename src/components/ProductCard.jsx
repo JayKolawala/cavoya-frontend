@@ -1,10 +1,14 @@
 import React from "react";
 import { Heart, ShoppingCart } from "lucide-react";
-import { useAppContext } from "../contexts/AppContext";
+import useCartStore from "../store/useCartStore";
+import useWishlistStore from "../store/useWishlistStore";
+import useUIStore from "../store/useUIStore";
 import { isVideo } from "../utils/mediaHelpers";
 
 const ProductCard = ({ product, onProductClick }) => {
-  const { toggleWishlist, wishlist, addToCart, showAlert } = useAppContext();
+  const { toggleWishlist, wishlist } = useWishlistStore();
+  const { addToCart } = useCartStore();
+  const { showCustomAlert } = useUIStore();
   const isInWishlist = wishlist.includes(product.id);
 
   return (
@@ -27,6 +31,7 @@ const ProductCard = ({ product, onProductClick }) => {
             <img
               src={product.image}
               alt={product.name}
+              loading="lazy"
               className="w-full h-full object-cover"
             />
           )}
@@ -43,11 +48,10 @@ const ProductCard = ({ product, onProductClick }) => {
           className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <Heart
-            className={`h-4 w-4 ${
-              isInWishlist
+            className={`h-4 w-4 ${isInWishlist
                 ? "fill-gray-900 text-gray-900"
                 : "text-gray-600 hover:text-gray-900"
-            } transition-colors`}
+              } transition-colors`}
           />
         </button>
 
@@ -64,7 +68,7 @@ const ProductCard = ({ product, onProductClick }) => {
             onClick={(e) => {
               e.stopPropagation();
               addToCart(product);
-              showAlert("Added to cart successfully!", "success");
+              showCustomAlert("Added to cart successfully!", "success");
             }}
             className="w-full bg-black text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-800 hover:shadow-lg transition-all duration-300"
           >

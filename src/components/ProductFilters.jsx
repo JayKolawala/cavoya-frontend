@@ -1,5 +1,6 @@
 import React from "react";
-import { useAppContext } from "../contexts/AppContext";
+import { useSearchParams } from "react-router-dom";
+import useProductStore from "../store/useProductStore";
 import { PRODUCT_CATEGORIES } from "../utils/constants";
 import {
   SlidersHorizontal,
@@ -22,8 +23,8 @@ const ProductFilters = () => {
     setSelectedCollection,
     selectedPrint,
     setSelectedPrint,
-    collections, // Pull collections from context
-  } = useAppContext();
+    collections,
+  } = useProductStore();
 
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = React.useState(false);
 
@@ -84,12 +85,16 @@ const ProductFilters = () => {
 
   const isMobile = () => window.innerWidth < 1024;
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   // Handle category selection
   const handleCategorySelect = (categoryId) => {
     if (isMobile()) {
       setTempCategory(categoryId);
     } else {
-      setSelectedCategory(categoryId);
+      const newParams = new URLSearchParams();
+      if (categoryId !== "all") newParams.set("category", categoryId);
+      setSearchParams(newParams);
     }
   };
 
@@ -102,37 +107,44 @@ const ProductFilters = () => {
     }
   };
 
-  // Handle collection selection (toggles off if already selected)
-  // Now uses col._id instead of col.name
+  // Handle collection selection
   const handleCollectionSelect = (colId) => {
     const next = activeCollection === colId ? null : colId;
     if (isMobile()) {
       setTempCollection(next);
-      setTempPrint(null); // reset print when collection changes
+      setTempPrint(null);
     } else {
-      setSelectedCollection(next);
-      setSelectedPrint(null);
+      const newParams = new URLSearchParams();
+      if (next) newParams.set("collectionId", next);
+      setSearchParams(newParams);
     }
   };
 
-  // Handle print selection — store the print _id (not name) because
-  // AppContext sends selectedPrint to the API as ?printId=<ObjectId>
+  // Handle print selection
   const handlePrintSelect = (printId) => {
     const current = isMobile() ? tempPrint : selectedPrint;
     const next = current === printId ? null : printId;
     if (isMobile()) {
       setTempPrint(next);
     } else {
-      setSelectedPrint(next);
+      const newParams = new URLSearchParams(searchParams);
+      if (next) {
+        newParams.set("printId", next);
+      } else {
+        newParams.delete("printId");
+      }
+      setSearchParams(newParams);
     }
   };
 
   // Apply filters on mobile
   const handleApplyFilters = () => {
-    setSelectedCategory(tempCategory);
     setSortBy(tempSort);
-    setSelectedCollection(tempCollection);
-    setSelectedPrint(tempPrint);
+    const newParams = new URLSearchParams();
+    if (tempCategory && tempCategory !== "all") newParams.set("category", tempCategory);
+    if (tempCollection) newParams.set("collectionId", tempCollection);
+    if (tempPrint) newParams.set("printId", tempPrint);
+    setSearchParams(newParams);
     setIsMobileFiltersOpen(false);
   };
 
@@ -144,10 +156,8 @@ const ProductFilters = () => {
       setTempCollection(null);
       setTempPrint(null);
     } else {
-      setSelectedCategory("all");
       setSortBy("featured");
-      setSelectedCollection(null);
-      setSelectedPrint(null);
+      setSearchParams(new URLSearchParams());
     }
   };
 

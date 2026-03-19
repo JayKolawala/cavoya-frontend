@@ -1,9 +1,9 @@
 import React from "react";
 import { CreditCard, Smartphone } from "lucide-react";
-import { useAppContext } from "../../contexts/AppContext";
+import useCheckoutStore from "../../store/useCheckoutStore";
 
 const CheckoutStep2 = ({ onNext, onBack }) => {
-  const { paymentMethod, setPaymentMethod } = useAppContext();
+  const { paymentMethod, setPaymentMethod } = useCheckoutStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();

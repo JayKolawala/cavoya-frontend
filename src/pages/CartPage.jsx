@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAppContext } from "../contexts/AppContext";
+import useCartStore from "../store/useCartStore";
 import {
   ShoppingCart,
   Minus,
@@ -13,7 +13,7 @@ import { isVideo } from "../utils/mediaHelpers";
 
 const CartPage = () => {
   const { cartItems, updateCartQuantity, removeFromCart, getTotalPrice } =
-    useAppContext();
+    useCartStore();
 
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);

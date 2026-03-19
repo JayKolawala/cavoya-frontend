@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../contexts/AppContext";
+import useUserStore from "../store/useUserStore";
+import useUIStore from "../store/useUIStore";
 
 const LoginPage = () => {
-  const { setUser, showCustomAlert } = useAppContext();
+  const { setUser } = useUserStore();
+  const { showCustomAlert } = useUIStore();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
 

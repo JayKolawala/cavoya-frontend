@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../contexts/AppContext";
+import useCartStore from "../store/useCartStore";
+import useCheckoutStore from "../store/useCheckoutStore";
 import CheckoutStep3 from "../components/checkout/CheckoutStep3";
 import CheckoutStep4 from "../components/checkout/CheckoutStep4";
 import CheckoutStep1 from "../components/checkout/CheckoutStep1";
@@ -8,7 +9,8 @@ import ScrollToTop from "../components/ScrollToTop";
 import { ShoppingCart, Sparkles, ShoppingBag } from "lucide-react";
 
 const CheckoutPage = () => {
-  const { cartItems, getTotalPrice, orderConfirmed } = useAppContext();
+  const { cartItems, getTotalPrice } = useCartStore();
+  const { orderConfirmed } = useCheckoutStore();
   const [currentStep, setCurrentStep] = useState(1);
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   Star,
@@ -11,7 +12,9 @@ import {
   ChevronRight,
   Play,
 } from "lucide-react";
-import { useAppContext } from "../contexts/AppContext";
+import useCartStore from "../store/useCartStore";
+import useProductStore from "../store/useProductStore";
+import useUIStore from "../store/useUIStore";
 import ProductCard from "../components/ProductCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import StarDisplay from "../components/StarDisplay";
@@ -23,7 +26,9 @@ const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { addToCart, products, fetchProductById, showCustomAlert } = useAppContext();
+  const { addToCart } = useCartStore();
+  const { products, fetchProductById } = useProductStore();
+  const { showCustomAlert } = useUIStore();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
@@ -276,6 +281,16 @@ const ProductPage = () => {
   return (
 
     <>
+      <Helmet>
+        <title>{selectedProduct.name} - Cavoya</title>
+        <meta name="description" content={selectedProduct.description?.substring(0, 150) || `Shop ${selectedProduct.name} at Cavoya`} />
+        <meta property="og:title" content={`${selectedProduct.name} - Cavoya`} />
+        <meta property="og:description" content={selectedProduct.description?.substring(0, 150) || `Shop ${selectedProduct.name} at Cavoya`} />
+        <meta property="og:image" content={selectedProduct.image} />
+        <meta property="og:type" content="product" />
+        <meta property="product:price:amount" content={selectedProduct.price} />
+        <meta property="product:price:currency" content="INR" />
+      </Helmet>
       <div className="bg-gradient-to-br from-black via-gray-900 to-gray-800 h-[72px]"></div>
       <section className="container mx-auto px-4 pt-24 pb-16">
 

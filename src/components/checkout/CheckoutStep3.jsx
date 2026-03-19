@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../../contexts/AppContext";
+import useCartStore from "../../store/useCartStore";
+import useCheckoutStore from "../../store/useCheckoutStore";
 import { Truck, Shield, RefreshCw } from "lucide-react";
 import { isVideo } from "../../utils/mediaHelpers";
 
 const CheckoutStep3 = ({ onNext, onBack, total }) => {
   const navigate = useNavigate();
-  const { cartItems, shippingInfo, paymentMethod, getTotalPrice } =
-    useAppContext();
+  const { cartItems, getTotalPrice } = useCartStore();
+  const { shippingInfo, paymentMethod } = useCheckoutStore();
 
   const [isProcessing, setIsProcessing] = useState(false);
 

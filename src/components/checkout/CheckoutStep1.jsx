@@ -1,8 +1,8 @@
 import React from "react";
-import { useAppContext } from "../../contexts/AppContext";
+import useCheckoutStore from "../../store/useCheckoutStore";
 
 const CheckoutStep1 = ({ onNext }) => {
-  const { shippingInfo, setShippingInfo } = useAppContext();
+  const { shippingInfo, setShippingInfo } = useCheckoutStore();
 
   const handleInputChange = (e) => {
     setShippingInfo({ [e.target.name]: e.target.value });

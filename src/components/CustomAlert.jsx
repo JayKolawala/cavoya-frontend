@@ -1,8 +1,8 @@
 import React from "react";
-import { useAppContext } from "../contexts/AppContext";
+import useUIStore from "../store/useUIStore";
 
 const CustomAlert = () => {
-  const { showAlert, setShowAlert, alertMessage } = useAppContext();
+  const { showAlert, setShowAlert, alertMessage } = useUIStore();
 
   if (!showAlert) return null;
 

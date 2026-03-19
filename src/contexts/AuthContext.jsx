@@ -28,9 +28,17 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Check auth status once on app mount (handles page refresh)
+  // Only verify the admin session when the user is actually on an /admin route.
+  // On public pages there is no adminToken cookie, so the check would always
+  // return 401 — which the browser logs to the console as a network error.
+  // Lighthouse "Browser errors logged to console" penalises this heavily.
   useEffect(() => {
-    verifySession();
+    if (window.location.pathname.startsWith("/admin")) {
+      verifySession();
+    } else {
+      // Not an admin route: skip the request and mark loading as done immediately.
+      setAuthLoading(false);
+    }
   }, [verifySession]);
 
   /**

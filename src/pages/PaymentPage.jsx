@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../contexts/AppContext";
+import useCartStore from "../store/useCartStore";
+import useCheckoutStore from "../store/useCheckoutStore";
 import {
   processRazorpayPayment,
   calculateOrderPricing,
@@ -12,14 +13,13 @@ import RatingModal from "../components/RatingModal";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
+  const { cartItems, getTotalPrice } = useCartStore();
   const {
-    cartItems,
     shippingInfo,
     paymentMethod,
-    getTotalPrice,
     createOrder,
     confirmOrder,
-  } = useAppContext();
+  } = useCheckoutStore();
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);

@@ -1,15 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../../contexts/AppContext";
+import useCheckoutStore from "../../store/useCheckoutStore";
+import useCartStore from "../../store/useCartStore";
 import { CheckCircle, Truck, Mail, Star } from "lucide-react";
 
 const CheckoutStep4 = ({ total }) => {
-  const {
-    confirmOrder,
-    shippingInfo,
-    orderNumber,
-    cartItems,
-  } = useAppContext();
+  const { confirmOrder, shippingInfo, orderNumber } = useCheckoutStore();
+  const { cartItems } = useCartStore();
   const navigate = useNavigate();
 
   const handleContinueShopping = () => {

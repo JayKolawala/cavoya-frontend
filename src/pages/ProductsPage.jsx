@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { useAppContext } from "../contexts/AppContext";
+import useProductStore from "../store/useProductStore";
 import { PRODUCT_CATEGORIES } from "../utils/constants";
 import ProductFilters from "../components/ProductFilters";
 import ProductCard from "../components/ProductCard";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Sparkles, Package } from "lucide-react";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { getCategoryMap } from "../utils/categoryHelpers";
 import AOS from "aos";
 
 const ProductsPage = () => {
   const {
-    sortedProducts,
+    products,
     productsLoading,
     isRefetching,
     hasMore,
@@ -21,16 +20,32 @@ const ProductsPage = () => {
     setSelectedCollection,
     setSelectedPrint,
     setSelectedNewArrivals,
+    resetAndFetchProducts,
+    sortBy,
     collections,
-  } = useAppContext();
+    fetchCollections,
+  } = useProductStore();
   const [_selectedProduct, setSelectedProduct] = useState(null);
-  // Track how many products were already rendered before the latest load-more batch.
-  // Only newly appended cards (index >= prevProductCount) get the entrance animation;
-  // already-visible cards skip it so they don't flicker/replay on every append.
-  const prevProductCountRef = useRef(0);
+
   useEffect(() => {
-    prevProductCountRef.current = sortedProducts.length;
-  });
+    if (collections.length === 0) {
+      fetchCollections();
+    }
+  }, [collections.length, fetchCollections]);
+
+  const sortedProducts = useMemo(() => {
+    let result = [...products];
+    if (sortBy === "price-low") {
+      result.sort((a, b) => a.price - b.price);
+    } else if (sortBy === "price-high") {
+      result.sort((a, b) => b.price - a.price);
+    } else if (sortBy === "newest") {
+      result.sort((a, b) => new Date(b.createdAt || Date.now()) - new Date(a.createdAt || Date.now()));
+    } else if (sortBy === "rating") {
+      result.sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0));
+    }
+    return result;
+  }, [products, sortBy]);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const location = useLocation();
@@ -109,29 +124,32 @@ const ProductsPage = () => {
       setSelectedCollection(null);
       setSelectedPrint(null);
       setSelectedCategory("all");
+      resetAndFetchProducts({ newArrivals: true });
     } else if (resolvedCollectionId && (printId || printName)) {
-      // Print filter — printId from URL is already a MongoDB ObjectId
-      // Legacy: printName would need resolution but we transition to ID-based URLs
       setSelectedCollection(resolvedCollectionId);
-      setSelectedPrint(printId || printName); // printId is preferred (ObjectId)
+      setSelectedPrint(printId || printName);
       setSelectedCategory("all");
       setSelectedNewArrivals(false);
+      resetAndFetchProducts({ collection: resolvedCollectionId, printId: printId || printName });
     } else if (resolvedCollectionId) {
       setSelectedCollection(resolvedCollectionId);
       setSelectedPrint(null);
       setSelectedCategory("all");
       setSelectedNewArrivals(false);
+      resetAndFetchProducts({ collection: resolvedCollectionId });
     } else if (category) {
       const dbCategoryName = categoryMap[category] || category;
       setSelectedCategory(dbCategoryName);
       setSelectedCollection(null);
       setSelectedPrint(null);
       setSelectedNewArrivals(false);
+      resetAndFetchProducts({ category: dbCategoryName });
     } else {
       setSelectedCategory("all");
       setSelectedCollection(null);
       setSelectedPrint(null);
       setSelectedNewArrivals(false);
+      resetAndFetchProducts({ category: "all" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, collectionId, collectionName, printId, printName, newArrivals, collections]);
@@ -192,40 +210,16 @@ const ProductsPage = () => {
               </div>
             )}
 
-            {/* Products Grid with Infinite Scroll */}
+            {/* Products Grid */}
             {sortedProducts.length > 0 && (
-              <InfiniteScroll
-                dataLength={sortedProducts.length}
-                next={loadMoreProducts}
-                hasMore={hasMore}
-                loader={
-                  <div className="flex justify-center py-8">
-                    <div className="flex items-center gap-3 text-gray-600">
-                      <div className="w-6 h-6 border-3 border-gray-700 border-t-transparent rounded-full animate-spin"></div>
-                      <span className="text-lg font-light">
-                        Loading more products...
-                      </span>
-                    </div>
-                  </div>
-                }
-                endMessage={
-                  <div className="text-center py-12">
-                    <div className="inline-block px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-50 rounded-full">
-                      <p className="text-gray-600 font-light text-lg">
-                        ✨ You've seen all products
-                      </p>
-                    </div>
-                  </div>
-                }
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-12">
                   {sortedProducts.map((product, index) => {
-                    const isNew = index >= prevProductCountRef.current;
                     return (
                       <div
                         key={product.id}
-                        className={isNew ? "animate-slide-up" : undefined}
-                        style={isNew ? { animationDelay: `${(index % 9) * 100}ms` } : undefined}
+                        className="animate-slide-up"
+                        style={{ animationFillMode: "both" }}
                       >
                         <ProductCard
                           product={product}
@@ -235,7 +229,35 @@ const ProductsPage = () => {
                     );
                   })}
                 </div>
-              </InfiniteScroll>
+
+                {/* Load More Button */}
+                {hasMore ? (
+                  <div className="flex justify-center pb-12">
+                    <button
+                      onClick={loadMoreProducts}
+                      disabled={productsLoading}
+                      className="px-8 py-3 bg-black text-white font-semibold rounded-full hover:bg-gray-800 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    >
+                      {productsLoading ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Loading...
+                        </>
+                      ) : (
+                        "Load More Products"
+                      )}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-center pb-12">
+                    <div className="inline-block px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-50 rounded-full">
+                      <p className="text-gray-600 font-light text-lg">
+                        ✨ You've seen all products
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
 
             {/* Enhanced Empty State */}

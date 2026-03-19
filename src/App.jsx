@@ -1,5 +1,6 @@
 // App.jsx
 import React, { Suspense, lazy, useState } from "react";
+import { HelmetProvider } from "react-helmet-async";
 import {
   BrowserRouter as Router,
   Routes,
@@ -8,7 +9,7 @@ import {
   Outlet,
 } from "react-router-dom";
 
-import { AppProvider } from "./contexts/AppContext";
+
 import { AdminProvider } from "./contexts/AdminContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import useAuth from "./hooks/useAuth";
@@ -19,6 +20,7 @@ import Footer from "./components/Footer";
 import CustomAlert from "./components/CustomAlert";
 import ScrollToTop from "./components/ScrollToTop";
 import AppLoader from "./components/AppLoader";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 // --- Lazy-loaded Public Pages ---
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -92,10 +94,10 @@ function App() {
   const [showLoader, setShowLoader] = useState(true);
 
   return (
-    <>
+    <HelmetProvider>
       {showLoader && <AppLoader onLoadComplete={() => setShowLoader(false)} />}
       <AuthProvider>
-        <AppProvider>
+
           <AdminProvider>
             <Router>
               <ScrollToTop>
@@ -104,7 +106,7 @@ function App() {
                   Suspense boundary wraps all lazy routes.
                   Swap the fallback for a proper skeleton/spinner as needed.
                 */}
-                  <Suspense fallback={null}>
+                  <Suspense fallback={<div className="flex h-screen items-center justify-center"><LoadingSpinner /></div>}>
                     <Routes>
 
                       {/* ── Standalone pages (no Header / Footer) ── */}
@@ -161,9 +163,9 @@ function App() {
               </ScrollToTop>
             </Router>
           </AdminProvider>
-        </AppProvider>
+
       </AuthProvider>
-    </>
+    </HelmetProvider>
   );
 }
 

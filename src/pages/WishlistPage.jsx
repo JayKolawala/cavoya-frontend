@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useAppContext } from "../contexts/AppContext";
+import useWishlistStore from "../store/useWishlistStore";
+import useCartStore from "../store/useCartStore";
+import useProductStore from "../store/useProductStore";
 import { Heart, Star, Sparkles, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const WishlistPage = () => {
   const navigate = useNavigate();
-  const { wishlist, products, toggleWishlist, addToCart } = useAppContext();
+  const { wishlist, toggleWishlist } = useWishlistStore();
+  const { addToCart } = useCartStore();
+  const { products } = useProductStore();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {

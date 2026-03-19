@@ -1,7 +1,10 @@
 // pages/HomePage.jsx
 import React, { useState, useEffect } from "react";
 import { Star, Sparkles, Heart, ShoppingCart } from "lucide-react";
-import { useAppContext } from "../contexts/AppContext";
+import useProductStore from "../store/useProductStore";
+import useWishlistStore from "../store/useWishlistStore";
+import useCartStore from "../store/useCartStore";
+import useUIStore from "../store/useUIStore";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import bgVideo2 from "../assets/bg-video2.mp4";
@@ -10,14 +13,10 @@ import { API_BASE_URL, API_ENDPOINTS } from "../utils/apiHelpers";
 
 
 const HomePage = () => {
-  const {
-    products,
-    productsLoading: loading,
-    toggleWishlist,
-    wishlist,
-    addToCart,
-    showCustomAlert: showAlert,
-  } = useAppContext();
+  const { products, productsLoading: loading, fetchProducts } = useProductStore();
+  const { toggleWishlist, wishlist } = useWishlistStore();
+  const { addToCart } = useCartStore();
+  const { showCustomAlert: showAlert } = useUIStore();
   const [_selectedProduct, setSelectedProduct] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const [prints, setPrints] = useState([]);
@@ -27,6 +26,9 @@ const HomePage = () => {
 
   useEffect(() => {
     setIsVisible(true);
+    if (products.length === 0) {
+      fetchProducts({ limit: 100 }); // Fetch a healthy initial subset for homepage showcases
+    }
   }, []);
 
   useEffect(() => {
@@ -149,6 +151,7 @@ const HomePage = () => {
                           <img
                             src={product.image}
                             alt={product.name}
+                            loading="lazy"
                             className="w-full h-full object-cover"
                           />
                         )}
@@ -339,6 +342,7 @@ const HomePage = () => {
                           <img
                             src={product.image}
                             alt={product.name}
+                            loading="lazy"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         )}

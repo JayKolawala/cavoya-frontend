@@ -1,7 +1,9 @@
 // components/Header.jsx
 import React, { useEffect, useState } from "react";
 import { ShoppingCart, Search, Heart, Menu, ChevronDown } from "lucide-react";
-import { useAppContext } from "../contexts/AppContext";
+import useCartStore from "../store/useCartStore";
+import useProductStore from "../store/useProductStore";
+import useUIStore from "../store/useUIStore";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import { getCategoryMap } from "../utils/categoryHelpers";
@@ -78,16 +80,15 @@ const MobileAccordion = ({ label, children }) => {
 // ─── Component ───────────────────────────────────────────────────────────────
 
 const Header = () => {
+  const { getCartItemsCount } = useCartStore();
   const {
-    getCartItemsCount,
     searchQuery,
     setSearchQuery,
-    showMobileMenu,
-    setShowMobileMenu,
     setSelectedCategory,
     setSelectedCollection,
     setSelectedNewArrivals,
-  } = useAppContext();
+  } = useProductStore();
+  const { showMobileMenu, setShowMobileMenu } = useUIStore();
 
   const navigate = useNavigate();
   const location = useLocation();
