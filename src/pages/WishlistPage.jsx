@@ -63,7 +63,6 @@ const WishlistPage = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-br from-black via-gray-900 to-gray-800 h-[72px]"></div>
       <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-gray-50 to-white">
         {/* Floating Background Elements */}
         <div className="absolute top-20 right-10 w-96 h-96 bg-gray-200/30 rounded-full blur-3xl"></div>

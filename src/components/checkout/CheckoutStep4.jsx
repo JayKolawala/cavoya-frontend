@@ -18,7 +18,9 @@ const CheckoutStep4 = ({ total }) => {
     <div className="text-center">
       <div className="mb-6">
         <CheckCircle className="h-16 w-16 text-gray-700 mx-auto mb-4" />
-        <h2 className="text-2xl font-light mb-2 text-gray-900">Order Confirmed!</h2>
+        <h2 className="text-2xl font-light mb-2 text-gray-900">
+          Order Confirmed!
+        </h2>
         <p className="text-gray-600 mb-4">Thank you for your purchase</p>
         <p className="text-sm text-gray-500">
           Order #: {orderNumber || `CAVOYA-${Date.now()}`}
@@ -30,11 +32,15 @@ const CheckoutStep4 = ({ total }) => {
         <div className="space-y-3">
           <div className="flex items-center">
             <Mail className="h-5 w-5 text-gray-700 mr-3" />
-            <span className="text-gray-600">Order confirmation sent to {shippingInfo.email}</span>
+            <span className="text-gray-600">
+              Order confirmation sent to {shippingInfo.email}
+            </span>
           </div>
           <div className="flex items-center">
             <Truck className="h-5 w-5 text-gray-700 mr-3" />
-            <span className="text-gray-600">Your order will be shipped within 2-3 business days</span>
+            <span className="text-gray-600">
+              Your order will be shipped within 2-3 business days
+            </span>
           </div>
         </div>
       </div>
@@ -49,7 +55,9 @@ const CheckoutStep4 = ({ total }) => {
         <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-6 mb-6 border border-gray-200">
           <div className="flex items-center gap-2 mb-4">
             <Star className="h-5 w-5 text-gray-700" />
-            <h3 className="text-lg font-medium text-gray-900">Rate Your Products</h3>
+            <h3 className="text-lg font-medium text-gray-900">
+              Rate Your Products
+            </h3>
           </div>
           <p className="text-gray-600 text-sm mb-4">
             Share your experience! Rate the products you just purchased.
@@ -72,7 +80,9 @@ const CheckoutStep4 = ({ total }) => {
                     />
                   )}
                   <div>
-                    <p className="font-medium text-gray-900 text-sm">{item.name}</p>
+                    <p className="font-medium text-gray-900 text-sm">
+                      {item.name}
+                    </p>
                     <p className="text-xs text-gray-500">Click to rate</p>
                   </div>
                 </div>
@@ -91,7 +101,10 @@ const CheckoutStep4 = ({ total }) => {
       </button>
 
       <p className="text-sm text-gray-500 mt-4">
-        Need help? <a href="#" className="text-gray-700 hover:text-black hover:underline">Contact us</a>
+        Need help?{" "}
+        <a href="#" className="text-gray-700 hover:text-black hover:underline">
+          Contact us
+        </a>
       </p>
     </div>
   );

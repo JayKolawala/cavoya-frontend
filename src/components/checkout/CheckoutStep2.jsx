@@ -1,63 +1,164 @@
-import React from "react";
-import { CreditCard, Smartphone } from "lucide-react";
 import useCheckoutStore from "../../store/useCheckoutStore";
+import useCartStore from "../../store/useCartStore";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Truck, Shield, RefreshCw } from "lucide-react";
+import { isVideo } from "../../utils/mediaHelpers";
 
-const CheckoutStep2 = ({ onNext, onBack }) => {
-  const { paymentMethod, setPaymentMethod } = useCheckoutStore();
+const CheckoutStep2 = ({ onNext, onBack, total }) => {
+  const navigate = useNavigate();
+  const { cartItems, getTotalPrice } = useCartStore();
+  const { shippingInfo, paymentMethod } = useCheckoutStore();
 
-  const handleSubmit = (e) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleConfirmOrder = async (e) => {
     e.preventDefault();
-    onNext();
+    setIsProcessing(true);
+
+    // Redirect to payment page for processing
+    navigate("/payment");
   };
 
   return (
     <div>
-      <h2 className="text-2xl font-light mb-6 text-gray-900">Payment Method</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-4">
-          <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-500 hover:bg-gray-50 transition-colors">
-            <input
-              type="radio"
-              name="payment"
-              value="card"
-              checked={paymentMethod === "card"}
-              onChange={() => setPaymentMethod("card")}
-              className="text-gray-900 mr-3 accent-black"
-            />
-            <CreditCard className="h-5 w-5 mr-2 text-gray-700" />
-            <span className="text-gray-800">Credit/Debit Card</span>
-          </label>
+      <h2 className="text-2xl font-light mb-6 text-gray-900">Order Review</h2>
 
-          <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-500 hover:bg-gray-50 transition-colors">
-            <input
-              type="radio"
-              name="payment"
-              value="upi"
-              checked={paymentMethod === "upi"}
-              onChange={() => setPaymentMethod("upi")}
-              className="text-gray-900 mr-3 accent-black"
-            />
-            <Smartphone className="h-5 w-5 mr-2 text-gray-700" />
-            <span className="text-gray-800">UPI Payment</span>
-          </label>
-        </div>
+      {/* Order Summary */}
+      <div className="bg-gray-50 rounded-lg p-6 mb-6">
+        <h3 className="text-lg font-medium mb-4 text-gray-900">
+          Order Items ({cartItems.length})
+        </h3>
+        {cartItems.map((item) => (
+          <div
+            key={item.id}
+            className="flex items-center justify-between py-3 border-b border-gray-200"
+          >
+            <div className="flex items-center">
+              {isVideo(item.image) ? (
+                <video
+                  src={item.image}
+                  className="w-16 h-20 object-cover rounded"
+                  muted
+                  loop
+                  playsInline
+                />
+              ) : (
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-16 h-20 object-cover rounded"
+                />
+              )}
+              <div className="ml-4">
+                <h4 className="font-medium text-gray-900">{item.name}</h4>
+                <p className="text-sm text-gray-600">Size: {item.size}</p>
+                <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+              </div>
+            </div>
+            <span className="font-semibold text-gray-900">
+              ₹{(item.price * item.quantity).toFixed(2)}
+            </span>
+          </div>
+        ))}
 
-        <div className="flex justify-between">
-          <button
-            type="button"
-            onClick={onBack}
-            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            Back
-          </button>
-          <button
-            type="submit"
-            className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            Continue to Review
-          </button>
+        <div className="space-y-2 mt-4 pt-4 border-t border-gray-200">
+          <div className="flex justify-between text-gray-700">
+            <span>Subtotal:</span>
+            <span>₹{getTotalPrice()}</span>
+          </div>
+          <div className="flex justify-between text-gray-700">
+            <span>Shipping:</span>
+            <span className="text-gray-600">Free</span>
+          </div>
+          <div className="flex justify-between text-gray-700">
+            <span>GST (18%):</span>
+            <span>₹{(parseFloat(getTotalPrice()) * 0.18).toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200 text-gray-900">
+            <span>Total:</span>
+            <span>₹{total}</span>
+          </div>
         </div>
-      </form>
+      </div>
+
+      {/* Shipping Info */}
+      <div className="bg-gray-50 rounded-lg p-6 mb-6">
+        <h3 className="text-lg font-medium mb-4 text-gray-900">
+          Shipping Address
+        </h3>
+        <p className="text-gray-600">
+          {shippingInfo.firstName} {shippingInfo.lastName}
+          <br />
+          {shippingInfo.address1}
+          <br />
+          {shippingInfo.address2 && `${shippingInfo.address2}\n`}
+          {shippingInfo.city}, {shippingInfo.state} {shippingInfo.zipCode}
+          <br />
+          {shippingInfo.country}
+          <br />
+          Phone: {shippingInfo.phone}
+          <br />
+          Email: {shippingInfo.email}
+        </p>
+      </div>
+
+      {/* Payment Method */}
+      <div className="bg-gray-50 rounded-lg p-6 mb-6">
+        <h3 className="text-lg font-medium mb-4 text-gray-900">
+          Payment Method
+        </h3>
+        <p className="text-gray-600 capitalize">
+          {paymentMethod === "card" && "Credit/Debit Card"}
+          {paymentMethod === "upi" && "UPI Payment"}
+          {paymentMethod === "cod" && "Cash on Delivery"}
+        </p>
+        <p className="text-sm text-gray-500 mt-2">
+          You will be redirected to a secure payment page
+        </p>
+      </div>
+
+      {/* Trust Badges */}
+      <div className="grid grid-cols-3 gap-4 text-center text-sm text-gray-600 mb-6">
+        <div className="flex flex-col items-center">
+          <Truck className="h-5 w-5 mb-1 text-gray-700" />
+          <span>Free Shipping</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <RefreshCw className="h-5 w-5 mb-1 text-gray-700" />
+          <span>Easy Returns</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <Shield className="h-5 w-5 mb-1 text-gray-700" />
+          <span>Secure Payment</span>
+        </div>
+      </div>
+
+      <div className="flex justify-between gap-2">
+        <button
+          type="button"
+          onClick={onBack}
+          disabled={isProcessing}
+          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Back
+        </button>
+        <button
+          type="submit"
+          onClick={handleConfirmOrder}
+          disabled={isProcessing}
+          className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+        >
+          {isProcessing ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              Redirecting...
+            </>
+          ) : (
+            "Proceed to Payment"
+          )}
+        </button>
+      </div>
     </div>
   );
 };

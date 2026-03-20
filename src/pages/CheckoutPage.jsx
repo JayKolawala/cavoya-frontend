@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../store/useCartStore";
 import useCheckoutStore from "../store/useCheckoutStore";
+import CheckoutStep2 from "../components/checkout/CheckoutStep2";
 import CheckoutStep3 from "../components/checkout/CheckoutStep3";
-import CheckoutStep4 from "../components/checkout/CheckoutStep4";
 import CheckoutStep1 from "../components/checkout/CheckoutStep1";
 import ScrollToTop from "../components/ScrollToTop";
 import { ShoppingCart, Sparkles, ShoppingBag } from "lucide-react";
@@ -69,7 +69,6 @@ const CheckoutPage = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-br from-black via-gray-900 to-gray-800 h-[72px]"></div>
       <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-gray-50 to-white">
         {/* Floating Background Elements */}
         <div className="absolute top-20 right-10 w-96 h-96 bg-gray-200/30 rounded-full blur-3xl"></div>
@@ -135,13 +134,13 @@ const CheckoutPage = () => {
                   <CheckoutStep1 onNext={() => setCurrentStep(2)} />
                 )}
                 {currentStep === 2 && (
-                  <CheckoutStep3
+                  <CheckoutStep2
                     onNext={() => setCurrentStep(3)}
                     onBack={() => setCurrentStep(1)}
                     total={total}
                   />
                 )}
-                {currentStep === 3 && <CheckoutStep4 total={total} />}
+                {currentStep === 3 && <CheckoutStep3 total={total} />}
               </ScrollToTop>
             </div>
           </div>

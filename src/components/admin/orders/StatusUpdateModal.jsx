@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Modal from "../shared/Modal";
 import { ORDER_STATUSES } from "../../../utils/constants";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Link as LinkIcon, Check } from "lucide-react";
 
 const getStatusLabel = (value) =>
   ORDER_STATUSES.find((s) => s.value === value)?.label ?? value;
@@ -14,6 +14,15 @@ const StatusUpdateModal = ({ order, onSave, onClose }) => {
   );
   const [notes, setNotes] = useState(order.notes || "");
   const [confirming, setConfirming] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyRatingLink = () => {
+    const orderId = order._id || order.id;
+    const url = `${window.location.origin}/rate-order/${orderId}?email=${encodeURIComponent(order.customerEmail)}`;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -120,9 +129,24 @@ const StatusUpdateModal = ({ order, onSave, onClose }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Notes
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium text-gray-700">
+                Notes
+              </label>
+              <button
+                type="button"
+                onClick={handleCopyRatingLink}
+                className={`text-xs inline-flex items-center gap-1 px-2 py-1 rounded transition-colors border ${
+                  copied 
+                    ? "bg-green-50 text-green-700 border-green-200" 
+                    : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50 bg-gray-50"
+                }`}
+                title="Copy the custom rating link for this order"
+              >
+                {copied ? <Check size={14} /> : <LinkIcon size={14} />}
+                {copied ? "Copied!" : "Copy Rating Link"}
+              </button>
+            </div>
             <textarea
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-pink-500 focus:border-pink-500"
               rows="3"

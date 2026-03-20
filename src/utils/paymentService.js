@@ -172,7 +172,7 @@ export const processRazorpayPayment = async ({
             order_id: orderId, // Order ID from backend
             name: 'Cavoya',
             description: 'Order Payment',
-            image: '/logo.png', // Optional: Add your logo
+            ...(window.location.protocol === 'https:' && { image: `${window.location.origin}/logo.png` }),
             prefill: {
                 name: customerName,
                 email: customerEmail,

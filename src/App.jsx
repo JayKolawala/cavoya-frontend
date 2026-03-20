@@ -39,6 +39,7 @@ const ReturnsPage = lazy(() => import("./pages/ReturnsPage"));
 const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const RateOrderPage = lazy(() => import("./pages/RateOrderPage"));
 
 // --- Lazy-loaded Admin Pages ---
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
@@ -143,6 +144,7 @@ function App() {
                         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                         <Route path="/terms-and-conditions" element={<TermsPage />} />
                         <Route path="/refund-and-return-policy" element={<ReturnsPage />} />
+                        <Route path="/rate-order/:orderId" element={<RateOrderPage />} />
 
                         {/* Protected user routes — uncomment ProtectedUserRoute
                           wrapper once auth is fully wired */}

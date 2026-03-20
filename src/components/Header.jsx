@@ -68,8 +68,9 @@ const MobileAccordion = ({ label, children }) => {
         />
       </button>
       <div
-        className={`overflow-hidden transition-all duration-300 ${open ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0"
-          }`}
+        className={`overflow-hidden transition-all duration-300 ${
+          open ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0"
+        }`}
       >
         <div className="flex flex-col space-y-2 pl-4">{children}</div>
       </div>
@@ -97,8 +98,10 @@ const Header = () => {
   const [collectionPrints, setCollectionPrints] = useState({});
   const [hoveredColId, setHoveredColId] = useState(null);
 
-  const isProductsPage = location.pathname === "/products";
-  const isHomePage = location.pathname === "/";
+  const lightHeaderPages = ["/product", "/cart", "/checkout", "/wishlist"];
+  const isLightHeaderPage = lightHeaderPages.some((path) =>
+    location.pathname.startsWith(path),
+  );
 
   const categoryMap = getCategoryMap();
 
@@ -110,7 +113,9 @@ const Header = () => {
     fetch(`${API_BASE_URL}/collections`)
       .then((r) => r.json())
       .then((data) => {
-        const arr = Array.isArray(data) ? data : data.data ?? data.collections ?? [];
+        const arr = Array.isArray(data)
+          ? data
+          : (data.data ?? data.collections ?? []);
         setCollectionItems(arr.filter((c) => c.isActive !== false));
       })
       .catch(console.error);
@@ -126,7 +131,9 @@ const Header = () => {
       fetch(`${API_BASE_URL}/collections/${col._id}/prints`)
         .then((r) => r.json())
         .then((data) => {
-          const arr = Array.isArray(data) ? data : data.data ?? data.prints ?? [];
+          const arr = Array.isArray(data)
+            ? data
+            : (data.data ?? data.prints ?? []);
           setCollectionPrints((prev) => ({ ...prev, [col._id]: arr }));
         })
         .catch(console.error);
@@ -172,16 +179,22 @@ const Header = () => {
       )}
 
       <header
-        className={`fixed top-0 z-50 w-full ${isScrolled
-          ? "bg-white shadow-lg shadow-black/10"
-          : "bg-transparent text-white"
-          }`}
+        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+          isScrolled
+            ? "bg-white shadow-lg shadow-black/10 text-black"
+            : showMobileMenu
+              ? "bg-transparent text-black"
+              : isLightHeaderPage
+                ? "bg-transparent text-black bg-white backdrop-blur-sm"
+                : "bg-transparent text-white"
+        }`}
       >
         <div className="w-full mx-auto">
           {/* ── Main nav ─────────────────────────────────────────── */}
           <nav
-            className={`flex justify-between items-center py-4 px-4 lg:px-4 z-10 relative ${showMobileMenu || isScrolled ? "bg-white" : ""
-              }`}
+            className={`flex justify-between items-center py-4 px-4 lg:px-4 z-10 relative ${
+              showMobileMenu || isScrolled ? "bg-white" : ""
+            }`}
           >
             {/* Hamburger */}
             <button
@@ -190,10 +203,11 @@ const Header = () => {
               aria-label="Menu"
             >
               <Menu
-                className={`h-6 w-6 ${showMobileMenu || isScrolled
-                  ? "text-black"
-                  : "text-white"
-                  }`}
+                className={`h-6 w-6 ${
+                  showMobileMenu || isScrolled || isLightHeaderPage
+                    ? "text-black"
+                    : "text-white"
+                }`}
               />
             </button>
 
@@ -202,9 +216,12 @@ const Header = () => {
               className="text-2xl font-bold text-gray-600"
               onClick={() => navigate("/")}
             >
-
               <img
-                src={(isScrolled || showMobileMenu) ? logoBlack : logoWhite}
+                src={
+                  isScrolled || showMobileMenu || isLightHeaderPage
+                    ? logoBlack
+                    : logoWhite
+                }
                 alt="cavoya-logo"
                 className="h-10 w-40 rounded-full object-cover cursor-pointer"
               />
@@ -255,10 +272,11 @@ const Header = () => {
                           item.path,
                         )
                       }
-                      className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black ${i === 0 || i === STYLES_ITEMS.length - 1
-                        ? "hover:rounded-lg"
-                        : ""
-                        }`}
+                      className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50 hover:text-black ${
+                        i === 0 || i === STYLES_ITEMS.length - 1
+                          ? "hover:rounded-lg"
+                          : ""
+                      }`}
                     >
                       {item.label}
                     </button>
@@ -274,7 +292,9 @@ const Header = () => {
                 </span>
                 <div className="absolute left-0 mt-2 w-56 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100 py-1">
                   {collectionItems.length === 0 ? (
-                    <p className="px-4 py-2 text-sm text-gray-400">No collections</p>
+                    <p className="px-4 py-2 text-sm text-gray-400">
+                      No collections
+                    </p>
                   ) : (
                     collectionItems.map((col) => {
                       const prints = collectionPrints[col._id] || [];
@@ -300,8 +320,9 @@ const Header = () => {
                             <span>{col.name}</span>
                             {prints.length > 0 && (
                               <ChevronDown
-                                className={`h-3.5 w-3.5 text-gray-400 flex-shrink-0 transition-transform duration-200 ${isHovered ? "rotate-180" : ""
-                                  }`}
+                                className={`h-3.5 w-3.5 text-gray-400 flex-shrink-0 transition-transform duration-200 ${
+                                  isHovered ? "rotate-180" : ""
+                                }`}
                               />
                             )}
                           </button>
@@ -351,9 +372,11 @@ const Header = () => {
 
             {/* Icons */}
             <div
-              className={`flex items-center space-x-4 ${showMobileMenu || isScrolled ? "text-black"
-                : "text-white"
-                }`}
+              className={`flex items-center space-x-4 ${
+                showMobileMenu || isScrolled || isLightHeaderPage
+                  ? "text-black"
+                  : "text-white"
+              }`}
             >
               <button
                 onClick={() => navigate("/wishlist")}
@@ -379,8 +402,9 @@ const Header = () => {
 
           {/* ── Mobile Menu ──────────────────────────────────────── */}
           <div
-            className={`lg:hidden border-t border-gray-200 transition-all duration-500 ease-in-out bg-white overflow-hidden ${showMobileMenu ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0"
-              }`}
+            className={`lg:hidden border-t border-gray-200 transition-all duration-500 ease-in-out bg-white overflow-hidden ${
+              showMobileMenu ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0"
+            }`}
           >
             <div className="flex flex-col space-y-4 p-4">
               {/* Search */}

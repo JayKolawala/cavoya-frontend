@@ -14,7 +14,7 @@ const useUIStore = create((set) => ({
   setShowAlert: (show) => set({ showAlert: show, alertMessage: "" }),
   showCustomAlert: (message, callback) => {
     set({ showAlert: true, alertMessage: message });
-    if (callback) {
+    if (callback && typeof callback === 'function') {
       setTimeout(() => {
         set({ showAlert: false, alertMessage: "" });
         callback();

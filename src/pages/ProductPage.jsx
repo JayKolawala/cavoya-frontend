@@ -291,7 +291,6 @@ const ProductPage = () => {
         <meta property="product:price:amount" content={selectedProduct.price} />
         <meta property="product:price:currency" content="INR" />
       </Helmet>
-      <div className="bg-gradient-to-br from-black via-gray-900 to-gray-800 h-[72px]"></div>
       <section className="container mx-auto px-4 pt-24 pb-16">
 
         <div className="flex flex-col lg:flex-row gap-12">
