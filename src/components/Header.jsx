@@ -98,7 +98,7 @@ const Header = () => {
   const [collectionPrints, setCollectionPrints] = useState({});
   const [hoveredColId, setHoveredColId] = useState(null);
 
-  const lightHeaderPages = ["/product", "/cart", "/checkout", "/wishlist"];
+  const lightHeaderPages = ["/product", "/cart", "/checkout", "/wishlist", "/rate-order"];
   const isLightHeaderPage = lightHeaderPages.some((path) =>
     location.pathname.startsWith(path),
   );

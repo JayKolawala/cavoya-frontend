@@ -43,7 +43,7 @@ const RateOrderPage = () => {
         // Step 3: Cross-browser check — query backend for each product's ratings
         const ratingChecks = await Promise.allSettled(
           productIds.map(pid =>
-            fetch(`${API_BASE_URL}/ratings/product/${pid}`)
+            fetch(`${API_BASE_URL}${API_ENDPOINTS.PRODUCT_RATINGS(pid)}`)
               .then(r => r.json())
               .then(data => ({ pid, ratings: Array.isArray(data) ? data : data.data ?? [] }))
           )

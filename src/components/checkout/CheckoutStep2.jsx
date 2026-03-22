@@ -71,10 +71,7 @@ const CheckoutStep2 = ({ onNext, onBack, total }) => {
             <span>Shipping:</span>
             <span className="text-gray-600">Free</span>
           </div>
-          <div className="flex justify-between text-gray-700">
-            <span>GST (18%):</span>
-            <span>₹{(parseFloat(getTotalPrice()) * 0.18).toFixed(2)}</span>
-          </div>
+
           <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200 text-gray-900">
             <span>Total:</span>
             <span>₹{total}</span>

@@ -11,7 +11,7 @@ const CheckoutStep4 = ({ total }) => {
 
   const handleContinueShopping = () => {
     confirmOrder();
-    navigate("/products");
+    navigate("/");
   };
 
   return (

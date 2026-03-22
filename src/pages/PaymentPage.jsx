@@ -106,7 +106,7 @@ const PaymentPage = () => {
               confirmOrder(orderData.orderNumber);
 
               setTimeout(() => {
-                navigate("/checkout?step=3");
+                navigate("/");
               }, 1500);
             } else {
               throw new Error("Failed to create order after payment");

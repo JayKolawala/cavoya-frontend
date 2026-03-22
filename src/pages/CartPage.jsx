@@ -219,20 +219,13 @@ const CartPage = () => {
                         Free
                       </span>
                     </div>
-                    <div className="flex justify-between text-gray-700">
-                      <span className="font-light">Tax (18%):</span>
-                      <span className="font-semibold">
-                        ₹{(parseFloat(getTotalPrice()) * 0.18).toFixed(2)}
-                      </span>
-                    </div>
-
                     <div className="border-t-2 border-gray-200 pt-4 mt-4">
                       <div className="flex justify-between items-center">
                         <span className="text-xl font-light text-gray-900">
                           Total:
                         </span>
                         <span className="text-2xl font-bold text-gray-900">
-                          ₹{(parseFloat(getTotalPrice()) * 1.18).toFixed(2)}
+                          ₹{parseFloat(getTotalPrice()).toFixed(2)}
                         </span>
                       </div>
                     </div>

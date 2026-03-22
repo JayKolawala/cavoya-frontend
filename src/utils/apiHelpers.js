@@ -26,7 +26,7 @@ export const API_ENDPOINTS = {
 
     // Ratings
     RATINGS: '/ratings',
-    PRODUCT_RATINGS: (productId) => `/ratings/product/${productId}`,
+    PRODUCT_RATINGS: (productId) => `/ratings/${productId}`,
     SUBMIT_RATING: '/ratings',
 
     // Collections

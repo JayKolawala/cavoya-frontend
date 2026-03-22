@@ -118,8 +118,7 @@ export const loadRazorpayScript = () => {
 export const calculateOrderPricing = (subtotal) => {
     const subtotalNum = parseFloat(subtotal);
     const shippingCost = 0; // Free shipping
-    const taxRate = 0.18; // 18% GST
-    const tax = subtotalNum * taxRate;
+    const tax = 0;
     const total = subtotalNum + shippingCost + tax;
 
     return {

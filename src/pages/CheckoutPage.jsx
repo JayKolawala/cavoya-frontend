@@ -65,7 +65,7 @@ const CheckoutPage = () => {
     );
   }
 
-  const total = (parseFloat(getTotalPrice()) * 1.18).toFixed(2);
+  const total = parseFloat(getTotalPrice()).toFixed(2);
 
   return (
     <>

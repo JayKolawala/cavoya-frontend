@@ -55,8 +55,7 @@ const useCheckoutStore = create((set, get) => ({
 
       const subtotal = parseFloat(cartStore.getTotalPrice());
       const shippingCost = 0;
-      const taxRate = 0.18;
-      const tax = subtotal * taxRate;
+      const tax = 0;
       const total = subtotal + shippingCost + tax;
 
       const orderData = {
