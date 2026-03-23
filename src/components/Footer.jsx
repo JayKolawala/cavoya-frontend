@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/cavoya.svg";
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 pt-12 pb-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-2xl font-bold mb-4">Cavoya</h3>
+            <img src={logo} alt="Cavoya" className="h-24 w-fit" />
             <p className="text-gray-400 mb-4">Elegance in every stitch</p>
           </div>
           <div>
