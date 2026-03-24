@@ -171,14 +171,14 @@ export const processRazorpayPayment = async ({
             order_id: orderId, // Order ID from backend
             name: 'Cavoya',
             description: 'Order Payment',
-            ...(window.location.protocol === 'https:' && { image: `${window.location.origin}/logo.png` }),
+            image: `${window.location.origin}/favicon.png`,
             prefill: {
                 name: customerName,
                 email: customerEmail,
                 contact: customerPhone,
             },
             theme: {
-                color: '#ec4899', // Pink-500 to match site theme
+                color: '#000000', // Black to match site theme
             },
             handler: function (response) {
                 // Payment successful
