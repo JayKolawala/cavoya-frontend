@@ -11,7 +11,148 @@ import {
   ChevronLeft,
   ChevronRight,
   Play,
+  X,
+  Ruler,
 } from "lucide-react";
+
+// ─── Size Chart Data ──────────────────────────────────────────────────────────
+const SIZE_CHART = {
+  top: {
+    label: "Top Wear",
+    rows: [
+      { measurement: "BUST",  inches: [32, 34, 36, 38, 40, 42], cm: [81, 86, 91, 97, 102, 107] },
+      { measurement: "WAIST", inches: [25, 27, 29, 31, 33, 35], cm: [64, 69, 74, 79,  84,  89] },
+      { measurement: "HIP",   inches: [35, 37, 39, 41, 43, 45], cm: [89, 94, 99, 104, 109, 114] },
+    ],
+  },
+  bottom: {
+    label: "Bottom Wear",
+    rows: [
+      { measurement: "WAIST",  inches: [25, 27, 29, 31, 33, 35], cm: [64, 69, 74, 79, 84,  89] },
+      { measurement: "HIP",    inches: [35, 37, 39, 41, 43, 45], cm: [89, 94, 99, 104, 109, 114] },
+      { measurement: "INSEAM", inches: [28, 28, 29, 29, 30, 30], cm: [71, 71, 74, 74, 76,  76] },
+    ],
+  },
+};
+
+const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+
+// Bottom-wear category keywords (case-insensitive match)
+const BOTTOM_KEYWORDS = ["bottom", "pant", "trouser", "jeans", "skirt", "short", "legging"];
+
+function isBottomWear(category = "") {
+  const lower = category.toLowerCase();
+  return BOTTOM_KEYWORDS.some((kw) => lower.includes(kw));
+}
+
+// ─── Size Chart Modal ─────────────────────────────────────────────────────────
+const SizeChartModal = ({ onClose, category }) => {
+  const defaultTab = isBottomWear(category) ? "bottom" : "top";
+  const [activeTab, setActiveTab] = useState(defaultTab);
+  const [unit, setUnit] = useState("inches");
+
+  const chart = SIZE_CHART[activeTab];
+
+  // Close on backdrop click
+  const handleBackdrop = (e) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+      onClick={handleBackdrop}
+    >
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden animate-fade-in">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-2">
+          <h2 className="text-lg font-bold tracking-widest uppercase text-gray-900">
+            Body Measurement
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+            aria-label="Close size chart"
+          >
+            <X className="h-5 w-5 text-gray-600" />
+          </button>
+        </div>
+
+        {/* Top / Bottom Tab */}
+        <div className="flex gap-4 px-6 pb-2 border-b border-gray-100">
+          {["top", "bottom"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`py-2 text-sm font-semibold tracking-wide uppercase transition-all border-b-2 ${
+                activeTab === tab
+                  ? "border-gray-900 text-gray-900"
+                  : "border-transparent text-gray-400 hover:text-gray-600"
+              }`}
+            >
+              {SIZE_CHART[tab].label}
+            </button>
+          ))}
+        </div>
+
+        {/* Unit Toggle */}
+        <div className="flex items-center justify-center gap-3 py-3">
+          <button
+            onClick={() => setUnit("inches")}
+            className={`text-sm font-semibold tracking-widest uppercase transition-colors ${
+              unit === "inches"
+                ? "underline underline-offset-4 text-gray-900"
+                : "text-gray-400 hover:text-gray-600"
+            }`}
+          >
+            Inches
+          </button>
+          <span className="text-gray-300 font-light">|</span>
+          <button
+            onClick={() => setUnit("cm")}
+            className={`text-sm font-semibold tracking-widest uppercase transition-colors ${
+              unit === "cm"
+                ? "underline underline-offset-4 text-gray-900"
+                : "text-gray-400 hover:text-gray-600"
+            }`}
+          >
+            CM
+          </button>
+        </div>
+
+        {/* Table */}
+        <div className="px-4 pb-6 overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr>
+                <th className="py-3 px-4 text-left font-normal text-gray-400" />
+                {SIZES.map((s) => (
+                  <th key={s} className="py-3 px-4 text-center font-bold text-gray-800 tracking-widest">
+                    {s}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {chart.rows.map((row, i) => (
+                <tr key={row.measurement} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                  <td className="py-4 px-4 font-bold text-gray-800 tracking-widest border border-gray-100">
+                    {row.measurement}
+                  </td>
+                  {row[unit].map((val, j) => (
+                    <td key={j} className="py-4 px-4 text-center text-gray-700 border border-gray-100">
+                      {val}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
 import useCartStore from "../store/useCartStore";
 import useProductStore from "../store/useProductStore";
 import useUIStore from "../store/useUIStore";
@@ -34,6 +175,7 @@ const ProductPage = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [showSizeChart, setShowSizeChart] = useState(false);
 
   // Check URL params to auto-open reviews section
   const searchParams = new URLSearchParams(location.search);
@@ -434,12 +576,19 @@ const ProductPage = () => {
             {/* Size Selection */}
             {selectedProduct.sizes && selectedProduct.sizes.length > 0 && (
               <div className="mb-8">
-                <h4 className="font-medium text-lg mb-3">
-                  Size:{" "}
-                  <span className="text-gray-600 font-normal">
-                    {selectedSize}
-                  </span>
-                </h4>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium text-lg">
+                    Size:{" "}
+                    <span className="text-gray-600 font-normal">{selectedSize}</span>
+                  </h4>
+                  <button
+                    onClick={() => setShowSizeChart(true)}
+                    className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors underline underline-offset-4"
+                  >
+                    <Ruler className="h-4 w-4" />
+                    Size Guide
+                  </button>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {selectedProduct.sizes.map((size) => (
                     <button
@@ -455,6 +604,14 @@ const ProductPage = () => {
                   ))}
                 </div>
               </div>
+            )}
+
+            {/* Size Chart Modal */}
+            {showSizeChart && (
+              <SizeChartModal
+                onClose={() => setShowSizeChart(false)}
+                category={selectedProduct.category || ""}
+              />
             )}
 
             {/* Add to Cart Button */}
