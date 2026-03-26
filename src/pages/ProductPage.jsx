@@ -260,7 +260,7 @@ const ProductPage = () => {
     <div className="border-b border-gray-200">
       <button
         onClick={onToggle}
-        className="w-full py-4 px-0 flex justify-between items-center text-left hover:bg-gray-50 transition-colors rounded-none"
+        className="w-full px-4 py-4 px-0 flex justify-between items-center text-left hover:bg-gray-50 transition-colors rounded-none"
       >
         <span className="text-gray-700 font-medium">{title}</span>
         {isOpen ? (
@@ -425,53 +425,11 @@ const ProductPage = () => {
             </div>
 
             {/* Enhanced Description */}
-            <div className="bg-gray-50 rounded-2xl py-6">
+            <div className="bg-gray-50 rounded-2xl px-6 py-4">
               <p className="text-gray-700 font-bold leading-relaxed">
                 {selectedProduct.description || "No description available."}
               </p>
             </div>
-
-            {/* Stock Status */}
-            {/* <div className="mb-6">
-            <p
-              className={`text-sm font-medium ${
-                selectedProduct.inventory?.stock > 0
-                  ? "text-green-600"
-                  : "text-red-600"
-              }`}
-            >
-              {selectedProduct.inventory?.stock > 0
-                ? `In Stock (${selectedProduct.inventory.stock} available)`
-                : "Out of Stock"}
-            </p>
-          </div> */}
-
-            {/* Color Selection */}
-            {/* {selectedProduct.colors && selectedProduct.colors.length > 0 && (
-            <div className="mb-6">
-              <h4 className="font-medium text-lg mb-3">
-                Color:{" "}
-                <span className="text-gray-600 font-normal">
-                  {selectedColor}
-                </span>
-              </h4>
-              <div className="flex flex-wrap gap-3">
-                {selectedProduct.colors.map((color) => (
-                  <button
-                    key={color}
-                    className={`w-10 h-10 rounded-full ${getColorClasses(
-                      color
-                    )} border-2 transition-all ${selectedColor === color
-                      ? "border-gray-800 scale-110 ring-2 ring-gray-300"
-                      : "border-gray-300 hover:scale-105"
-                      }`}
-                    onClick={() => setSelectedColor(color)}
-                    title={color}
-                  />
-                ))}
-              </div>
-            </div>
-          )} */}
 
             {/* Size Selection */}
             {selectedProduct.sizes && selectedProduct.sizes.length > 0 && (
@@ -508,7 +466,7 @@ const ProductPage = () => {
               className={`w-full py-4 rounded-lg font-bold transition-transform transform ${selectedProduct.inventory?.stock > 0
                 ? "bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                } mb-4`}
+                } my-4`}
             >
               {selectedProduct.inventory?.stock > 0
                 ? "Add to Cart"
