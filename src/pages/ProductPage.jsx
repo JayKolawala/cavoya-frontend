@@ -1,59 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import {
-  Star,
-  Truck,
-  RefreshCw,
-  Shield,
-  ChevronDown,
-  ChevronUp,
-  ChevronLeft,
-  ChevronRight,
-  Play,
-  X,
-  Ruler,
-} from "lucide-react";
+import { Star, X, Ruler, Play, ChevronLeft, ChevronRight } from "lucide-react";
 
-// ─── Size Chart Data ──────────────────────────────────────────────────────────
+// ─── Size Chart Data ───────────────────────────────────────────────────────────
 const SIZE_CHART = {
   top: {
     label: "Top Wear",
     rows: [
-      { measurement: "BUST",  inches: [32, 34, 36, 38, 40, 42], cm: [81, 86, 91, 97, 102, 107] },
-      { measurement: "WAIST", inches: [25, 27, 29, 31, 33, 35], cm: [64, 69, 74, 79,  84,  89] },
-      { measurement: "HIP",   inches: [35, 37, 39, 41, 43, 45], cm: [89, 94, 99, 104, 109, 114] },
+      { measurement: "BUST", inches: [32, 34, 36, 38, 40, 42], cm: [81, 86, 91, 97, 102, 107] },
+      { measurement: "WAIST", inches: [25, 27, 29, 31, 33, 35], cm: [64, 69, 74, 79, 84, 89] },
+      { measurement: "HIP", inches: [35, 37, 39, 41, 43, 45], cm: [89, 94, 99, 104, 109, 114] },
     ],
   },
   bottom: {
     label: "Bottom Wear",
     rows: [
-      { measurement: "WAIST",  inches: [25, 27, 29, 31, 33, 35], cm: [64, 69, 74, 79, 84,  89] },
-      { measurement: "HIP",    inches: [35, 37, 39, 41, 43, 45], cm: [89, 94, 99, 104, 109, 114] },
-      { measurement: "INSEAM", inches: [28, 28, 29, 29, 30, 30], cm: [71, 71, 74, 74, 76,  76] },
+      { measurement: "WAIST", inches: [25, 27, 29, 31, 33, 35], cm: [64, 69, 74, 79, 84, 89] },
+      { measurement: "HIP", inches: [35, 37, 39, 41, 43, 45], cm: [89, 94, 99, 104, 109, 114] },
+      { measurement: "INSEAM", inches: [28, 28, 29, 29, 30, 30], cm: [71, 71, 74, 74, 76, 76] },
     ],
   },
 };
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
-
-// Bottom-wear category keywords (case-insensitive match)
 const BOTTOM_KEYWORDS = ["bottom", "pant", "trouser", "jeans", "skirt", "short", "legging"];
 
 function isBottomWear(category = "") {
-  const lower = category.toLowerCase();
-  return BOTTOM_KEYWORDS.some((kw) => lower.includes(kw));
+  return BOTTOM_KEYWORDS.some((kw) => category.toLowerCase().includes(kw));
 }
 
-// ─── Size Chart Modal ─────────────────────────────────────────────────────────
+// ─── Size Chart Modal ──────────────────────────────────────────────────────────
 const SizeChartModal = ({ onClose, category }) => {
   const defaultTab = isBottomWear(category) ? "bottom" : "top";
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [unit, setUnit] = useState("inches");
-
   const chart = SIZE_CHART[activeTab];
 
-  // Close on backdrop click
   const handleBackdrop = (e) => {
     if (e.target === e.currentTarget) onClose();
   };
@@ -63,86 +46,55 @@ const SizeChartModal = ({ onClose, category }) => {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
       onClick={handleBackdrop}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden animate-fade-in">
-        {/* Header */}
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden">
         <div className="flex items-center justify-between px-6 pt-6 pb-2">
-          <h2 className="text-lg font-bold tracking-widest uppercase text-gray-900">
-            Body Measurement
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
-            aria-label="Close size chart"
-          >
+          <h2 className="text-lg font-bold tracking-widest uppercase text-gray-900">Body Measurement</h2>
+          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 transition-colors" aria-label="Close">
             <X className="h-5 w-5 text-gray-600" />
           </button>
         </div>
-
-        {/* Top / Bottom Tab */}
         <div className="flex gap-4 px-6 pb-2 border-b border-gray-100">
           {["top", "bottom"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`py-2 text-sm font-semibold tracking-wide uppercase transition-all border-b-2 ${
-                activeTab === tab
-                  ? "border-gray-900 text-gray-900"
-                  : "border-transparent text-gray-400 hover:text-gray-600"
-              }`}
+              className={`py-2 text-sm font-semibold tracking-wide uppercase transition-all border-b-2 ${activeTab === tab ? "border-gray-900 text-gray-900" : "border-transparent text-gray-400 hover:text-gray-600"
+                }`}
             >
               {SIZE_CHART[tab].label}
             </button>
           ))}
         </div>
-
-        {/* Unit Toggle */}
         <div className="flex items-center justify-center gap-3 py-3">
-          <button
-            onClick={() => setUnit("inches")}
-            className={`text-sm font-semibold tracking-widest uppercase transition-colors ${
-              unit === "inches"
-                ? "underline underline-offset-4 text-gray-900"
-                : "text-gray-400 hover:text-gray-600"
-            }`}
-          >
-            Inches
-          </button>
-          <span className="text-gray-300 font-light">|</span>
-          <button
-            onClick={() => setUnit("cm")}
-            className={`text-sm font-semibold tracking-widest uppercase transition-colors ${
-              unit === "cm"
-                ? "underline underline-offset-4 text-gray-900"
-                : "text-gray-400 hover:text-gray-600"
-            }`}
-          >
-            CM
-          </button>
+          {["inches", "cm"].map((u, i) => (
+            <React.Fragment key={u}>
+              {i > 0 && <span className="text-gray-300">|</span>}
+              <button
+                onClick={() => setUnit(u)}
+                className={`text-sm font-semibold tracking-widest uppercase transition-colors ${unit === u ? "underline underline-offset-4 text-gray-900" : "text-gray-400 hover:text-gray-600"
+                  }`}
+              >
+                {u === "inches" ? "Inches" : "CM"}
+              </button>
+            </React.Fragment>
+          ))}
         </div>
-
-        {/* Table */}
         <div className="px-4 pb-6 overflow-x-auto">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr>
                 <th className="py-3 px-4 text-left font-normal text-gray-400" />
                 {SIZES.map((s) => (
-                  <th key={s} className="py-3 px-4 text-center font-bold text-gray-800 tracking-widest">
-                    {s}
-                  </th>
+                  <th key={s} className="py-3 px-4 text-center font-bold text-gray-800 tracking-widest">{s}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {chart.rows.map((row, i) => (
                 <tr key={row.measurement} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
-                  <td className="py-4 px-4 font-bold text-gray-800 tracking-widest border border-gray-100">
-                    {row.measurement}
-                  </td>
+                  <td className="py-4 px-4 font-bold text-gray-800 tracking-widest border border-gray-100">{row.measurement}</td>
                   {row[unit].map((val, j) => (
-                    <td key={j} className="py-4 px-4 text-center text-gray-700 border border-gray-100">
-                      {val}
-                    </td>
+                    <td key={j} className="py-4 px-4 text-center text-gray-700 border border-gray-100">{val}</td>
                   ))}
                 </tr>
               ))}
@@ -153,6 +105,7 @@ const SizeChartModal = ({ onClose, category }) => {
     </div>
   );
 };
+
 import useCartStore from "../store/useCartStore";
 import useProductStore from "../store/useProductStore";
 import useUIStore from "../store/useUIStore";
@@ -170,112 +123,57 @@ const ProductPage = () => {
   const { addToCart } = useCartStore();
   const { products, fetchProductById } = useProductStore();
   const { showCustomAlert } = useUIStore();
+
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
+  const [selectedTopSize, setSelectedTopSize] = useState("");
+  const [selectedBottomSize, setSelectedBottomSize] = useState("");
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showSizeChart, setShowSizeChart] = useState(false);
-
-  // Check URL params to auto-open reviews section
-  const searchParams = new URLSearchParams(location.search);
-  const shouldShowReviews = searchParams.get("rate") === "true" || searchParams.get("showReviews") === "true";
-  const [activeAccordion, setActiveAccordion] = useState(shouldShowReviews ? "reviews" : null);
-
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
+  const thumbRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
-  // Thumbnail scroll state
-  const thumbnailScrollRef = React.useRef(null);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(false);
-
-  // Check if arrows should be visible
-  const updateArrowVisibility = () => {
-    if (thumbnailScrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } =
-        thumbnailScrollRef.current;
-      setShowLeftArrow(scrollLeft > 0);
-      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10);
-    }
+  const updateThumbArrows = () => {
+    const el = thumbRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
   };
 
-  // Scroll thumbnails left or right
-  const scrollThumbnails = (direction) => {
-    if (thumbnailScrollRef.current) {
-      const scrollAmount = 300; // Scroll by 300px
-      const newScrollLeft =
-        thumbnailScrollRef.current.scrollLeft +
-        (direction === "left" ? -scrollAmount : scrollAmount);
-      thumbnailScrollRef.current.scrollTo({
-        left: newScrollLeft,
-        behavior: "smooth",
-      });
-    }
+  const scrollThumbs = (dir) => {
+    const el = thumbRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir === "left" ? -200 : 200, behavior: "smooth" });
   };
 
-  // Update arrow visibility on scroll
-  React.useEffect(() => {
-    const thumbnailContainer = thumbnailScrollRef.current;
-    if (thumbnailContainer) {
-      updateArrowVisibility();
-      thumbnailContainer.addEventListener("scroll", updateArrowVisibility);
-      return () =>
-        thumbnailContainer.removeEventListener("scroll", updateArrowVisibility);
-    }
-  }, [selectedProduct]);
-
-  // Get related products (same category, exclude current product)
-  // If no related products, fallback to any other products
   const relatedProducts = selectedProduct
     ? (() => {
-      // First, try to find products in the same category
       const sameCategory = products.filter(
-        (p) =>
-          p.category === selectedProduct.category &&
-          p.id !== selectedProduct.id &&
-          p._id !== selectedProduct._id,
+        (p) => p.category === selectedProduct.category && p.id !== selectedProduct.id && p._id !== selectedProduct._id
       );
-
-      // If we have related products from same category, use them
-      if (sameCategory.length > 0) {
-        return sameCategory.slice(0, 4);
-      }
-
-      // Otherwise, show any other products (excluding current)
-      return products
-        .filter(
-          (p) => p.id !== selectedProduct.id && p._id !== selectedProduct._id,
-        )
-        .slice(0, 4);
+      if (sameCategory.length > 0) return sameCategory.slice(0, 4);
+      return products.filter((p) => p.id !== selectedProduct.id && p._id !== selectedProduct._id).slice(0, 4);
     })()
     : [];
 
-  // Determine section title based on whether we found related products
   const productsSectionTitle = selectedProduct
-    ? products.some(
-      (p) =>
-        p.category === selectedProduct.category &&
-        p.id !== selectedProduct.id &&
-        p._id !== selectedProduct._id,
-    )
+    ? products.some((p) => p.category === selectedProduct.category && p.id !== selectedProduct.id && p._id !== selectedProduct._id)
       ? "Related Products"
       : "You May Also Like"
     : "Related Products";
 
-  // Fetch reviews for the product
   const fetchReviews = async (productId) => {
     if (!productId) return;
-
     setReviewsLoading(true);
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/ratings/${productId}`
-      );
+      const response = await fetch(`${API_BASE_URL}/ratings/${productId}`);
       const data = await response.json();
-
       if (response.ok && data.success) {
-        // API returns: { success, data: { avgRating, totalRatings, ratings: [] } }
         setReviews(data.data?.ratings || data.ratings || []);
       } else {
         setReviews([]);
@@ -288,60 +186,49 @@ const ProductPage = () => {
     }
   };
 
-
   useEffect(() => {
     const loadProduct = async () => {
       setLoading(true);
-
-      // Always fetch from API to get full data including collectionName & printName.
-      // The cached products array does not have these fields.
       let product = null;
-
       if (id && fetchProductById) {
         product = await fetchProductById(id);
       }
-
-      // Fallback to cached products array if API fetch failed
       if (!product) {
         product = products.find((p) => p.id === id || p._id === id);
       }
-
       if (product) {
         setSelectedProduct(product);
-        setSelectedColor(
-          product.colors && product.colors.length > 0 ? product.colors[0] : "",
-        );
-        setSelectedSize(
-          product.sizes && product.sizes.length > 0 ? product.sizes[0] : "",
-        );
-
-        // Fetch reviews for this product
+        setSelectedColor(product.colors?.length > 0 ? product.colors[0] : "");
+        setSelectedSize(product.sizes?.length > 0 ? product.sizes[0] : "");
+        setSelectedTopSize(product.topSizes?.[0] || "");
+        setSelectedBottomSize(product.bottomSizes?.[0] || "");
         await fetchReviews(product.id || product._id);
       }
-
       setLoading(false);
     };
-
     loadProduct();
   }, [id]);
 
-  const toggleAccordion = (section) => {
-    setActiveAccordion(activeAccordion === section ? null : section);
-  };
+  // Initialize and update thumbnail scroll arrows
+  useEffect(() => {
+    if (!selectedProduct) return;
+    updateThumbArrows();
+    window.addEventListener("resize", updateThumbArrows);
+    // Small timeout to allow images to layout correctly
+    const timeoutId = setTimeout(updateThumbArrows, 150);
+    return () => {
+      window.removeEventListener("resize", updateThumbArrows);
+      clearTimeout(timeoutId);
+    };
+  }, [selectedProduct]);
 
-  // Show loading spinner while product is being fetched
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <LoadingSpinner />;
 
-  // Show error message if product is not found
   if (!selectedProduct) {
     return (
       <section className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-3xl font-light mb-4">Product Not Found</h1>
-        <p className="text-gray-600 mb-8">
-          The product you're looking for doesn't exist.
-        </p>
+        <p className="text-gray-600 mb-8">The product you're looking for doesn't exist.</p>
         <button
           onClick={() => window.history.back()}
           className="px-6 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
@@ -352,76 +239,27 @@ const ProductPage = () => {
     );
   }
 
-  // Build media array with main image and additional images/videos
+  // Build media array
   const productMedia = [];
-
-  // Add main image first
   if (selectedProduct.image) {
-    productMedia.push({
-      url: selectedProduct.image,
-      type: isVideo(selectedProduct.image) ? "video" : "image",
-      alt: selectedProduct.name,
-      isMain: true,
-    });
+    productMedia.push({ url: selectedProduct.image, type: isVideo(selectedProduct.image) ? "video" : "image", alt: selectedProduct.name });
   }
-
-  // Add additional images/videos from API response
-  if (
-    selectedProduct.images &&
-    Array.isArray(selectedProduct.images) &&
-    selectedProduct.images.length > 0
-  ) {
+  if (selectedProduct.images?.length > 0) {
     selectedProduct.images.forEach((media, index) => {
-      // Your API returns objects with {url, alt, _id}
       const mediaUrl = media.url || media;
-      const mediaAlt =
-        media.alt || `${selectedProduct.name} - Image ${index + 2}`;
-
+      const mediaAlt = media.alt || `${selectedProduct.name} - Image ${index + 2}`;
       if (mediaUrl) {
-        productMedia.push({
-          url: mediaUrl,
-          type: isVideo(mediaUrl) ? "video" : "image",
-          alt: mediaAlt,
-          isMain: false,
-        });
+        productMedia.push({ url: mediaUrl, type: isVideo(mediaUrl) ? "video" : "image", alt: mediaAlt });
       }
     });
   }
-
-  // Fallback if no media available at all
   if (productMedia.length === 0) {
-    productMedia.push({
-      url: "https://placehold.co/800x1200/E8D2C5/543C42?text=No+Image",
-      type: "image",
-      alt: "No image available",
-      isMain: true,
-    });
+    productMedia.push({ url: "https://placehold.co/800x1200/E8D2C5/543C42?text=No+Image", type: "image", alt: "No image available" });
   }
 
-  const AccordionSection = ({ title, isOpen, onToggle, children }) => (
-    <div className="border-b border-gray-200">
-      <button
-        onClick={onToggle}
-        className="w-full px-4 py-4 px-0 flex justify-between items-center text-left hover:bg-gray-50 transition-colors rounded-none"
-      >
-        <span className="text-gray-700 font-medium">{title}</span>
-        {isOpen ? (
-          <ChevronUp className="h-5 w-5 text-gray-500" />
-        ) : (
-          <ChevronDown className="h-5 w-5 text-gray-500" />
-        )}
-      </button>
-      <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-[2000px] pb-4 px-4" : "max-h-0"
-          }`}
-      >
-        <div className="text-gray-600 text-sm leading-relaxed">{children}</div>
-      </div>
-    </div>
-  );
+  const hasTopBottomSizes = selectedProduct.topSizes || selectedProduct.bottomSizes;
 
   return (
-
     <>
       <Helmet>
         <title>{selectedProduct.name} - Cavoya</title>
@@ -433,171 +271,191 @@ const ProductPage = () => {
         <meta property="product:price:amount" content={selectedProduct.price} />
         <meta property="product:price:currency" content="INR" />
       </Helmet>
-      <section className="container mx-auto px-4 pt-24 pb-16">
 
+      {showSizeChart && (
+        <SizeChartModal onClose={() => setShowSizeChart(false)} category={selectedProduct.category || ""} />
+      )}
+
+      <section className="container mx-auto px-4 pt-24 pb-16">
+        {/* ── Two-column layout ── */}
         <div className="flex flex-col lg:flex-row gap-12">
-          {/* Enhanced Media Gallery */}
-          <div className="lg:w-1/2">
-            <div className="w-full h-[500px] bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden mb-6 relative shadow-xl">
+
+          {/* ── LEFT: sticky image panel ── */}
+          <div className="lg:w-1/2 lg:sticky lg:top-24 lg:self-start">
+            {/* Main image */}
+            <div className="w-full bg-gray-50 rounded-2xl overflow-hidden mb-4 shadow-lg">
               {productMedia[activeMediaIndex].type === "video" ? (
                 <video
                   src={productMedia[activeMediaIndex].url}
-                  className="w-full h-full object-contain"
-                  controls
-                  autoPlay
-                  muted
-                  loop
+                  className="w-full object-contain"
+                  // style={{ aspectRatio: "3/4" }}
+                  controls autoPlay muted loop
                 />
               ) : (
                 <img
                   src={productMedia[activeMediaIndex].url}
                   alt={productMedia[activeMediaIndex].alt}
-                  className="w-full h-full object-contain transition-transform duration-300 hover:scale-105"
+                  className="w-full md:min-h-[500px] max-h-[500px] object-contain transition-transform duration-300 hover:scale-105"
+                // style={{ aspectRatio: "3/4" }}
                 />
               )}
             </div>
 
-            {/* Enhanced Thumbnails with Horizontal Scroll */}
-            <div className="relative px-2">
-              {/* Left Arrow */}
-              {showLeftArrow && (
-                <button
-                  onClick={() => scrollThumbnails("left")}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 transition-all duration-200 hover:scale-110"
-                  aria-label="Scroll left"
-                >
-                  <ChevronLeft className="h-5 w-5 text-gray-700" />
-                </button>
-              )}
-
-              {/* Scrollable Thumbnail Container */}
-              <div
-                ref={thumbnailScrollRef}
-                className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth p-2 px-2"
-                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-              >
-                {productMedia.map((media, index) => (
-                  <div
-                    key={index}
-                    className={`relative flex-shrink-0 w-24 h-24 rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${activeMediaIndex === index
-                      ? "ring-4 ring-gray-700 shadow-lg scale-105"
-                      : "hover:opacity-80 hover:scale-105 shadow-md"
-                      }`}
-                    onClick={() => setActiveMediaIndex(index)}
+            {/* Horizontal thumbnail strip with scroll arrows */}
+            {productMedia.length > 1 && (
+              <div className="relative">
+                {/* Left arrow */}
+                {canScrollLeft && (
+                  <button
+                    onClick={() => scrollThumbs("left")}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-md rounded-full p-1.5 transition-all"
+                    aria-label="Scroll thumbnails left"
                   >
-                    {media.type === "video" ? (
-                      <>
-                        <video
-                          src={media.url}
-                          className="w-full h-full object-cover"
-                          muted
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
-                          <Play className="h-8 w-8 text-white drop-shadow-lg" />
-                        </div>
-                      </>
-                    ) : (
-                      <img
-                        src={media.url}
-                        alt={`Thumbnail ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
+                    <ChevronLeft className="h-4 w-4 text-gray-700" />
+                  </button>
+                )}
 
-              {/* Right Arrow */}
-              {showRightArrow && (
-                <button
-                  onClick={() => scrollThumbnails("right")}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 transition-all duration-200 hover:scale-110"
-                  aria-label="Scroll right"
+                <div
+                  ref={thumbRef}
+                  onScroll={updateThumbArrows}
+                  className="flex gap-3 overflow-x-auto pb-1 px-1"
+                  style={{ scrollbarWidth: "none" }}
                 >
-                  <ChevronRight className="h-5 w-5 text-gray-700" />
-                </button>
-              )}
-            </div>
+                  {productMedia.map((media, index) => (
+                    <button
+                      key={index}
+                      onClick={() => { setActiveMediaIndex(index); updateThumbArrows(); }}
+                      className={`relative flex-shrink-0 w-20 h-24 rounded-xl overflow-hidden border-2 transition-all duration-200 ${activeMediaIndex === index
+                        ? "border-gray-900 shadow-md"
+                        : "border-transparent hover:border-gray-300"
+                        }`}
+                    >
+                      {media.type === "video" ? (
+                        <>
+                          <video src={media.url} className="w-full h-full object-cover" muted />
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                            <Play className="h-5 w-5 text-white" />
+                          </div>
+                        </>
+                      ) : (
+                        <img src={media.url} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Right arrow */}
+                {canScrollRight && (
+                  <button
+                    onClick={() => scrollThumbs("right")}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-md rounded-full p-1.5 transition-all"
+                    aria-label="Scroll thumbnails right"
+                  >
+                    <ChevronRight className="h-4 w-4 text-gray-700" />
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Enhanced Product Details */}
+          {/* ── RIGHT: scrollable product info ── */}
           <div className="lg:w-1/2">
-            <h1 className="text-4xl md:text-5xl font-light mb-3 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent capitalize">
+
+            {/* Title */}
+            <h1 className="text-2xl md:text-4xl font-light mb-2 text-gray-900 capitalize">
               {selectedProduct.name}
             </h1>
 
-            {/* Enhanced Rating - Use backend avgRating and totalRatings */}
+            {/* Rating */}
             {selectedProduct.totalRatings > 0 ? (
-              <div className="flex items-center mb-6">
-                <StarDisplay
-                  rating={selectedProduct.avgRating || 0}
-                  size="h-5 w-5"
-                  showHalfStars={true}
-                />
+              <div className="flex items-center mb-5">
+                <StarDisplay rating={selectedProduct.avgRating || 0} size="h-5 w-5" showHalfStars={true} />
                 <span className="ml-3 text-gray-600 font-medium">
-                  {selectedProduct.avgRating?.toFixed(1) || "0.0"} (
-                  {selectedProduct.totalRatings}{" "}
+                  {selectedProduct.avgRating?.toFixed(1)} ({selectedProduct.totalRatings}{" "}
                   {selectedProduct.totalRatings === 1 ? "review" : "reviews"})
                 </span>
               </div>
             ) : (
-              <div className="mb-6">
-                <span className="text-gray-500 text-sm italic">
-                  No reviews yet
-                </span>
-              </div>
+              <p className="text-gray-500 text-sm italic mb-5">No reviews yet</p>
             )}
 
-            {/* Enhanced Price */}
-            <div className="flex items-center space-x-4 mb-8">
-              <span className="text-4xl font-bold text-gray-900">
-                ₹{selectedProduct.price}
-              </span>
-              {selectedProduct.originalPrice &&
-                selectedProduct.originalPrice > selectedProduct.price && (
-                  <span className="text-xl text-gray-400 line-through">
-                    ₹{selectedProduct.originalPrice}
+            {/* Price */}
+            <div className="mb-6">
+              <p className="text-sm text-gray-500">MRP:</p>
+              <div className="flex items-center gap-3 mt-0.5">
+                <span className="text-3xl font-semibold text-gray-900">
+                  ₹{selectedProduct.price?.toLocaleString("en-IN")}
+                </span>
+                {selectedProduct.originalPrice && selectedProduct.originalPrice > selectedProduct.price && (
+                  <span className="text-lg text-gray-400 line-through">
+                    ₹{selectedProduct.originalPrice?.toLocaleString("en-IN")}
                   </span>
                 )}
-              {selectedProduct.isSale && (
-                <span className="bg-black text-white px-3 py-1.5 text-sm font-semibold rounded-full shadow-md">
-                  SALE
-                </span>
-              )}
-            </div>
-
-            {/* Enhanced Description */}
-            <div className="bg-gray-50 rounded-2xl px-6 py-4">
-              <p className="text-gray-700 font-bold leading-relaxed">
-                {selectedProduct.description || "No description available."}
+                {selectedProduct.isSale && (
+                  <span className="bg-black text-white px-3 py-1 text-xs font-semibold rounded-full">SALE</span>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Tax included.{" "}
+                <span className="underline cursor-pointer">Shipping calculated at checkout.</span>
               </p>
             </div>
 
-            {/* Size Selection */}
-            {selectedProduct.sizes && selectedProduct.sizes.length > 0 && (
-              <div className="mb-8">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-medium text-lg">
-                    Size:{" "}
-                    <span className="text-gray-600 font-normal">{selectedSize}</span>
-                  </h4>
-                  <button
-                    onClick={() => setShowSizeChart(true)}
-                    className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors underline underline-offset-4"
-                  >
-                    <Ruler className="h-4 w-4" />
-                    Size Guide
-                  </button>
-                </div>
+            <hr className="border-gray-200 mb-6" />
+
+            {/* Size selectors */}
+            {hasTopBottomSizes ? (
+              <div className="space-y-5 mb-6">
+                {selectedProduct.topSizes?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold tracking-widest text-gray-500 mb-2">TOP</p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProduct.topSizes.map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => setSelectedTopSize(size)}
+                          className={`px-4 py-2 border rounded-md text-sm font-medium transition-colors ${selectedTopSize === size
+                            ? "border-gray-900 bg-gray-100 text-gray-900"
+                            : "border-gray-300 hover:border-gray-500"
+                            }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {selectedProduct.bottomSizes?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold tracking-widest text-gray-500 mb-2">BOTTOM</p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProduct.bottomSizes.map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => setSelectedBottomSize(size)}
+                          className={`px-4 py-2 border rounded-md text-sm font-medium transition-colors ${selectedBottomSize === size
+                            ? "border-gray-900 bg-gray-100 text-gray-900"
+                            : "border-gray-300 hover:border-gray-500"
+                            }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : selectedProduct.sizes?.length > 0 && (
+              <div className="mb-6">
                 <div className="flex flex-wrap gap-2">
                   {selectedProduct.sizes.map((size) => (
                     <button
                       key={size}
-                      className={`px-4 py-2 border rounded-md transition-colors ${selectedSize === size
+                      onClick={() => setSelectedSize(size)}
+                      className={`px-4 py-2 border rounded-md text-sm font-medium transition-colors ${selectedSize === size
                         ? "border-gray-900 bg-gray-100 text-gray-900"
                         : "border-gray-300 hover:border-gray-500"
                         }`}
-                      onClick={() => setSelectedSize(size)}
                     >
                       {size}
                     </button>
@@ -606,195 +464,119 @@ const ProductPage = () => {
               </div>
             )}
 
-            {/* Size Chart Modal */}
-            {showSizeChart && (
-              <SizeChartModal
-                onClose={() => setShowSizeChart(false)}
-                category={selectedProduct.category || ""}
-              />
-            )}
-
-            {/* Add to Cart Button */}
+            {/* Size chart link */}
             <button
-              onClick={() =>
-                addToCart(selectedProduct, selectedColor, selectedSize)
-              }
-              disabled={selectedProduct.inventory?.stock <= 0}
-              className={`w-full py-4 rounded-lg font-bold transition-transform transform ${selectedProduct.inventory?.stock > 0
-                ? "bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                } my-4`}
+              onClick={() => setShowSizeChart(true)}
+              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors underline underline-offset-4 mb-6"
             >
-              {selectedProduct.inventory?.stock > 0
-                ? "Add to Cart"
-                : "Out of Stock"}
+              <Ruler className="h-4 w-4" />
+              Size Chart
             </button>
 
-            {/* Product Badges: Category, Collection, Print */}
-            <div className="flex flex-wrap gap-2 mb-4">
+            {/* Add to Cart */}
+            <button
+              onClick={() => addToCart(selectedProduct, selectedColor, selectedSize)}
+              disabled={selectedProduct.inventory?.stock <= 0}
+              className={`w-full py-4 rounded-lg font-bold transition-transform transform my-2 ${selectedProduct.inventory?.stock > 0
+                ? "bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+            >
+              {selectedProduct.inventory?.stock > 0 ? "Add to Cart" : "Out of Stock"}
+            </button>
+
+            <hr className="border-gray-200 my-6" />
+
+            {/* Description — always visible */}
+            {selectedProduct.description && (
+              <p className="text-gray-700 leading-relaxed mb-6 text-sm">
+                {selectedProduct.description}
+              </p>
+            )}
+
+            {/* ── Detail rows (always visible, no accordion) ── */}
+            <div className="space-y-4 text-sm">
+              <div>
+                <p className="font-semibold text-gray-900">Delivery time:</p>
+                <p className="text-gray-600">10–12 business days, excluding the weekends and festive holidays</p>
+              </div>
+
               {selectedProduct.category && (
-                <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
-                  🏷️ {selectedProduct.category}
-                </span>
+                <div>
+                  <p className="font-semibold text-gray-900">Category:</p>
+                  <p className="text-gray-600">{selectedProduct.category}</p>
+                </div>
               )}
+
               {selectedProduct.collectionName && (
-                <span className="inline-block bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-full text-sm font-medium">
-                  🗂️ test{selectedProduct.collectionName}
-                </span>
+                <div>
+                  <p className="font-semibold text-gray-900">Collection:</p>
+                  <p className="text-gray-600">{selectedProduct.collectionName}</p>
+                </div>
               )}
+
               {selectedProduct.printName && (
-                <span className="inline-block bg-purple-50 text-purple-700 border border-purple-200 px-3 py-1 rounded-full text-sm font-medium">
-                  🎨 {selectedProduct.printName}
-                </span>
+                <div>
+                  <p className="font-semibold text-gray-900">Print:</p>
+                  <p className="text-gray-600">{selectedProduct.printName}</p>
+                </div>
+              )}
+
+              {selectedProduct.colors?.length > 0 && (
+                <div>
+                  <p className="font-semibold text-gray-900">Colors:</p>
+                  <p className="text-gray-600">{selectedProduct.colors.join(", ")}</p>
+                </div>
+              )}
+
+              {selectedProduct.sizes?.length > 0 && (
+                <div>
+                  <p className="font-semibold text-gray-900">Available Sizes:</p>
+                  <p className="text-gray-600">{selectedProduct.sizes.join(", ")}</p>
+                </div>
+              )}
+
+              {selectedProduct.inventory?.stock !== undefined && (
+                <div>
+                  <p className="font-semibold text-gray-900">Stock:</p>
+                  <p className="text-gray-600">{selectedProduct.inventory.stock} units</p>
+                </div>
+              )}
+
+              {selectedProduct.isFeatured && (
+                <div>
+                  <p className="font-semibold text-gray-900">Featured:</p>
+                  <p className="text-gray-600 flex items-center gap-1.5">
+                    <Star className="w-3.5 h-3.5 fill-gray-700 text-gray-700" />
+                    Handpicked featured product
+                  </p>
+                </div>
               )}
             </div>
 
-
-            {/* Enhanced Accordion Sections */}
-            <div className="border-t border-gray-200 bg-white rounded-2xl shadow-sm overflow-hidden" id="reviews-section">
-              <AccordionSection
-                title="Product Details"
-                isOpen={activeAccordion === "details"}
-                onToggle={() => toggleAccordion("details")}
-              >
-                <div className="space-y-4 bg-gray-50 p-4 rounded-xl">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white p-3 rounded-lg">
-                      <p className="font-semibold text-gray-800 mb-1">
-                        Category:
-                      </p>
-                      <p className="text-gray-600">
-                        {selectedProduct.category || "N/A"}
-                      </p>
-                    </div>
-                    <div className="bg-white p-3 rounded-lg">
-                      <p className="font-semibold text-gray-800 mb-1">Stock:</p>
-                      <p className="text-gray-600">
-                        {selectedProduct.inventory?.stock || 0} units
-                      </p>
-                    </div>
-                    <div className="bg-white p-3 rounded-lg">
-                      <p className="font-semibold text-gray-800 mb-1">Collection:</p>
-                      <p className="text-gray-600">
-                        {selectedProduct.collectionName || "N/A"}
-                      </p>
-                    </div>
-                    <div className="bg-white p-3 rounded-lg">
-                      <p className="font-semibold text-gray-800 mb-1">Print Type:</p>
-                      <p className="text-gray-600">
-                        {selectedProduct.printName || "N/A"}
-                      </p>
-                    </div>
-                    <div className="bg-white p-3 rounded-lg">
-                      <p className="font-semibold text-gray-800 mb-1">Colors:</p>
-                      <p className="text-gray-600">
-                        {selectedProduct.colors?.join(", ") || "N/A"}
-                      </p>
-                    </div>
-                    <div className="bg-white p-3 rounded-lg">
-                      <p className="font-semibold text-gray-800 mb-1">Sizes:</p>
-                      <p className="text-gray-600">
-                        {selectedProduct.sizes?.join(", ") || "N/A"}
-                      </p>
-                    </div>
-                  </div>
-
-                </div>
-              </AccordionSection>
-
-              <AccordionSection
-                title="Product Description"
-                isOpen={activeAccordion === "description"}
-                onToggle={() => toggleAccordion("description")}
-              >
-                <div className="space-y-4">
-                  <p className="text-gray-700 leading-relaxed">
-                    {selectedProduct.description ||
-                      "No detailed description available."}
-                  </p>
-
-                  {selectedProduct.isFeatured && (
-                    <div className="bg-gradient-to-r from-gray-100 to-gray-50 p-4 rounded-xl border-l-4 border-gray-700 shadow-sm">
-                      <p className="font-semibold text-gray-800 mb-1 flex items-center gap-2">
-                        <Star className="w-4 h-4 fill-gray-700 text-gray-700" />
-                        Featured Product
-                      </p>
-                      <p className="text-gray-600 text-sm">
-                        This is one of our featured items, handpicked for quality
-                        and style.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </AccordionSection>
-
-              <AccordionSection
-                title="Shipping & Returns"
-                isOpen={activeAccordion === "shipping"}
-                onToggle={() => toggleAccordion("shipping")}
-              >
-                <div className="space-y-5">
-                  <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-xl">
-                    <div className="w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Truck className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800 mb-1">
-                        Free Shipping
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Complimentary delivery on all orders over ₹999 across
-                        India
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-xl">
-                    <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <RefreshCw className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800 mb-1">
-                        Easy Returns
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Hassle-free 30-day return policy for complete peace of
-                        mind
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-xl">
-                    <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-black rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Shield className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800 mb-1">
-                        Secure Payment
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Bank-grade encryption keeps your payment information safe
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </AccordionSection>
+            {/* Shipping & Returns — always visible */}
+            <hr className="border-gray-200 my-6" />
+            <div className="space-y-2 text-sm">
+              <h3 className="font-semibold text-gray-900">Shipping &amp; Returns</h3>
+              <p className="text-gray-600">• Free shipping on all orders over ₹999 across India</p>
+              <p className="text-gray-600">• Hassle-free 30-day return policy</p>
+              <p className="text-gray-600">• Bank-grade encryption for secure payments</p>
             </div>
+
           </div>
         </div>
 
-        {/* Reviews Display Section - Only show reviews, no rating form */}
-        <div className="border-b border-gray-200">
-          <div className="py-4 px-4 ">
-            <h3 className="text-gray-700 text-center font-medium text-2xl mb-6">Customer Reviews ({reviews.length})</h3>
-            <div className="space-y-6">
-              {/* Reviews Display */}
-              <ReviewsDisplay reviews={reviews} loading={reviewsLoading} />
-            </div>
-          </div>
+        {/* Reviews */}
+        <div className="border-b border-gray-200 mt-16">
+          <h3 className="text-gray-700 text-center font-medium text-2xl mt-8 mb-6">
+            Customer Reviews ({reviews.length})
+          </h3>
+          <ReviewsDisplay reviews={reviews} loading={reviewsLoading} />
         </div>
 
-        {/* Related Products Section */}
+        {/* Related Products */}
         {relatedProducts.length > 0 && (
-          <div className="mt-20">
+          <div className="mt-16">
             <h2 className="text-3xl font-light mb-8 text-center text-gray-900">
               {productsSectionTitle}
             </h2>
@@ -802,16 +584,11 @@ const ProductPage = () => {
               {relatedProducts.map((product, index) => (
                 <div
                   key={product.id || product._id}
-                  className={`
-                  ${index >= 2 ? "hidden md:block" : ""}
-                  ${index >= 3 ? "lg:block" : ""}
-                `}
+                  className={`${index >= 2 ? "hidden md:block" : ""} ${index >= 3 ? "lg:block" : ""}`}
                 >
                   <ProductCard
                     product={product}
-                    onProductClick={(product) =>
-                      navigate(`/product/${product.id || product._id}`)
-                    }
+                    onProductClick={(p) => navigate(`/product/${p.id || p._id}`)}
                   />
                 </div>
               ))}
