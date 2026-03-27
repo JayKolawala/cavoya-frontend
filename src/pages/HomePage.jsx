@@ -195,13 +195,18 @@ const HomePage = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            addToCart(product);
-                            showAlert("Added to cart successfully!", "success");
+                            const hasSizes = product.sizes?.length > 0 || product.topSizes?.length > 0 || product.bottomSizes?.length > 0;
+                            if (hasSizes) {
+                              handleProductClick(product);
+                            } else {
+                              addToCart(product);
+                              showAlert("Added to cart successfully!", "success");
+                            }
                           }}
                           className="w-full bg-black text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-800 hover:shadow-lg transition-all duration-300"
                         >
                           <ShoppingCart className="h-4 w-4" />
-                          Quick Add
+                          {(product.sizes?.length > 0 || product.topSizes?.length > 0 || product.bottomSizes?.length > 0) ? "Select Size" : "Quick Add"}
                         </button>
                       </div>
                     </div>
@@ -357,13 +362,18 @@ const HomePage = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        addToCart(product);
-                        showAlert("Added to cart successfully!", "success");
+                        const hasSizes = product.sizes?.length > 0 || product.topSizes?.length > 0 || product.bottomSizes?.length > 0;
+                        if (hasSizes) {
+                          handleProductClick(product);
+                        } else {
+                          addToCart(product);
+                          showAlert("Added to cart successfully!", "success");
+                        }
                       }}
                       className="w-full bg-black text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-800 hover:shadow-lg transition-all duration-300"
                     >
                       <ShoppingCart className="h-4 w-4" />
-                      Quick Add
+                      {(product.sizes?.length > 0 || product.topSizes?.length > 0 || product.bottomSizes?.length > 0) ? "Select Size" : "Quick Add"}
                     </button>
                   </div>
                 ))}

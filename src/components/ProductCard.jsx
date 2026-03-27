@@ -11,6 +11,8 @@ const ProductCard = ({ product, onProductClick }) => {
   const { showCustomAlert } = useUIStore();
   const isInWishlist = wishlist.includes(product.id);
 
+  const hasSizes = product.sizes?.length > 0 || product.topSizes?.length > 0 || product.bottomSizes?.length > 0;
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group">
       <div className="relative">
@@ -62,18 +64,22 @@ const ProductCard = ({ product, onProductClick }) => {
           </div>
         )}
 
-        {/* Quick Add Button - Appears on Hover */}
+        {/* Quick Add / Select Size Button - Appears on Hover */}
         <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
           <button
             onClick={(e) => {
               e.stopPropagation();
-              addToCart(product);
-              showCustomAlert("Added to cart successfully!", "success");
+              if (hasSizes) {
+                onProductClick(product);
+              } else {
+                addToCart(product);
+                showCustomAlert("Added to cart successfully!", "success");
+              }
             }}
             className="w-full bg-black text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-800 hover:shadow-lg transition-all duration-300"
           >
             <ShoppingCart className="h-4 w-4" />
-            Quick Add
+            {hasSizes ? "Select Size" : "Quick Add"}
           </button>
         </div>
       </div>
