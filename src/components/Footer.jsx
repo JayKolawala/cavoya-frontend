@@ -109,7 +109,7 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => navigate("/admin/login")}
-                  className="hover:text-white transition-colors text-sm opacity-70"
+                  className="text-gray-400 hover:text-white transition-colors text-sm"
                 >
                   Admin Portal
                 </button>
@@ -143,7 +143,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="text-center mt-4 pt-4 border-t border-gray-800">
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-400 text-sm">
             Developed by{" "}
             <a
               href="https://jaykolawala.in/"

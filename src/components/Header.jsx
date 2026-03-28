@@ -104,11 +104,12 @@ const Header = () => {
 
   const categoryMap = getCategoryMap();
 
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL ||
+    "https://cavoya-backend.onrender.com/api";
+
   // Fetch active collections from API
   useEffect(() => {
-    const API_BASE_URL =
-      import.meta.env.VITE_API_BASE_URL ||
-      "https://cavoya-backend.onrender.com/api";
     fetch(`${API_BASE_URL}/collections`)
       .then((r) => r.json())
       .then((data) => {
@@ -118,26 +119,22 @@ const Header = () => {
         setCollectionItems(arr.filter((c) => c.isActive !== false));
       })
       .catch(console.error);
-  }, []);
+  }, [API_BASE_URL]);
 
-  // Fetch prints for each collection after collections load
-  useEffect(() => {
-    if (collectionItems.length === 0) return;
-    const API_BASE_URL =
-      import.meta.env.VITE_API_BASE_URL ||
-      "https://cavoya-backend.onrender.com/api";
-    collectionItems.forEach((col) => {
-      fetch(`${API_BASE_URL}/collections/${col._id}/prints`)
-        .then((r) => r.json())
-        .then((data) => {
-          const arr = Array.isArray(data)
-            ? data
-            : (data.data ?? data.prints ?? []);
-          setCollectionPrints((prev) => ({ ...prev, [col._id]: arr }));
-        })
-        .catch(console.error);
-    });
-  }, [collectionItems]);
+  // Fetch prints for a specific collection on demand
+  const fetchPrintsForCollection = (colId) => {
+    if (collectionPrints[colId]) return; // Already cached
+
+    fetch(`${API_BASE_URL}/collections/${colId}/prints`)
+      .then((r) => r.json())
+      .then((data) => {
+        const arr = Array.isArray(data)
+          ? data
+          : (data.data ?? data.prints ?? []);
+        setCollectionPrints((prev) => ({ ...prev, [colId]: arr }));
+      })
+      .catch(console.error);
+  };
 
   const handleNavigateWithFilters = (
     category,
@@ -219,6 +216,7 @@ const Header = () => {
                 className={`absolute inset-0 h-10 w-40 rounded-full object-cover transition-opacity duration-300 ${isScrolled || showMobileMenu || isLightHeaderPage ? "opacity-0" : "opacity-100"
                   }`}
                 loading="eager"
+                fetchpriority="high"
               />
               {/* Black logo — shown on white/scrolled header */}
               <img
@@ -227,6 +225,7 @@ const Header = () => {
                 className={`absolute inset-0 h-10 w-40 rounded-full object-cover transition-opacity duration-300 ${isScrolled || showMobileMenu || isLightHeaderPage ? "opacity-100" : "opacity-0"
                   }`}
                 loading="eager"
+                fetchpriority="high"
               />
             </div>
 
@@ -304,7 +303,10 @@ const Header = () => {
                       return (
                         <div
                           key={col._id}
-                          onMouseEnter={() => setHoveredColId(col._id)}
+                          onMouseEnter={() => {
+                            setHoveredColId(col._id);
+                            fetchPrintsForCollection(col._id);
+                          }}
                           onMouseLeave={() => setHoveredColId(null)}
                         >
                           {/* Collection row */}

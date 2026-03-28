@@ -6,12 +6,17 @@ export const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
   const token = localStorage.getItem("token");
 
+  // Create an AbortController for a 10-second timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
   const config = {
     headers: {
       "Content-Type": "application/json",
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
+    signal: controller.signal,
     ...options,
   };
 
@@ -21,6 +26,12 @@ export const apiRequest = async (endpoint, options = {}) => {
 
   try {
     const response = await fetch(url, config);
+    clearTimeout(timeoutId);
+    
+    if (response.status === 204) {
+      return { success: true };
+    }
+
     const data = await response.json();
 
     if (!response.ok) {
@@ -29,6 +40,10 @@ export const apiRequest = async (endpoint, options = {}) => {
 
     return data;
   } catch (error) {
+    clearTimeout(timeoutId);
+    if (error.name === "AbortError") {
+      throw new Error("Request timed out. Please try again.");
+    }
     console.error("API Request Error:", error);
     throw error;
   }

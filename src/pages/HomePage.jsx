@@ -18,14 +18,13 @@ const HomePage = () => {
   const { addToCart } = useCartStore();
   const { showCustomAlert: showAlert } = useUIStore();
   const [_selectedProduct, setSelectedProduct] = useState(null);
-  const [isVisible, setIsVisible] = useState(false);
   const [prints, setPrints] = useState([]);
   const [printsLoading, setPrintsLoading] = useState(true);
   const [printsError, setPrintsError] = useState(null);
+  const [videoError, setVideoError] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsVisible(true);
     if (products.length === 0) {
       fetchProducts({ limit: 100 }); // Fetch a healthy initial subset for homepage showcases
     }
@@ -77,10 +76,7 @@ const HomePage = () => {
         <div className="absolute inset-0 bg-black/40"></div>
 
         {/* Hero Content */}
-        <div
-          className={`relative z-10 text-center px-4 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-            }`}
-        >
+        <div className="relative z-10 text-center px-4 animate-fade-in">
           <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
             <Sparkles className="w-4 h-4 text-gray-300" />
             <span className="text-gray-200 text-sm font-light tracking-wider">
@@ -241,8 +237,9 @@ const HomePage = () => {
       </section>
 
       {/* Video Section */}
-      <section className="w-full bg-black">
-        <div className="relative w-full min-h-[70vh] md:min-h-[80vh] overflow-hidden">
+    <section className="w-full bg-black">
+      <div className="relative w-full min-h-[70vh] md:min-h-[80vh] overflow-hidden bg-gradient-to-br from-black via-gray-900 to-gray-800">
+        {!videoError && (
           <video
             className="absolute inset-0 w-full h-full object-cover"
             autoPlay
@@ -250,10 +247,12 @@ const HomePage = () => {
             muted
             playsInline
             preload="auto"
+            onError={() => setVideoError(true)}
           >
             <source src={bgVideo2} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
+        )}
 
           {/* Soft overlay (optional) */}
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
@@ -283,7 +282,7 @@ const HomePage = () => {
               <LoadingSpinner />
             </div>
           ) : printsError ? (
-            <p className="text-center text-red-500">{printsError}</p>
+            <p className="text-center text-red-700">{printsError}</p>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto">
               {prints.map((print) => (
