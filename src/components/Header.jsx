@@ -216,7 +216,7 @@ const Header = () => {
                 className={`absolute inset-0 h-10 w-40 rounded-full object-cover transition-opacity duration-300 ${isScrolled || showMobileMenu || isLightHeaderPage ? "opacity-0" : "opacity-100"
                   }`}
                 loading="eager"
-                fetchpriority="high"
+                fetchPriority="high"
               />
               {/* Black logo — shown on white/scrolled header */}
               <img
@@ -225,7 +225,7 @@ const Header = () => {
                 className={`absolute inset-0 h-10 w-40 rounded-full object-cover transition-opacity duration-300 ${isScrolled || showMobileMenu || isLightHeaderPage ? "opacity-100" : "opacity-0"
                   }`}
                 loading="eager"
-                fetchpriority="high"
+                fetchPriority="high"
               />
             </div>
 

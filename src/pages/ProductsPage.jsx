@@ -4,7 +4,7 @@ import { PRODUCT_CATEGORIES } from "../utils/constants";
 import ProductFilters from "../components/ProductFilters";
 import ProductCard from "../components/ProductCard";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
-import LoadingSpinner from "../components/LoadingSpinner";
+import ProductSkeleton from "../components/ProductSkeleton";
 import { Sparkles, Package } from "lucide-react";
 import { getCategoryMap } from "../utils/categoryHelpers";
 import AOS from "aos";
@@ -194,13 +194,11 @@ const ProductsPage = () => {
 
           {/* Products Section - 75% */}
           <main className="lg:w-3/4 flex-1">
-            {/* Full-page spinner — only on cold first load (no products yet) */}
+            {/* Full-page skeleton — only on cold first load (no products yet) */}
             {productsLoading &&
               !isRefetching &&
               sortedProducts.length === 0 && (
-                <div className="flex justify-center py-20">
-                  <LoadingSpinner />
-                </div>
+                <ProductSkeleton count={6} columns="full" />
               )}
 
             {/* Slim refetch indicator — shown during filter/category changes */}

@@ -3,8 +3,7 @@
  * Handles payment processing for online orders (Card, UPI)
  */
 
-// Get API base URL
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+import { API_BASE_URL } from './apiHelpers';
 
 /**
  * Get authentication token from localStorage
@@ -171,7 +170,7 @@ export const processRazorpayPayment = async ({
             order_id: orderId, // Order ID from backend
             name: 'Cavoya',
             description: 'Order Payment',
-            image: `${window.location.origin}/favicon.png`,
+            image: `${window.location.origin}/cavoya_logo.PNG`,
             prefill: {
                 name: customerName,
                 email: customerEmail,

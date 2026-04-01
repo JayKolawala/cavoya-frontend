@@ -1,9 +1,8 @@
 // src/contexts/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { API_BASE_URL } from "../utils/apiHelpers";
 
 const AuthContext = createContext(null);
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
 export const AuthProvider = ({ children }) => {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -16,7 +15,7 @@ export const AuthProvider = ({ children }) => {
    */
   const verifySession = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/admin/me`, {
+      const res = await fetch(`${API_BASE_URL}/admin/me`, {
         method: "GET",
         credentials: "include", // send the HTTP-only cookie cross-origin
       });
@@ -53,7 +52,7 @@ export const AuthProvider = ({ children }) => {
    */
   const logout = useCallback(async () => {
     try {
-      await fetch(`${API_BASE}/admin/logout`, {
+      await fetch(`${API_BASE_URL}/admin/logout`, {
         method: "POST",
         credentials: "include",
       });

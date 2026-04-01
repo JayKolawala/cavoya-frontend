@@ -2,8 +2,12 @@
  * API Configuration and Helper Utilities
  */
 
-// API Base URL
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+// API Base URL - Single source of truth
+const DEV_API_URL = 'http://localhost:5000/api';
+const PROD_API_URL = 'https://cavoya-backend.onrender.com/api';
+
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
+    (import.meta.env.DEV ? DEV_API_URL : PROD_API_URL);
 
 // API Endpoints (centralized endpoint management)
 export const API_ENDPOINTS = {

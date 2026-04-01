@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { Eye, EyeOff } from "lucide-react";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+import { API_BASE_URL } from "../../utils/apiHelpers";
 
 const AdminLogin = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
@@ -19,7 +18,7 @@ const AdminLogin = () => {
     setErrorMsg("");
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/admin/login`, {
+      const res = await fetch(`${API_BASE_URL}/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", // browser will store the HTTP-only cookie from Set-Cookie header

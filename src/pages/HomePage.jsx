@@ -6,7 +6,7 @@ import useWishlistStore from "../store/useWishlistStore";
 import useCartStore from "../store/useCartStore";
 import useUIStore from "../store/useUIStore";
 import { useNavigate } from "react-router-dom";
-import LoadingSpinner from "../components/LoadingSpinner";
+import ProductSkeleton from "../components/ProductSkeleton";
 import bgVideo2 from "../assets/bg-video2.mp4";
 import { isVideo } from "../utils/mediaHelpers";
 import { API_BASE_URL, API_ENDPOINTS } from "../utils/apiHelpers";
@@ -116,9 +116,7 @@ const HomePage = () => {
           </div>
 
           {loading ? (
-            <div className="flex justify-center py-20">
-              <LoadingSpinner />
-            </div>
+            <ProductSkeleton count={6} columns="2cols" />
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
               {products.slice(0, 6).map((product, index) => {
@@ -278,9 +276,7 @@ const HomePage = () => {
           </div>
 
           {printsLoading ? (
-            <div className="flex justify-center py-20">
-              <LoadingSpinner />
-            </div>
+            <ProductSkeleton count={4} columns="4cols" />
           ) : printsError ? (
             <p className="text-center text-red-700">{printsError}</p>
           ) : (
@@ -314,9 +310,7 @@ const HomePage = () => {
           </div>
 
           {loading ? (
-            <div className="flex justify-center py-20">
-              <LoadingSpinner />
-            </div>
+            <ProductSkeleton count={4} columns="4cols" />
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
               {products

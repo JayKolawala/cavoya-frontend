@@ -110,7 +110,7 @@ import useCartStore from "../store/useCartStore";
 import useProductStore from "../store/useProductStore";
 import useUIStore from "../store/useUIStore";
 import ProductCard from "../components/ProductCard";
-import LoadingSpinner from "../components/LoadingSpinner";
+import SingleProductSkeleton from "../components/SingleProductSkeleton";
 import StarDisplay from "../components/StarDisplay";
 import ReviewsDisplay from "../components/ReviewsDisplay";
 import { isVideo } from "../utils/mediaHelpers";
@@ -222,7 +222,7 @@ const ProductPage = () => {
     };
   }, [selectedProduct]);
 
-  if (loading) return <LoadingSpinner />;
+  if (loading) return <SingleProductSkeleton />;
 
   if (!selectedProduct) {
     return (

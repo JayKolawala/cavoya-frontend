@@ -1,37 +1,18 @@
 import { useState, useCallback } from 'react';
+import { API_BASE_URL } from '../utils/apiHelpers';
 
 /**
  * Custom hook for making API calls with automatic state management
  * 
- * @param {string} baseURL - Base URL for API (optional, defaults to environment variable)
+ * @param {string} baseURL - Base URL for API (optional, overrides centralized URL)
  * @returns {Object} API utilities and state
- * 
- * @example
- * const { data, loading, error, execute } = useApi();
- * 
- * // GET request
- * await execute('/products', { method: 'GET' });
- * 
- * // POST request with JSON body
- * await execute('/products', {
- *   method: 'POST',
- *   body: { name: 'Product', price: 100 }
- * });
- * 
- * // POST request with FormData
- * const formData = new FormData();
- * formData.append('name', 'Product');
- * await execute('/products', {
- *   method: 'POST',
- *   body: formData
- * });
  */
 const useApi = (baseURL = null) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const API_BASE_URL = baseURL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+    const API_URL = baseURL || API_BASE_URL;
 
     /**
      * Execute an API request
@@ -62,7 +43,7 @@ const useApi = (baseURL = null) => {
         }
         setError(null);
 
-        const url = `${API_BASE_URL}${endpoint}`;
+        const url = `${API_URL}${endpoint}`;
 
         try {
             // Abort the request if it takes longer than 15 seconds
@@ -120,7 +101,7 @@ const useApi = (baseURL = null) => {
                 setLoading(false);
             }
         }
-    }, [API_BASE_URL]);
+    }, [API_URL]);
 
     /**
      * Reset the hook state
