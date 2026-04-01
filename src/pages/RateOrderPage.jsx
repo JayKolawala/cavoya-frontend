@@ -45,20 +45,24 @@ const RateOrderPage = () => {
           productIds.map(pid =>
             fetch(`${API_BASE_URL}${API_ENDPOINTS.PRODUCT_RATINGS(pid)}`)
               .then(r => r.json())
-              .then(data => ({ pid, ratings: Array.isArray(data) ? data : data.data ?? [] }))
+              .then(data => ({ 
+                pid, 
+                ratings: data.data?.ratings ?? data.ratings ?? []
+              }))
           )
         );
 
         ratingChecks.forEach(result => {
           if (result.status === "fulfilled") {
             const { pid, ratings } = result.value;
-            const alreadyRatedOnServer = ratings.some(r =>
-              r.orderId === orderRef || r.orderId === orderId || r.order === orderRef || r.order === orderId
-            );
-            if (alreadyRatedOnServer) {
-              alreadyRated.add(pid);
-              // Persist in localStorage so subsequent visits on same browser are instant
-              localStorage.setItem(`rated_${orderRef}_${pid}`, "true");
+            if (Array.isArray(ratings)) {
+              const alreadyRatedOnServer = ratings.some(r =>
+                r.orderId === orderRef || r.orderId === orderId || r.order === orderRef || r.order === orderId
+              );
+              if (alreadyRatedOnServer) {
+                alreadyRated.add(pid);
+                localStorage.setItem(`rated_${orderRef}_${pid}`, "true");
+              }
             }
           }
         });

@@ -20,14 +20,22 @@ const loadScript = (src) =>
 // Convert any image URL / import to base64
 const toBase64 = (src) =>
   new Promise((resolve) => {
+    if (!src || typeof src !== 'string') {
+      resolve(null);
+      return;
+    }
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.onload = () => {
-      const c = document.createElement("canvas");
-      c.width = img.naturalWidth;
-      c.height = img.naturalHeight;
-      c.getContext("2d").drawImage(img, 0, 0);
-      resolve(c.toDataURL("image/png"));
+      try {
+        const c = document.createElement("canvas");
+        c.width = img.naturalWidth;
+        c.height = img.naturalHeight;
+        c.getContext("2d").drawImage(img, 0, 0);
+        resolve(c.toDataURL("image/png"));
+      } catch {
+        resolve(null);
+      }
     };
     img.onerror = () => resolve(null); // skip on error
     img.src = src;
@@ -274,13 +282,22 @@ const generateInvoicePDF = async (
 
     // Thumbnail
     if (!isVideo) {
-      const imgB64 = await toBase64(item.image);
-      if (imgB64) {
-        // small rounded rect background
+      const isValidUrl = item.image && typeof item.image === 'string' && item.image.startsWith('http');
+      if (isValidUrl) {
+        const imgB64 = await toBase64(item.image);
+        if (imgB64) {
+          rect(ML + 2, curY + 2, THUMB, THUMB, GRAY_100, null, 1);
+          try {
+            doc.addImage(imgB64, "PNG", ML + 2, curY + 2, THUMB, THUMB);
+          } catch (_) {
+            setFont("normal", 6, GRAY_500);
+            doc.text("IMG", ML + 2 + THUMB / 2, curY + 7, { align: "center" });
+          }
+        }
+      } else {
         rect(ML + 2, curY + 2, THUMB, THUMB, GRAY_100, null, 1);
-        try {
-          doc.addImage(imgB64, "PNG", ML + 2, curY + 2, THUMB, THUMB);
-        } catch (_) { }
+        setFont("normal", 6, GRAY_500);
+        doc.text("N/A", ML + 2 + THUMB / 2, curY + 7, { align: "center" });
       }
     } else {
       rect(ML + 2, curY + 2, THUMB, THUMB, GRAY_100, null, 1);

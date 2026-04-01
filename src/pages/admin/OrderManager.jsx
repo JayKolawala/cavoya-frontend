@@ -45,7 +45,7 @@ const OrderManager = () => {
           customerName: order.customer.name,
           customerEmail: order.customer.email,
           customerPhone: order.customer.phone,
-          orderDate: new Date(order.createdAt).toISOString().split("T")[0],
+          orderDate: order.createdAt,
           status: order.status,
           totalAmount: order.pricing.total,
           paymentMethod: order.payment.method,
