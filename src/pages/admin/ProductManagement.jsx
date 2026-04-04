@@ -83,17 +83,18 @@ const ProductManagement = () => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    material: "",
+    fit: "",
+    modelHeight: "",
+    modelIsWearing: "",
     price: "",
     originalPrice: "",
     image: "",
     colors: [],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: ["XS", "S", "M", "L", "XL", "XXL"],
     category: "",
     isFeatured: false,
     bestSeller: false,
-    inventory: {
-      stock: 0,
-    },
     printCollectionId: "",
     printId: "",
   });
@@ -305,17 +306,18 @@ const ProductManagement = () => {
     const editFormData = {
       name: fullProduct.name,
       description: fullProduct.description || "",
+      material: fullProduct.material || "",
+      fit: fullProduct.fit || "",
+      modelHeight: fullProduct.modelHeight || "",
+      modelIsWearing: fullProduct.modelIsWearing || "",
       price: fullProduct.price,
       originalPrice: fullProduct.originalPrice || "",
       image: fullProduct.image,
       colors: fullProduct.colors || [],
-      sizes: fullProduct.sizes || ["S", "M", "L", "XL"],
+      sizes: fullProduct.sizes || ["XS", "S", "M", "L", "XL", "XXL"],
       category: fullProduct.category,
       isFeatured: fullProduct.isFeatured || false,
       bestSeller: fullProduct.bestSeller || false,
-      inventory: {
-        stock: fullProduct.inventory?.stock || 0,
-      },
       existingImages: fullProduct.images || [],
       printCollectionId,
       printId,
@@ -360,17 +362,18 @@ const ProductManagement = () => {
     setFormData({
       name: "",
       description: "",
+      material: "",
+      fit: "",
+      modelHeight: "",
+      modelIsWearing: "",
       price: "",
       originalPrice: "",
       image: "",
       colors: [],
-      sizes: ["S", "M", "L", "XL"],
+      sizes: ["XS", "S", "M", "L", "XL", "XXL"],
       category: "",
       isFeatured: false,
       bestSeller: false,
-      inventory: {
-        stock: 0,
-      },
       existingImages: [],
       printCollectionId: "",
       printId: "",
@@ -790,26 +793,67 @@ const ProductManagement = () => {
                   </div>
                 </div>
 
-                {/* Stock */}
+                {/* Material */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Stock Quantity *
+                    Material
                   </label>
                   <input
-                    type="number"
-                    required
-                    min="0"
+                    type="text"
                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
-                    value={formData.inventory.stock}
+                    value={formData.material}
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        inventory: {
-                          ...formData.inventory,
-                          stock: parseInt(e.target.value) || 0,
-                        },
-                      })
+                      setFormData({ ...formData, material: e.target.value })
                     }
+                    placeholder="e.g., 100% Cotton"
+                  />
+                </div>
+
+                {/* Fit */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Fit
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                    value={formData.fit}
+                    onChange={(e) =>
+                      setFormData({ ...formData, fit: e.target.value })
+                    }
+                    placeholder="e.g., Relaxed fit, Slim fit, Oversized"
+                  />
+                </div>
+
+                {/* Model Height */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Model Height
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                    value={formData.modelHeight}
+                    onChange={(e) =>
+                      setFormData({ ...formData, modelHeight: e.target.value })
+                    }
+                    placeholder="e.g., 5'7&quot;"
+                  />
+                </div>
+
+                {/* Model Is Wearing */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Model Is Wearing
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                    value={formData.modelIsWearing}
+                    onChange={(e) =>
+                      setFormData({ ...formData, modelIsWearing: e.target.value })
+                    }
+                    placeholder="e.g., Size S"
                   />
                 </div>
 
@@ -852,11 +896,13 @@ const ProductManagement = () => {
 
                 {/* Sizes */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Available Sizes
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Available Sizes
+                    </label>
+                  </div>
                   <div className="flex flex-wrap gap-2">
-                    {["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
+                    {["XS", "S", "M", "L", "XL", "XXL", "3XL"].map((size) => (
                       <button
                         key={size}
                         type="button"
@@ -996,7 +1042,7 @@ const ProductManagement = () => {
                   Price
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
-                  Stock
+                  Material
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
                   Status
@@ -1071,7 +1117,7 @@ const ProductManagement = () => {
                         )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {product.inventory?.stock || 0}
+                      {product.material || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {product.isFeatured && (

@@ -138,11 +138,14 @@ const useProductStore = create((set, get) => ({
       const formData = new FormData();
       formData.append("name", productData.name);
       formData.append("description", productData.description || "");
+      formData.append("material", productData.material || "");
+      formData.append("fit", productData.fit || "");
+      formData.append("modelHeight", productData.modelHeight || "");
+      formData.append("modelIsWearing", productData.modelIsWearing || "");
       formData.append("price", Number(productData.price));
       formData.append("category", productData.category || "Uncategorized");
       formData.append("colors", JSON.stringify(productData.colors || []));
       formData.append("sizes", JSON.stringify(productData.sizes || []));
-      formData.append("inventory", JSON.stringify({ stock: Number(productData.inventory?.stock) || 0, trackQuantity: true }));
       
       if (productData.originalPrice) formData.append("originalPrice", Number(productData.originalPrice));
       if (productData.isFeatured !== undefined) formData.append("isFeatured", productData.isFeatured);
@@ -176,11 +179,14 @@ const useProductStore = create((set, get) => ({
       const formData = new FormData();
       formData.append("name", productData.name);
       formData.append("description", productData.description || "");
+      formData.append("material", productData.material || "");
+      formData.append("fit", productData.fit || "");
+      formData.append("modelHeight", productData.modelHeight || "");
+      formData.append("modelIsWearing", productData.modelIsWearing || "");
       formData.append("price", Number(productData.price));
       formData.append("category", productData.category || "Uncategorized");
       formData.append("colors", JSON.stringify(productData.colors || []));
       formData.append("sizes", JSON.stringify(productData.sizes || []));
-      formData.append("inventory", JSON.stringify({ stock: Number(productData.inventory?.stock) || 0, trackQuantity: true }));
       
       if (productData.originalPrice) formData.append("originalPrice", Number(productData.originalPrice));
       if (productData.isFeatured !== undefined) formData.append("isFeatured", productData.isFeatured);

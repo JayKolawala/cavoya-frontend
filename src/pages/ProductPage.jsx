@@ -1,41 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { Star, X, Ruler, Play, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, Ruler, Play, ChevronLeft, ChevronRight } from "lucide-react";
 
 // ─── Size Chart Data ───────────────────────────────────────────────────────────
 const SIZE_CHART = {
-  top: {
-    label: "Top Wear",
-    rows: [
-      { measurement: "BUST", inches: [32, 34, 36, 38, 40, 42], cm: [81, 86, 91, 97, 102, 107] },
-      { measurement: "WAIST", inches: [25, 27, 29, 31, 33, 35], cm: [64, 69, 74, 79, 84, 89] },
-      { measurement: "HIP", inches: [35, 37, 39, 41, 43, 45], cm: [89, 94, 99, 104, 109, 114] },
-    ],
-  },
-  bottom: {
-    label: "Bottom Wear",
-    rows: [
-      { measurement: "WAIST", inches: [25, 27, 29, 31, 33, 35], cm: [64, 69, 74, 79, 84, 89] },
-      { measurement: "HIP", inches: [35, 37, 39, 41, 43, 45], cm: [89, 94, 99, 104, 109, 114] },
-      { measurement: "INSEAM", inches: [28, 28, 29, 29, 30, 30], cm: [71, 71, 74, 74, 76, 76] },
-    ],
-  },
+  rows: [
+    { measurement: "BUST", inches: [32, 34, 36, 38, 40, 42], cm: [81, 86, 91, 97, 102, 107] },
+    { measurement: "WAIST", inches: [25, 27, 29, 31, 33, 35], cm: [64, 69, 74, 79, 84, 89] },
+    { measurement: "HIP", inches: [35, 37, 39, 41, 43, 45], cm: [89, 94, 99, 104, 109, 114] },
+  ],
 };
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
-const BOTTOM_KEYWORDS = ["bottom", "pant", "trouser", "jeans", "skirt", "short", "legging"];
-
-function isBottomWear(category = "") {
-  return BOTTOM_KEYWORDS.some((kw) => category.toLowerCase().includes(kw));
-}
 
 // ─── Size Chart Modal ──────────────────────────────────────────────────────────
-const SizeChartModal = ({ onClose, category }) => {
-  const defaultTab = isBottomWear(category) ? "bottom" : "top";
-  const [activeTab, setActiveTab] = useState(defaultTab);
+const SizeChartModal = ({ onClose }) => {
   const [unit, setUnit] = useState("inches");
-  const chart = SIZE_CHART[activeTab];
+  const chart = SIZE_CHART;
 
   const handleBackdrop = (e) => {
     if (e.target === e.currentTarget) onClose();
@@ -47,23 +29,11 @@ const SizeChartModal = ({ onClose, category }) => {
       onClick={handleBackdrop}
     >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden">
-        <div className="flex items-center justify-between px-6 pt-6 pb-2">
+        <div className="flex items-center justify-between px-6 pt-6 pb-2 border-b border-gray-100">
           <h2 className="text-lg font-bold tracking-widest uppercase text-gray-900">Body Measurement</h2>
           <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 transition-colors" aria-label="Close">
             <X className="h-5 w-5 text-gray-600" />
           </button>
-        </div>
-        <div className="flex gap-4 px-6 pb-2 border-b border-gray-100">
-          {["top", "bottom"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`py-2 text-sm font-semibold tracking-wide uppercase transition-all border-b-2 ${activeTab === tab ? "border-gray-900 text-gray-900" : "border-transparent text-gray-400 hover:text-gray-600"
-                }`}
-            >
-              {SIZE_CHART[tab].label}
-            </button>
-          ))}
         </div>
         <div className="flex items-center justify-center gap-3 py-3">
           {["inches", "cm"].map((u, i) => (
@@ -273,7 +243,7 @@ const ProductPage = () => {
       </Helmet>
 
       {showSizeChart && (
-        <SizeChartModal onClose={() => setShowSizeChart(false)} category={selectedProduct.category || ""} />
+        <SizeChartModal onClose={() => setShowSizeChart(false)} />
       )}
 
       <section className="container mx-auto px-4 pt-24 pb-16">
@@ -283,7 +253,7 @@ const ProductPage = () => {
           {/* ── LEFT: sticky image panel ── */}
           <div className="lg:w-1/2 lg:sticky lg:top-24 lg:self-start">
             {/* Main image */}
-            <div className="w-full bg-gray-50 rounded-2xl overflow-hidden mb-4 shadow-lg">
+            {/* <div className="w-fit md:h-screen rounded-2xl overflow-hidden mb-4 shadow-lg">
               {productMedia[activeMediaIndex].type === "video" ? (
                 <video
                   src={productMedia[activeMediaIndex].url}
@@ -295,12 +265,29 @@ const ProductPage = () => {
                 <img
                   src={productMedia[activeMediaIndex].url}
                   alt={productMedia[activeMediaIndex].alt}
-                  className="w-full md:min-h-[500px] max-h-[500px] object-contain transition-transform duration-300 hover:scale-105"
+                  className=" w-full md:min-h-screen max-h-[500px] object-contain transition-transform duration-300 hover:scale-105"
                 // style={{ aspectRatio: "3/4" }}
                 />
               )}
+            </div> */}
+            <div className="w-full h-[80vh] lg:h-screen rounded-2xl overflow-hidden mb-4 shadow-lg">
+              {productMedia[activeMediaIndex].type === "video" ? (
+                <video
+                  src={productMedia[activeMediaIndex].url}
+                  className="w-full h-full object-cover"
+                  controls
+                  autoPlay
+                  muted
+                  loop
+                />
+              ) : (
+                <img
+                  src={productMedia[activeMediaIndex].url}
+                  alt={productMedia[activeMediaIndex].alt}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                />
+              )}
             </div>
-
             {/* Horizontal thumbnail strip with scroll arrows */}
             {productMedia.length > 1 && (
               <div className="relative">
@@ -448,7 +435,18 @@ const ProductPage = () => {
             ) : selectedProduct.sizes?.length > 0 && (
               <div className="mb-6">
                 <div className="flex flex-wrap gap-2">
-                  {selectedProduct.sizes.map((size) => (
+                  {(() => {
+                    const SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "3XL", "4XL", "5XL"];
+                    const sortedSizes = [...selectedProduct.sizes].sort((a, b) => {
+                      const idxA = SIZE_ORDER.indexOf(a.toUpperCase());
+                      const idxB = SIZE_ORDER.indexOf(b.toUpperCase());
+                      if (idxA === -1 && idxB === -1) return a.localeCompare(b);
+                      if (idxA === -1) return 1;
+                      if (idxB === -1) return -1;
+                      return idxA - idxB;
+                    });
+                    
+                    return sortedSizes.map((size) => (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
@@ -459,7 +457,7 @@ const ProductPage = () => {
                     >
                       {size}
                     </button>
-                  ))}
+                  ))})()}
                 </div>
               </div>
             )}
@@ -476,13 +474,9 @@ const ProductPage = () => {
             {/* Add to Cart */}
             <button
               onClick={() => addToCart(selectedProduct, selectedColor, selectedSize)}
-              disabled={selectedProduct.inventory?.stock <= 0}
-              className={`w-full py-4 rounded-lg font-bold transition-transform transform my-2 ${selectedProduct.inventory?.stock > 0
-                ? "bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+              className="w-full py-4 rounded-lg font-bold transition-transform transform my-2 bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
             >
-              {selectedProduct.inventory?.stock > 0 ? "Add to Cart" : "Out of Stock"}
+              Add to Cart
             </button>
 
             <hr className="border-gray-200 my-6" />
@@ -496,29 +490,31 @@ const ProductPage = () => {
 
             {/* ── Detail rows (always visible, no accordion) ── */}
             <div className="space-y-4 text-sm">
-              <div>
-                <p className="font-semibold text-gray-900">Delivery time:</p>
-                <p className="text-gray-600">10–12 business days, excluding the weekends and festive holidays</p>
-              </div>
-
-              {selectedProduct.category && (
+              {selectedProduct.material && (
                 <div>
-                  <p className="font-semibold text-gray-900">Category:</p>
-                  <p className="text-gray-600">{selectedProduct.category}</p>
+                  <p className="font-semibold text-gray-900">Material:</p>
+                  <p className="text-gray-600">{selectedProduct.material}</p>
                 </div>
               )}
 
-              {selectedProduct.collectionName && (
+              {selectedProduct.fit && (
                 <div>
-                  <p className="font-semibold text-gray-900">Collection:</p>
-                  <p className="text-gray-600">{selectedProduct.collectionName}</p>
+                  <p className="font-semibold text-gray-900">Fit:</p>
+                  <p className="text-gray-600">{selectedProduct.fit}</p>
                 </div>
               )}
 
-              {selectedProduct.printName && (
+              {selectedProduct.modelHeight && (
                 <div>
-                  <p className="font-semibold text-gray-900">Print:</p>
-                  <p className="text-gray-600">{selectedProduct.printName}</p>
+                  <p className="font-semibold text-gray-900">Model Height:</p>
+                  <p className="text-gray-600">{selectedProduct.modelHeight}</p>
+                </div>
+              )}
+
+              {selectedProduct.modelIsWearing && (
+                <div>
+                  <p className="font-semibold text-gray-900">Model is Wearing:</p>
+                  <p className="text-gray-600">{selectedProduct.modelIsWearing}</p>
                 </div>
               )}
 
@@ -528,39 +524,26 @@ const ProductPage = () => {
                   <p className="text-gray-600">{selectedProduct.colors.join(", ")}</p>
                 </div>
               )}
-
-              {selectedProduct.sizes?.length > 0 && (
-                <div>
-                  <p className="font-semibold text-gray-900">Available Sizes:</p>
-                  <p className="text-gray-600">{selectedProduct.sizes.join(", ")}</p>
-                </div>
-              )}
-
-              {selectedProduct.inventory?.stock !== undefined && (
-                <div>
-                  <p className="font-semibold text-gray-900">Stock:</p>
-                  <p className="text-gray-600">{selectedProduct.inventory.stock} units</p>
-                </div>
-              )}
-
-              {selectedProduct.isFeatured && (
-                <div>
-                  <p className="font-semibold text-gray-900">Featured:</p>
-                  <p className="text-gray-600 flex items-center gap-1.5">
-                    <Star className="w-3.5 h-3.5 fill-gray-700 text-gray-700" />
-                    Handpicked featured product
-                  </p>
-                </div>
-              )}
             </div>
 
             {/* Shipping & Returns — always visible */}
             <hr className="border-gray-200 my-6" />
             <div className="space-y-2 text-sm">
-              <h3 className="font-semibold text-gray-900">Shipping &amp; Returns</h3>
-              <p className="text-gray-600">• Free shipping on all orders over ₹999 across India</p>
-              <p className="text-gray-600">• Hassle-free 30-day return policy</p>
-              <p className="text-gray-600">• Bank-grade encryption for secure payments</p>
+              <h3 className="text-lg font-semibold text-gray-900">Additional Information</h3>
+              <div>
+                <p className="font-semibold text-gray-900">Notes :</p>
+                <p className="text-gray-600">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">Delivery  :</p>
+                <p className="text-gray-600">made to order takes 2 weeks / 10-12 days , excluding the weekend and festival holidays
+                  .</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">Care :</p>
+                <p className="text-gray-600">Dry clean only .</p>
+              </div>
+
             </div>
 
           </div>
