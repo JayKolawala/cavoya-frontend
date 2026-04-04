@@ -52,6 +52,10 @@ const ProductManagement = () => {
   const showAlert = (title, message, type = "error") =>
     setAlertModal({ isOpen: true, title, message, type });
 
+  // ── Multi-select state ───────────────────────────────────────────────────
+  const [selectedProducts, setSelectedProducts] = useState(new Set());
+
+  // ── Single-delete confirm modal ──────────────────────────────────────────
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, productId: null });
   const openDeleteConfirm = (productId) =>
     setConfirmModal({ isOpen: true, productId });
@@ -60,8 +64,21 @@ const ProductManagement = () => {
     setConfirmModal({ isOpen: false, productId: null });
     if (productId) {
       await deleteProduct(productId);
+      setSelectedProducts((prev) => { const n = new Set(prev); n.delete(productId); return n; });
       await fetchAdminProducts();
     }
+  };
+
+  // ── Bulk-delete confirm modal ────────────────────────────────────────────
+  const [bulkConfirmModal, setBulkConfirmModal] = useState(false);
+  const handleBulkDeleteConfirmed = async () => {
+    setBulkConfirmModal(false);
+    const ids = Array.from(selectedProducts);
+    for (const id of ids) {
+      await deleteProduct(id);
+    }
+    setSelectedProducts(new Set());
+    await fetchAdminProducts();
   };
   const [formData, setFormData] = useState({
     name: "",
@@ -156,6 +173,35 @@ const ProductManagement = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+
+  // ── Multi-select derived values & handlers (need paginatedProducts) ───────
+  const isAllSelected =
+    paginatedProducts.length > 0 &&
+    paginatedProducts.every((p) => selectedProducts.has(p._id));
+
+  const toggleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedProducts((prev) => {
+        const next = new Set(prev);
+        paginatedProducts.forEach((p) => next.delete(p._id));
+        return next;
+      });
+    } else {
+      setSelectedProducts((prev) => {
+        const next = new Set(prev);
+        paginatedProducts.forEach((p) => next.add(p._id));
+        return next;
+      });
+    }
+  };
+
+  const toggleSelectOne = (id) => {
+    setSelectedProducts((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
 
   // Reset to first page when filters change
   useEffect(() => {
@@ -370,7 +416,7 @@ const ProductManagement = () => {
         type={alertModal.type}
       />
 
-      {/* Delete Confirm Modal */}
+      {/* Single Delete Confirm Modal */}
       <AlertModal
         isOpen={confirmModal.isOpen}
         onClose={() => setConfirmModal({ isOpen: false, productId: null })}
@@ -380,6 +426,18 @@ const ProductManagement = () => {
         type="warning"
         mode="confirm"
         confirmLabel="Delete"
+      />
+
+      {/* Bulk Delete Confirm Modal */}
+      <AlertModal
+        isOpen={bulkConfirmModal}
+        onClose={() => setBulkConfirmModal(false)}
+        onConfirm={handleBulkDeleteConfirmed}
+        title={`Delete ${selectedProducts.size} Product${selectedProducts.size !== 1 ? 's' : ''}`}
+        message={`Are you sure you want to delete ${selectedProducts.size} selected product${selectedProducts.size !== 1 ? 's' : ''}? This action cannot be undone.`}
+        type="warning"
+        mode="confirm"
+        confirmLabel="Delete All"
       />
 
       {/* Header */}
@@ -886,10 +944,45 @@ const ProductManagement = () => {
 
       {/* Products Table */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+
+        {/* Bulk Action Bar */}
+        {selectedProducts.size > 0 && (
+          <div className="flex items-center justify-between px-6 py-3 bg-pink-50 border-b border-pink-200">
+            <span className="text-sm font-medium text-pink-800">
+              {selectedProducts.size} product{selectedProducts.size !== 1 ? 's' : ''} selected
+            </span>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setSelectedProducts(new Set())}
+                className="text-sm text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Clear selection
+              </button>
+              <button
+                onClick={() => setBulkConfirmModal(true)}
+                className="flex items-center gap-1.5 px-4 py-1.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors shadow-sm"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete Selected
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gradient-to-r from-pink-50 via-rose-50 to-pink-50">
               <tr>
+                {/* Select-All checkbox */}
+                <th className="px-3 py-4 text-left">
+                  <input
+                    type="checkbox"
+                    checked={isAllSelected}
+                    onChange={toggleSelectAll}
+                    className="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer"
+                    title={isAllSelected ? 'Deselect all' : 'Select all on this page'}
+                  />
+                </th>
                 <th className="px-3 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
                   Sr No.
                 </th>
@@ -914,97 +1007,118 @@ const ProductManagement = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
-              {paginatedProducts.map((product, index) => (
-                <tr
-                  key={product._id}
-                  className="hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
-                      {startIndex + index + 1}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="h-10 w-10 flex-shrink-0 rounded-lg overflow-hidden ring-2 ring-pink-100">
-                        {isVideo(product.image) ? (
-                          <video
-                            src={product.image}
-                            className="h-10 w-10 object-cover"
-                            muted
-                          />
-                        ) : (
-                          <img
-                            className="h-10 w-10 object-cover"
-                            src={product.image}
-                            alt={product.name}
-                          />
-                        )}
+              {paginatedProducts.map((product, index) => {
+                const isChecked = selectedProducts.has(product._id);
+                const multiSelected = selectedProducts.size > 1;
+                return (
+                  <tr
+                    key={product._id}
+                    className={`hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200 ${
+                      isChecked ? 'bg-pink-50/60' : ''
+                    }`}
+                  >
+                    {/* Row checkbox */}
+                    <td className="px-3 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => toggleSelectOne(product._id)}
+                        className="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer"
+                      />
+                    </td>
+                    {/* Sr No. */}
+                    <td className="px-3 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {startIndex + index + 1}
                       </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {product.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="h-10 w-10 flex-shrink-0 rounded-lg overflow-hidden ring-2 ring-pink-100">
+                          {isVideo(product.image) ? (
+                            <video
+                              src={product.image}
+                              className="h-10 w-10 object-cover"
+                              muted
+                            />
+                          ) : (
+                            <img
+                              className="h-10 w-10 object-cover"
+                              src={product.image}
+                              alt={product.name}
+                            />
+                          )}
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">
+                            {product.name}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {product.category}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-bold text-pink-600">
-                      ₹{product.price}
-                    </span>
-                    {product.originalPrice &&
-                      product.originalPrice > product.price && (
-                        <span className="ml-2 text-xs text-gray-500 line-through">
-                          ₹{product.originalPrice}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {product.category}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm font-bold text-pink-600">
+                        ₹{product.price}
+                      </span>
+                      {product.originalPrice &&
+                        product.originalPrice > product.price && (
+                          <span className="ml-2 text-xs text-gray-500 line-through">
+                            ₹{product.originalPrice}
+                          </span>
+                        )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {product.inventory?.stock || 0}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {product.isFeatured && (
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                          Featured
                         </span>
                       )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {product.inventory?.stock || 0}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {product.isFeatured && (
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
-                        Featured
-                      </span>
-                    )}
-                    {product.bestSeller && (
-                      <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
-                        Best Seller
-                      </span>
-                    )}
-                    {product.originalPrice &&
-                      product.originalPrice > product.price && (
-                        <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                          On Sale
+                      {product.bestSeller && (
+                        <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                          Best Seller
                         </span>
                       )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => handleEdit(product)}
-                        className="p-2 text-pink-600 hover:text-pink-700 hover:bg-pink-100 rounded-lg transition-all duration-200"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => openDeleteConfirm(product._id)}
-                        className="p-2 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-lg transition-all duration-200"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                      {product.originalPrice &&
+                        product.originalPrice > product.price && (
+                          <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            On Sale
+                          </span>
+                        )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center space-x-2">
+                        {/* Edit — hidden when multiple products are selected */}
+                        {!multiSelected && (
+                          <button
+                            onClick={() => handleEdit(product)}
+                            className="p-2 text-pink-600 hover:text-pink-700 hover:bg-pink-100 rounded-lg transition-all duration-200"
+                            title="Edit product"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => openDeleteConfirm(product._id)}
+                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-lg transition-all duration-200"
+                          title="Delete product"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
 
               {adminLoading && !submitLoading && (
                 <tr>
-                  <td colSpan="7" className="text-center py-8">
+                  <td colSpan="8" className="text-center py-8">
                     <div className="flex justify-center items-center">
                       <LoadingSpinner />
                     </div>
@@ -1014,7 +1128,7 @@ const ProductManagement = () => {
 
               {adminError && (
                 <tr>
-                  <td colSpan="7" className="p-4">
+                  <td colSpan="8" className="p-4">
                     <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg text-center">
                       Error: {adminError}
                     </div>

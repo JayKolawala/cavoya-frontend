@@ -166,7 +166,7 @@ const useProductStore = create((set, get) => ({
       setTimeout(() => useUIStore.getState().showCustomAlert("Product added successfully!"), 0);
       return response;
     } catch (error) {
-      setTimeout(() => useUIStore.getState().showCustomAlert(`Error adding product: ${error.message}`), 0);
+      setTimeout(() => useUIStore.getState().showCustomAlert(`Error adding product: ${error.message}`, "error"), 0);
       throw error;
     }
   },
@@ -209,7 +209,7 @@ const useProductStore = create((set, get) => ({
       setTimeout(() => useUIStore.getState().showCustomAlert("Product updated successfully!"), 0);
       return response;
     } catch (error) {
-      setTimeout(() => useUIStore.getState().showCustomAlert(`Error updating product: ${error.message}`), 0);
+      setTimeout(() => useUIStore.getState().showCustomAlert(`Error updating product: ${error.message}`, "error"), 0);
       throw error;
     }
   },
@@ -220,7 +220,7 @@ const useProductStore = create((set, get) => ({
       set((state) => ({ products: state.products.filter((p) => p._id !== id) }));
       setTimeout(() => useUIStore.getState().showCustomAlert("Product deleted successfully!"), 0);
     } catch (error) {
-      setTimeout(() => useUIStore.getState().showCustomAlert(`Error deleting product: ${error.message}`), 0);
+      setTimeout(() => useUIStore.getState().showCustomAlert(`Error deleting product: ${error.message}`, "error"), 0);
       throw error;
     }
   },
