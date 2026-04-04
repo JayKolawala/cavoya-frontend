@@ -62,15 +62,18 @@ const HomePage = () => {
 
   return (
     <div className="animate-fade-in overflow-hidden">
-      {/* Hero Section with Black & White Design */}
-      <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-black via-gray-900 to-gray-800">
-        {/* Animated Background Gradient - Monochrome */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-gray-500/10 to-white/5 animate-pulse"></div>
-
-        {/* Floating Decorative Elements - Grayscale */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gray-400/5 rounded-full blur-3xl animate-pulse delay-700"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/3 rounded-full blur-3xl"></div>
+      {/* Hero Section */}
+      <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
+        {/* Video Background */}
+        <video
+          className="absolute inset-0 w-full h-full object-cover"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="/hero_bg.mp4" type="video/mp4" />
+        </video>
 
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/40"></div>
