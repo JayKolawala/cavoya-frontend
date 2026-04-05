@@ -10,7 +10,7 @@ import {
     Image,
     Layers,
 } from "lucide-react";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import ProductSkeleton from "../../components/ProductSkeleton";
 import { API_BASE_URL } from "../../utils/apiHelpers";
 import AlertModal from "../../components/admin/shared/AlertModal";
 
@@ -386,8 +386,8 @@ const PrintsPanel = ({ collection }) => {
             </div>
 
             {loading ? (
-                <div className="flex justify-center py-6">
-                    <LoadingSpinner />
+                <div className="py-6">
+                    <ProductSkeleton count={4} columns="4cols" />
                 </div>
             ) : error ? (
                 <p className="text-red-500 text-sm">{error}</p>
@@ -574,8 +574,13 @@ const AdminSettings = () => {
 
             {/* Loading */}
             {loading ? (
-                <div className="flex justify-center py-20">
-                    <LoadingSpinner />
+                <div className="py-10 space-y-4">
+                    {[...Array(3)].map((_, i) => (
+                        <div key={i} className="bg-white rounded-xl p-5 animate-pulse">
+                            <div className="h-5 bg-gray-200 rounded w-1/3 mb-2" />
+                            <div className="h-4 bg-gray-100 rounded w-1/2" />
+                        </div>
+                    ))}
                 </div>
             ) : collections.length === 0 ? (
                 <div className="text-center py-20 text-gray-400">

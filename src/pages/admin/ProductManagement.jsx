@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Search, X } from "lucide-react";
 import useProductStore from "../../store/useProductStore";
 import { PRODUCT_CATEGORIES } from "../../utils/constants";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import TableSkeleton from "../../components/TableSkeleton";
 import { isVideo } from "../../utils/mediaHelpers";
 import AlertModal from "../../components/admin/shared/AlertModal";
 import { API_BASE_URL } from "../../utils/apiHelpers";
@@ -1164,10 +1164,8 @@ const ProductManagement = () => {
 
               {adminLoading && !submitLoading && (
                 <tr>
-                  <td colSpan="8" className="text-center py-8">
-                    <div className="flex justify-center items-center">
-                      <LoadingSpinner />
-                    </div>
+                  <td colSpan="8" className="p-0" colSpan={8}>
+                    <TableSkeleton rows={5} columns={6} />
                   </td>
                 </tr>
               )}

@@ -25,9 +25,7 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (products.length === 0) {
-      fetchProducts({ limit: 100 }); // Fetch a healthy initial subset for homepage showcases
-    }
+    fetchProducts({ limit: 100 });
   }, []);
 
   useEffect(() => {

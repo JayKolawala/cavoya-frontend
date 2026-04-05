@@ -194,12 +194,10 @@ const ProductsPage = () => {
 
           {/* Products Section - 75% */}
           <main className="lg:w-3/4 flex-1">
-            {/* Full-page skeleton — only on cold first load (no products yet) */}
-            {productsLoading &&
-              !isRefetching &&
-              sortedProducts.length === 0 && (
-                <ProductSkeleton count={6} columns="full" />
-              )}
+            {/* Full-page skeleton — shown when products are loading */}
+            {productsLoading && !isRefetching && (
+              <ProductSkeleton count={6} columns="full" />
+            )}
 
             {/* Slim refetch indicator — shown during filter/category changes */}
             {isRefetching && (
