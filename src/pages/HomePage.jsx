@@ -117,7 +117,7 @@ const HomePage = () => {
           </div>
 
           {loading ? (
-            <ProductSkeleton count={6} columns="2cols" />
+            <ProductSkeleton count={6} columns="3cols" />
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
               {products.slice(0, 6).map((product, index) => {

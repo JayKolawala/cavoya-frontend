@@ -4,7 +4,7 @@ import useUIStore from "./useUIStore";
 
 const useProductStore = create((set, get) => ({
   products: [],
-  productsLoading: false,
+  productsLoading: true,
   productsError: null,
   isRefetching: false,
   searchQuery: "",
