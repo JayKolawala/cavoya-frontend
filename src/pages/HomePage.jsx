@@ -107,6 +107,10 @@ const HomePage = () => {
     navigate("/products");
   };
 
+  const handlePrintClick = (printId) => {
+    navigate(`/products?printId=${printId}`);
+  };
+
   return (
     <div className="animate-fade-in overflow-hidden">
       {/* Hero Section */}
@@ -337,7 +341,11 @@ const HomePage = () => {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto">
               {prints.map((print) => (
-                <div key={print._id || print.id} className="group cursor-pointer">
+                <div 
+                  key={print._id || print.id} 
+                  className="group cursor-pointer"
+                  onClick={() => handlePrintClick(print._id || print.id)}
+                >
                   <div className="aspect-square bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 mb-3 overflow-hidden">
                     <img
                       src={getOptimizedImageUrl(print.image)}

@@ -28,6 +28,21 @@ const ProductFilters = () => {
 
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = React.useState(false);
 
+  // Accordion state for filter sections
+  const [openSections, setOpenSections] = React.useState({
+    categories: false,
+    collection: false,
+    print: false,
+    sort: false,
+  });
+
+  const toggleSection = (section) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
   // Temporary state for mobile filter selections (only applied on "Apply" click)
   const [tempCategory, setTempCategory] = React.useState(selectedCategory);
   const [tempSort, setTempSort] = React.useState(sortBy);
@@ -205,35 +220,45 @@ const ProductFilters = () => {
         <div className="p-6 space-y-8 max-h-[calc(100vh-250px)] overflow-y-auto">
           {/* Categories Section */}
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+            <button
+              onClick={() => toggleSection("categories")}
+              className="w-full flex items-center justify-between mb-2 group"
+            >
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide group-hover:text-black transition-colors">
                 Categories
               </h3>
-              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                {categories.length}
-              </span>
-            </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                  {categories.length}
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 text-gray-500 transition-transform ${openSections.categories ? "rotate-180" : ""}`}
+                />
+              </div>
+            </button>
 
             {/* Category List */}
-            <div className="space-y-2">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => handleCategorySelect(category.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${(isMobile() ? tempCategory : selectedCategory) === category.id
-                    ? "bg-black text-white shadow-md"
-                    : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                    }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-sm">{category.name}</span>
-                    {(isMobile() ? tempCategory : selectedCategory) === category.id && (
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    )}
-                  </div>
-                </button>
-              ))}
-            </div>
+            {openSections.categories && (
+              <div className="space-y-2 mt-4">
+                {categories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => handleCategorySelect(category.id)}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${(isMobile() ? tempCategory : selectedCategory) === category.id
+                      ? "bg-black text-white shadow-md"
+                      : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-sm">{category.name}</span>
+                      {(isMobile() ? tempCategory : selectedCategory) === category.id && (
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Divider */}
@@ -241,35 +266,45 @@ const ProductFilters = () => {
 
           {/* Collection Section */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Layers className="w-4 h-4 text-gray-700" />
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
-                Collection
-              </h3>
-            </div>
+            <button
+              onClick={() => toggleSection("collection")}
+              className="w-full flex items-center justify-between mb-2 group"
+            >
+              <div className="flex items-center gap-2">
+                <Layers className="w-4 h-4 text-gray-700 group-hover:text-black transition-colors" />
+                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide group-hover:text-black transition-colors">
+                  Collection
+                </h3>
+              </div>
+              <ChevronDown
+                className={`w-4 h-4 text-gray-500 transition-transform ${openSections.collection ? "rotate-180" : ""}`}
+              />
+            </button>
 
-            <div className="space-y-2">
-              {collections.map((col) => (
-                <button
-                  key={col._id}
-                  onClick={() => handleCollectionSelect(col._id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${activeCollection === col._id
-                    ? "bg-black text-white shadow-md"
-                    : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                    }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-sm">{col.name}</span>
-                    {activeCollection === col._id && (
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    )}
-                  </div>
-                </button>
-              ))}
-              {collections.length === 0 && (
-                <p className="text-xs text-gray-400 px-2">No collections available</p>
-              )}
-            </div>
+            {openSections.collection && (
+              <div className="space-y-2 mt-4">
+                {collections.map((col) => (
+                  <button
+                    key={col._id}
+                    onClick={() => handleCollectionSelect(col._id)}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${activeCollection === col._id
+                      ? "bg-black text-white shadow-md"
+                      : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-sm">{col.name}</span>
+                      {activeCollection === col._id && (
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      )}
+                    </div>
+                  </button>
+                ))}
+                {collections.length === 0 && (
+                  <p className="text-xs text-gray-400 px-2">No collections available</p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Print Section — only visible when a collection is selected */}
@@ -277,39 +312,49 @@ const ProductFilters = () => {
             <>
               <div className="border-t border-gray-200"></div>
               <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <Palette className="w-4 h-4 text-gray-700" />
-                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
-                    Print Type
-                  </h3>
-                </div>
+                <button
+                  onClick={() => toggleSection("print")}
+                  className="w-full flex items-center justify-between mb-2 group"
+                >
+                  <div className="flex items-center gap-2">
+                    <Palette className="w-4 h-4 text-gray-700 group-hover:text-black transition-colors" />
+                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide group-hover:text-black transition-colors">
+                      Print Type
+                    </h3>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-transform ${openSections.print ? "rotate-180" : ""}`}
+                  />
+                </button>
 
-                <div className="space-y-2">
-                  {prints.map((p) => (
-                    <button
-                      key={p._id}
-                      onClick={() => handlePrintSelect(p._id)}
-                      className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${activePrint === p._id
-                        ? "bg-black text-white shadow-md"
-                        : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                        }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        {p.image && (
-                          <img
-                            src={p.image}
-                            alt={p.name}
-                            className="w-8 h-8 rounded-md object-cover flex-shrink-0"
-                          />
-                        )}
-                        <span className="font-medium text-sm">{p.name}</span>
-                        {activePrint === p._id && (
-                          <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                {openSections.print && (
+                  <div className="space-y-2 mt-4">
+                    {prints.map((p) => (
+                      <button
+                        key={p._id}
+                        onClick={() => handlePrintSelect(p._id)}
+                        className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${activePrint === p._id
+                          ? "bg-black text-white shadow-md"
+                          : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                          }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          {p.image && (
+                            <img
+                              src={p.image}
+                              alt={p.name}
+                              className="w-8 h-8 rounded-md object-cover flex-shrink-0"
+                            />
+                          )}
+                          <span className="font-medium text-sm">{p.name}</span>
+                          {activePrint === p._id && (
+                            <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -319,33 +364,43 @@ const ProductFilters = () => {
 
           {/* Sort Section */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <ArrowUpDown className="w-4 h-4 text-gray-700" />
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
-                Sort By
-              </h3>
-            </div>
+            <button
+              onClick={() => toggleSection("sort")}
+              className="w-full flex items-center justify-between mb-2 group"
+            >
+              <div className="flex items-center gap-2">
+                <ArrowUpDown className="w-4 h-4 text-gray-700 group-hover:text-black transition-colors" />
+                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide group-hover:text-black transition-colors">
+                  Sort By
+                </h3>
+              </div>
+              <ChevronDown
+                className={`w-4 h-4 text-gray-500 transition-transform ${openSections.sort ? "rotate-180" : ""}`}
+              />
+            </button>
 
             {/* Sort Options */}
-            <div className="space-y-2">
-              {sortOptions.map((option) => (
-                <button
-                  key={option.id}
-                  onClick={() => handleSortSelect(option.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${(isMobile() ? tempSort : sortBy) === option.id
-                    ? "bg-gray-100 text-gray-900 border-2 border-gray-400"
-                    : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent"
-                    }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-sm">{option.name}</span>
-                    {(isMobile() ? tempSort : sortBy) === option.id && (
-                      <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
-                    )}
-                  </div>
-                </button>
-              ))}
-            </div>
+            {openSections.sort && (
+              <div className="space-y-2 mt-4">
+                {sortOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => handleSortSelect(option.id)}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${(isMobile() ? tempSort : sortBy) === option.id
+                      ? "bg-gray-100 text-gray-900 border-2 border-gray-400"
+                      : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent"
+                      }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-sm">{option.name}</span>
+                      {(isMobile() ? tempSort : sortBy) === option.id && (
+                        <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Mobile Apply Button */}
