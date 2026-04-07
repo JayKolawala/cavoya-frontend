@@ -28,3 +28,15 @@ export const isVideo = (url) => {
 export const getMediaType = (url) => {
     return isVideo(url) ? "video" : "image";
 };
+
+/**
+ * Get optimized Cloudinary image URL for faster loading
+ * @param {string} url - Original image URL
+ * @param {number} width - Target width (default: 600)
+ * @returns {string} - Optimized image URL
+ */
+export const getOptimizedImageUrl = (url, width = 600) => {
+    if (!url || !url.includes("cloudinary.com")) return url;
+    // Insert optimization params: f_auto (auto format), q_auto (auto quality), w_<width>
+    return url.replace("/upload/", `/upload/f_auto,q_auto,w_${width},c_fill/`);
+};

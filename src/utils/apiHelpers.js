@@ -39,6 +39,10 @@ export const API_ENDPOINTS = {
     PRINTS: '/collections/prints',
     COLLECTION_PRINTS: (collId) => `/collections/${collId}/prints`,
     COLLECTION_PRINT_BY_ID: (collId, printId) => `/collections/${collId}/prints/${printId}`,
+
+    // Products with filters
+    BEST_SELLERS: '/products?bestSeller=true',
+    NEW_ARRIVALS: '/products?sort=newest',
 };
 
 /**

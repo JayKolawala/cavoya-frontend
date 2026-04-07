@@ -8,12 +8,13 @@ import useUIStore from "../store/useUIStore";
 import { useNavigate } from "react-router-dom";
 import ProductSkeleton from "../components/ProductSkeleton";
 import bgVideo2 from "../assets/bg-video2.mp4";
-import { isVideo } from "../utils/mediaHelpers";
+import { isVideo, getOptimizedImageUrl } from "../utils/mediaHelpers";
 import { API_BASE_URL, API_ENDPOINTS } from "../utils/apiHelpers";
+import { transformProduct } from "../utils/api";
 
 
 const HomePage = () => {
-  const { products, productsLoading: loading, fetchProducts } = useProductStore();
+  const { fetchProducts } = useProductStore();
   const { toggleWishlist, wishlist } = useWishlistStore();
   const { addToCart } = useCartStore();
   const { showCustomAlert: showAlert } = useUIStore();
@@ -21,6 +22,12 @@ const HomePage = () => {
   const [prints, setPrints] = useState([]);
   const [printsLoading, setPrintsLoading] = useState(true);
   const [printsError, setPrintsError] = useState(null);
+  const [bestSellers, setBestSellers] = useState([]);
+  const [bestSellersLoading, setBestSellersLoading] = useState(true);
+  const [bestSellersError, setBestSellersError] = useState(null);
+  const [newInProducts, setNewInProducts] = useState([]);
+  const [newInLoading, setNewInLoading] = useState(true);
+  const [newInError, setNewInError] = useState(null);
   const [videoError, setVideoError] = useState(false);
   const navigate = useNavigate();
 
@@ -47,6 +54,48 @@ const HomePage = () => {
       }
     };
     fetchPrints();
+  }, []);
+
+  useEffect(() => {
+    const fetchBestSellers = async () => {
+      try {
+        setBestSellersLoading(true);
+        const response = await fetch(`${API_BASE_URL}/products?bestSeller=true&limit=4`);
+        if (!response.ok) throw new Error("Failed to fetch best sellers");
+        const data = await response.json();
+        let sellersArray = (data.data || []).map(transformProduct);
+        if (sellersArray.length === 0) {
+          const fallbackResponse = await fetch(`${API_BASE_URL}/products?limit=4`);
+          const fallbackData = await fallbackResponse.json();
+          const fallbackArray = fallbackData.data || [];
+          sellersArray = fallbackArray.map(transformProduct);
+        }
+        setBestSellers(sellersArray);
+      } catch (err) {
+        setBestSellersError(err.message);
+      } finally {
+        setBestSellersLoading(false);
+      }
+    };
+    fetchBestSellers();
+  }, []);
+
+  useEffect(() => {
+    const fetchNewIn = async () => {
+      try {
+        setNewInLoading(true);
+        const response = await fetch(`${API_BASE_URL}/products?sort=newest&limit=6`);
+        if (!response.ok) throw new Error("Failed to fetch new arrivals");
+        const data = await response.json();
+        const newArrivalsArray = (data.data || []).map(transformProduct);
+        setNewInProducts(newArrivalsArray);
+      } catch (err) {
+        setNewInError(err.message);
+      } finally {
+        setNewInLoading(false);
+      }
+    };
+    fetchNewIn();
   }, []);
 
   const handleProductClick = (product) => {
@@ -116,11 +165,15 @@ const HomePage = () => {
             </h2>
           </div>
 
-          {loading ? (
+          {newInLoading ? (
             <ProductSkeleton count={6} columns="3cols" />
+          ) : newInError ? (
+            <p className="text-center text-red-700">{newInError}</p>
+          ) : newInProducts.length === 0 ? (
+            <p className="text-center text-gray-500">No new arrivals available</p>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
-              {products.slice(0, 6).map((product, index) => {
+              {newInProducts.map((product, index) => {
                 const isInWishlist = wishlist.includes(product.id);
                 return (
                   <div
@@ -144,9 +197,10 @@ const HomePage = () => {
                           />
                         ) : (
                           <img
-                            src={product.image}
+                            src={getOptimizedImageUrl(product.image)}
                             alt={product.name}
                             loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-cover"
                           />
                         )}
@@ -286,8 +340,10 @@ const HomePage = () => {
                 <div key={print._id || print.id} className="group cursor-pointer">
                   <div className="aspect-square bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 mb-3 overflow-hidden">
                     <img
-                      src={print.image}
+                      src={getOptimizedImageUrl(print.image)}
                       alt={print.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
@@ -310,14 +366,15 @@ const HomePage = () => {
             </h2>
           </div>
 
-          {loading ? (
+          {bestSellersLoading ? (
             <ProductSkeleton count={4} columns="4cols" />
+          ) : bestSellersError ? (
+            <p className="text-center text-red-700">{bestSellersError}</p>
+          ) : bestSellers.length === 0 ? (
+            <p className="text-center text-gray-500">No best sellers available</p>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              {products
-                .filter((product) => product.bestSeller === true)
-                .slice(0, 4)
-                .map((product, index) => (
+              {bestSellers.map((product, index) => (
                   <div
                     key={product.id}
                     className="group animate-slide-up"
@@ -339,9 +396,10 @@ const HomePage = () => {
                           />
                         ) : (
                           <img
-                            src={product.image}
+                            src={getOptimizedImageUrl(product.image)}
                             alt={product.name}
                             loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         )}
