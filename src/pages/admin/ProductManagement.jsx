@@ -1164,7 +1164,7 @@ const ProductManagement = () => {
 
               {adminLoading && !submitLoading && (
                 <tr>
-                  <td colSpan="8" className="p-0" colSpan={8}>
+                  <td colSpan={8} className="p-0">
                     <TableSkeleton rows={5} columns={6} />
                   </td>
                 </tr>
