@@ -20,10 +20,25 @@ const loadScript = (src) =>
 // Convert any image URL / import to base64
 const toBase64 = (src) =>
   new Promise((resolve) => {
-    if (!src || typeof src !== 'string') {
+    // Handle null/undefined/non-string inputs
+    if (!src) {
       resolve(null);
       return;
     }
+    
+    // Handle imported image modules (e.g., import Logo from 'logo.png')
+    // src could be { default: 'url' } or just 'url'
+    let imageUrl = src;
+    if (typeof src === 'object' && src !== null) {
+      imageUrl = src.default || src.src || null;
+    }
+    
+    // Handle non-string URLs after extraction
+    if (typeof imageUrl !== 'string' || !imageUrl) {
+      resolve(null);
+      return;
+    }
+    
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.onload = () => {
@@ -38,7 +53,7 @@ const toBase64 = (src) =>
       }
     };
     img.onerror = () => resolve(null); // skip on error
-    img.src = src;
+    img.src = imageUrl;
   });
 
 // ─── Pure jsPDF invoice renderer ─────────────────────────────────────────────
