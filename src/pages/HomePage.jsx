@@ -11,6 +11,7 @@ import bgVideo2 from "../assets/bg-video2.mp4";
 import { isVideo, getOptimizedImageUrl } from "../utils/mediaHelpers";
 import { API_BASE_URL, API_ENDPOINTS } from "../utils/apiHelpers";
 import { transformProduct } from "../utils/api";
+import heroBg from "/hero-bg.PNG";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const MAX_RETRIES = 3;          // stop retrying after this many attempts
@@ -201,7 +202,7 @@ const HomePage = () => {
     <div className="animate-fade-in overflow-hidden">
       {/* ── Hero ── */}
       <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
-        <video
+        {/* <video
           className="absolute inset-0 w-full h-full object-cover"
           autoPlay
           loop
@@ -209,7 +210,8 @@ const HomePage = () => {
           playsInline
         >
           <source src="/hero_bg.mp4" type="video/mp4" />
-        </video>
+        </video> */}
+        <img className="absolute inset-0 w-full h-full object-cover" src={heroBg} alt="hero-bg" />
 
         <div className="absolute inset-0 bg-black/40" />
 
@@ -302,8 +304,8 @@ const HomePage = () => {
                       >
                         <Heart
                           className={`h-4 w-4 ${isInWishlist
-                              ? "fill-gray-900 text-gray-900"
-                              : "text-gray-600 hover:text-gray-900"
+                            ? "fill-gray-900 text-gray-900"
+                            : "text-gray-600 hover:text-gray-900"
                             } transition-colors`}
                         />
                       </button>
