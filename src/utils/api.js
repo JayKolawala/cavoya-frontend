@@ -1,14 +1,44 @@
 // src/utils/api.js
-export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://cavoya-backend.onrender.com/api";
 
+// Centralized API URL
+const DEV_API_URL = 'http://localhost:5000/api';
+const PROD_API_URL = 'https://cavoya-backend.onrender.com/api';
+
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
+    (import.meta.env.DEV ? DEV_API_URL : PROD_API_URL);
+
+// Default timeout (15 seconds)
+const DEFAULT_TIMEOUT = 15000;
+
+/**
+ * Fetch with timeout
+ */
+export const fetchWithTimeout = async (url, options = {}, timeout = DEFAULT_TIMEOUT) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error(`Request timed out after ${timeout / 1000}s. Please try again.`);
+    }
+    throw error;
+  }
+};
+
+/**
+ * API request wrapper with auth, timeout, and error handling
+ */
 export const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
   const token = localStorage.getItem("token");
-
-  // Create an AbortController for a 10-second timeout
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000);
 
   const config = {
     headers: {
@@ -16,7 +46,6 @@ export const apiRequest = async (endpoint, options = {}) => {
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
-    signal: controller.signal,
     ...options,
   };
 
@@ -25,8 +54,7 @@ export const apiRequest = async (endpoint, options = {}) => {
   }
 
   try {
-    const response = await fetch(url, config);
-    clearTimeout(timeoutId);
+    const response = await fetchWithTimeout(url, config);
     
     if (response.status === 204) {
       return { success: true };
@@ -35,15 +63,14 @@ export const apiRequest = async (endpoint, options = {}) => {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || "Something went wrong");
+      throw Object.assign(new Error(data.message || "Something went wrong"), {
+        status: response.status,
+        data,
+      });
     }
 
     return data;
   } catch (error) {
-    clearTimeout(timeoutId);
-    if (error.name === "AbortError") {
-      throw new Error("Request timed out. Please try again.");
-    }
     console.error("API Request Error:", error);
     throw error;
   }
