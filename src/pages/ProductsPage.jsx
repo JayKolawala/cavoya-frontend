@@ -195,12 +195,12 @@ const ProductsPage = () => {
           {/* Products Section - 75% */}
           <main className="lg:w-3/4 flex-1">
             {/* Full-page skeleton — shown when products are loading */}
-            {productsLoading && !isRefetching && (
+            {productsLoading && (products.length === 0 || !isRefetching) && (
               <ProductSkeleton count={6} columns="full" />
             )}
 
             {/* Slim refetch indicator — shown during filter/category changes */}
-            {isRefetching && (
+            {isRefetching && products.length > 0 && (
               <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden mb-4">
                 <div className="h-full bg-gradient-to-r from-pink-400 to-rose-500 animate-pulse rounded-full" />
               </div>

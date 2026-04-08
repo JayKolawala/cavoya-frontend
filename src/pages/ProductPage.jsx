@@ -157,26 +157,34 @@ const ProductPage = () => {
   };
 
   useEffect(() => {
+    let timeoutId;
     const loadProduct = async () => {
       setLoading(true);
-      let product = null;
-      if (id && fetchProductById) {
-        product = await fetchProductById(id);
+      try {
+        let product = null;
+        if (id && fetchProductById) {
+          product = await fetchProductById(id);
+        }
+        if (!product) {
+          product = products.find((p) => p.id === id || p._id === id);
+        }
+        if (product) {
+          setSelectedProduct(product);
+          setSelectedColor(product.colors?.length > 0 ? product.colors[0] : "");
+          setSelectedSize(product.sizes?.length > 0 ? product.sizes[0] : "");
+          setSelectedTopSize(product.topSizes?.[0] || "");
+          setSelectedBottomSize(product.bottomSizes?.[0] || "");
+          await fetchReviews(product.id || product._id);
+          setLoading(false);
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        timeoutId = setTimeout(loadProduct, 3000);
       }
-      if (!product) {
-        product = products.find((p) => p.id === id || p._id === id);
-      }
-      if (product) {
-        setSelectedProduct(product);
-        setSelectedColor(product.colors?.length > 0 ? product.colors[0] : "");
-        setSelectedSize(product.sizes?.length > 0 ? product.sizes[0] : "");
-        setSelectedTopSize(product.topSizes?.[0] || "");
-        setSelectedBottomSize(product.bottomSizes?.[0] || "");
-        await fetchReviews(product.id || product._id);
-      }
-      setLoading(false);
     };
     loadProduct();
+    return () => clearTimeout(timeoutId);
   }, [id]);
 
   // Initialize and update thumbnail scroll arrows

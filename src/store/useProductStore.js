@@ -77,8 +77,11 @@ const useProductStore = create((set, get) => ({
         };
       });
     } catch (error) {
-      set({ productsError: error.message, productsLoading: false, isRefetching: false });
+      set({ productsError: error.message });
       console.error("Error fetching products:", error);
+      setTimeout(() => {
+        get().fetchProducts(options);
+      }, 3000);
     }
   },
 
@@ -91,7 +94,7 @@ const useProductStore = create((set, get) => ({
       return null;
     } catch (error) {
       console.error("Error fetching product:", error);
-      return null;
+      throw error;
     }
   },
 

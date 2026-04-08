@@ -36,6 +36,7 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
+    let timeoutId;
     const fetchPrints = async () => {
       try {
         setPrintsLoading(true);
@@ -47,16 +48,19 @@ const HomePage = () => {
           ? data
           : data.data ?? data.prints ?? [];
         setPrints(printsArray);
+        setPrintsError(null);
+        setPrintsLoading(false);
       } catch (err) {
         setPrintsError(err.message);
-      } finally {
-        setPrintsLoading(false);
+        timeoutId = setTimeout(fetchPrints, 3000);
       }
     };
     fetchPrints();
+    return () => clearTimeout(timeoutId);
   }, []);
 
   useEffect(() => {
+    let timeoutId;
     const fetchBestSellers = async () => {
       try {
         setBestSellersLoading(true);
@@ -71,16 +75,19 @@ const HomePage = () => {
           sellersArray = fallbackArray.map(transformProduct);
         }
         setBestSellers(sellersArray);
+        setBestSellersError(null);
+        setBestSellersLoading(false);
       } catch (err) {
         setBestSellersError(err.message);
-      } finally {
-        setBestSellersLoading(false);
+        timeoutId = setTimeout(fetchBestSellers, 3000);
       }
     };
     fetchBestSellers();
+    return () => clearTimeout(timeoutId);
   }, []);
 
   useEffect(() => {
+    let timeoutId;
     const fetchNewIn = async () => {
       try {
         setNewInLoading(true);
@@ -89,13 +96,15 @@ const HomePage = () => {
         const data = await response.json();
         const newArrivalsArray = (data.data || []).map(transformProduct);
         setNewInProducts(newArrivalsArray);
+        setNewInError(null);
+        setNewInLoading(false);
       } catch (err) {
         setNewInError(err.message);
-      } finally {
-        setNewInLoading(false);
+        timeoutId = setTimeout(fetchNewIn, 3000);
       }
     };
     fetchNewIn();
+    return () => clearTimeout(timeoutId);
   }, []);
 
   const handleProductClick = (product) => {
@@ -169,10 +178,8 @@ const HomePage = () => {
             </h2>
           </div>
 
-          {newInLoading ? (
+          {newInLoading || newInError ? (
             <ProductSkeleton count={6} columns="3cols" />
-          ) : newInError ? (
-            <p className="text-center text-red-700">{newInError}</p>
           ) : newInProducts.length === 0 ? (
             <p className="text-center text-gray-500">No new arrivals available</p>
           ) : (
@@ -334,10 +341,8 @@ const HomePage = () => {
             </h2>
           </div>
 
-          {printsLoading ? (
+          {printsLoading || printsError ? (
             <ProductSkeleton count={4} columns="4cols" />
-          ) : printsError ? (
-            <p className="text-center text-red-700">{printsError}</p>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto">
               {prints.map((print) => (
@@ -374,10 +379,8 @@ const HomePage = () => {
             </h2>
           </div>
 
-          {bestSellersLoading ? (
+          {bestSellersLoading || bestSellersError ? (
             <ProductSkeleton count={4} columns="4cols" />
-          ) : bestSellersError ? (
-            <p className="text-center text-red-700">{bestSellersError}</p>
           ) : bestSellers.length === 0 ? (
             <p className="text-center text-gray-500">No best sellers available</p>
           ) : (
