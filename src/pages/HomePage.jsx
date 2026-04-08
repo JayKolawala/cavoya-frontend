@@ -52,7 +52,7 @@ const HomePage = () => {
         setPrintsLoading(false);
       } catch (err) {
         setPrintsError(err.message);
-        timeoutId = setTimeout(fetchPrints, 3000);
+        timeoutId = setTimeout(fetchPrints, 60000);
       }
     };
     fetchPrints();
