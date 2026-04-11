@@ -5,45 +5,32 @@ import { PRODUCT_CATEGORIES } from "../../utils/constants";
 import TableSkeleton from "../../components/TableSkeleton";
 import { isVideo } from "../../utils/mediaHelpers";
 import AlertModal from "../../components/admin/shared/AlertModal";
-import { API_BASE_URL } from "../../utils/apiHelpers";
+import { useProducts } from "../../hooks/useProducts";
+import { useCollections, useCollectionPrints } from "../../hooks/useCollections";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ProductManagement = () => {
   const { addProduct, updateProduct, deleteProduct } = useProductStore();
-
-  // ── Independent admin product fetch (not capped by customer-page limit) ──
+  const queryClient = useQueryClient();
   const API_BASE_URL =
     import.meta.env.VITE_API_BASE_URL ||
     "https://cavoya-backend.onrender.com/api";
-  const [adminProducts, setAdminProducts] = useState([]);
-  const [adminLoading, setAdminLoading] = useState(true);
-  const [adminError, setAdminError] = useState(null);
 
-  const fetchAdminProducts = async () => {
-    setAdminLoading(true);
-    setAdminError(null);
-    try {
-      const res = await fetch(`${API_BASE_URL}/products?limit=1000`);
-      const data = await res.json();
-      if (data?.data) {
-        setAdminProducts(data.data);
-      } else {
-        setAdminError("Unexpected response format");
-      }
-    } catch (err) {
-      setAdminError(err.message || "Failed to load products");
-    } finally {
-      setAdminLoading(false);
-    }
-  };
+  // ── React Query: fetch all products (cached for 5 min) ──────────────────
+  const {
+    data: productsData,
+    isLoading: adminLoading,
+    error: adminErrorObj,
+  } = useProducts({ limit: 1000 });
+  const adminProducts = productsData?.data ?? [];
+  const adminError = adminErrorObj?.message ?? null;
 
-  useEffect(() => {
-    fetchAdminProducts();
-  }, []);
+  const refetchAdminProducts = () =>
+    queryClient.invalidateQueries({ queryKey: ['products'] });
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCollection, setFilterCollection] = useState("");
   const [filterPrint, setFilterPrint] = useState("");
-  const [filterPrints, setFilterPrints] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -65,7 +52,7 @@ const ProductManagement = () => {
     if (productId) {
       await deleteProduct(productId);
       setSelectedProducts((prev) => { const n = new Set(prev); n.delete(productId); return n; });
-      await fetchAdminProducts();
+      refetchAdminProducts();
     }
   };
 
@@ -78,7 +65,7 @@ const ProductManagement = () => {
       await deleteProduct(id);
     }
     setSelectedProducts(new Set());
-    await fetchAdminProducts();
+    refetchAdminProducts();
   };
   const [formData, setFormData] = useState({
     name: "",
@@ -99,53 +86,26 @@ const ProductManagement = () => {
     printId: "",
   });
 
-  // ── Collections & Prints state ─────────────────────────────────────────
-  const [collections, setCollections] = useState([]);
-  const [prints, setPrints] = useState([]);
-  const [collectionsLoading, setCollectionsLoading] = useState(false);
-  const [printsLoading, setPrintsLoading] = useState(false);
+  // ── React Query: collections & prints (all cached) ──────────────────────
+  const { data: collectionsData, isLoading: collectionsLoading } = useCollections();
+  const collections = Array.isArray(collectionsData)
+    ? collectionsData
+    : collectionsData?.data ?? collectionsData?.collections ?? [];
 
-  // Fetch all collections on mount
-  useEffect(() => {
-    setCollectionsLoading(true);
-    fetch(`${API_BASE_URL}/collections`)
-      .then((r) => r.json())
-      .then((data) => {
-        const arr = Array.isArray(data) ? data : data.data ?? data.collections ?? [];
-        setCollections(arr);
-      })
-      .catch(console.error)
-      .finally(() => setCollectionsLoading(false));
-  }, []);
+  // Prints for the filter bar (keyed by filterCollection)
+  const { data: filterPrintsData } = useCollectionPrints(filterCollection || null);
+  const filterPrints = filterPrintsData ?? [];
 
-  // Fetch prints for the filter collection dropdown
+  // Sync filterPrint reset when collection changes
   useEffect(() => {
-    if (!filterCollection) { setFilterPrints([]); setFilterPrint(""); return; }
-    // filterCollection is now a collection ID
-    fetch(`${API_BASE_URL}/collections/${filterCollection}/prints`)
-      .then((r) => r.json())
-      .then((data) => {
-        const arr = Array.isArray(data) ? data : data.data ?? data.prints ?? [];
-        setFilterPrints(arr);
-      })
-      .catch(console.error);
     setFilterPrint("");
   }, [filterCollection]);
 
-  // Fetch prints whenever the selected collection changes
-  useEffect(() => {
-    const collId = formData.printCollectionId;
-    if (!collId) { setPrints([]); return; }
-    setPrintsLoading(true);
-    fetch(`${API_BASE_URL}/collections/${collId}/prints`)
-      .then((r) => r.json())
-      .then((data) => {
-        const arr = Array.isArray(data) ? data : data.data ?? data.prints ?? [];
-        setPrints(arr);
-      })
-      .catch(console.error)
-      .finally(() => setPrintsLoading(false));
-  }, [formData.printCollectionId]);
+  // Prints for the form (keyed by formData.printCollectionId)
+  const { data: formPrintsData, isLoading: printsLoading } = useCollectionPrints(
+    formData.printCollectionId || null
+  );
+  const prints = formPrintsData ?? [];
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -265,7 +225,7 @@ const ProductManagement = () => {
         await addProduct(cleanedFormData);
       }
       resetForm();
-      await fetchAdminProducts(); // Refresh admin table
+      refetchAdminProducts(); // Invalidate cache to refresh admin table
     } catch (error) {
       console.error("Error submitting product:", error);
       showAlert("Save Failed", error.message || "Failed to save product.");
@@ -1059,9 +1019,8 @@ const ProductManagement = () => {
                 return (
                   <tr
                     key={product._id}
-                    className={`hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200 ${
-                      isChecked ? 'bg-pink-50/60' : ''
-                    }`}
+                    className={`hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200 ${isChecked ? 'bg-pink-50/60' : ''
+                      }`}
                   >
                     {/* Row checkbox */}
                     <td className="px-3 py-4 whitespace-nowrap">

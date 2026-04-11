@@ -51,6 +51,19 @@ export function useUpdateCollection() {
     });
 }
 
+export function useCollectionPrints(collectionId) {
+    const { apiRequest } = useApiContext();
+
+    return useQuery({
+        queryKey: ['collectionPrints', collectionId],
+        queryFn: async () => {
+            const data = await apiRequest(`/collections/${collectionId}/prints`);
+            return Array.isArray(data) ? data : data.data ?? data.prints ?? [];
+        },
+        enabled: !!collectionId,
+    });
+}
+
 export function useDeleteCollection() {
     const { apiRequest } = useApiContext();
     const queryClient = useQueryClient();

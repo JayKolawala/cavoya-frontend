@@ -1,21 +1,18 @@
 // src/pages/admin/OrderManager.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ORDER_STATUSES } from "../../utils/constants";
 import OrderFilters from "../../components/admin/orders/OrderFilters";
 import OrderTable from "../../components/admin/orders/OrderTable";
 import OrderStats from "../../components/admin/orders/OrderStats";
-import useApi from "../../hooks/useApi";
+import { useOrders, useUpdateOrderStatus } from "../../hooks/useOrders";
 import AlertModal from "../../components/admin/shared/AlertModal";
 
 const OrderManager = () => {
-  const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalOrders, setTotalOrders] = useState(0);
   const limit = 10;
 
   // Alert modal state
@@ -23,69 +20,56 @@ const OrderManager = () => {
   const showAlert = (title, message, type = "error") =>
     setAlertModal({ isOpen: true, title, message, type });
 
-  const { loading, error, get, patch } = useApi();
-
-  // Fetch orders from API
-  const fetchOrders = async () => {
-    try {
-      // Build query string
-      const queryParams = new URLSearchParams({
-        page: currentPage,
-        limit: limit,
-      });
-      if (searchTerm) queryParams.append("search", searchTerm);
-      if (statusFilter !== "all") queryParams.append("status", statusFilter);
-
-      const response = await get(`/orders?${queryParams.toString()}`);
-      if (response.success && response.data) {
-        // Transform API response to match the component's expected format
-        const transformedOrders = response.data.map((order) => ({
-          _id: order._id, // ← CRITICAL: Keep MongoDB _id for API calls
-          id: order.orderNumber, // Display ID
-          customerName: order.customer.name,
-          customerEmail: order.customer.email,
-          customerPhone: order.customer.phone,
-          orderDate: order.createdAt,
-          status: order.status,
-          totalAmount: order.pricing.total,
-          paymentMethod: order.payment.method,
-          paymentStatus: order.payment.status,
-          shippingAddress: {
-            street: order.shippingAddress.street,
-            city: order.shippingAddress.city,
-            state: order.shippingAddress.state,
-            pincode: order.shippingAddress.postalCode,
-            country: order.shippingAddress.country,
-          },
-          billingAddress: order.billingAddress || order.shippingAddress,
-          items: order.items.map((item) => ({
-            id: item._id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            size: item.size,
-            color: item.color,
-            image: item.image,
-          })),
-          trackingNumber: order.trackingNumber || "",
-          estimatedDelivery: order.estimatedDelivery || "",
-          notes:
-            order.statusHistory?.[order.statusHistory.length - 1]?.note || "",
-        }));
-        setOrders(transformedOrders);
-        setTotalPages(response.totalPages || 1);
-        setTotalOrders(response.total || response.data.length);
-      }
-    } catch (err) {
-      console.error("Failed to fetch orders:", err);
-    }
+  // ── React Query: fetch orders (cached per page/search/status) ────────────
+  const queryParams = {
+    page: currentPage,
+    limit,
+    ...(searchTerm ? { search: searchTerm } : {}),
+    ...(statusFilter !== "all" ? { status: statusFilter } : {}),
   };
+  const { data: ordersResponse, isLoading: loading, error: ordersError } = useOrders(queryParams);
 
-  // Fetch orders on component mount and when dependencies change
-  useEffect(() => {
-    fetchOrders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, searchTerm, statusFilter]);
+  const rawOrders = ordersResponse?.data ?? [];
+  const totalPages = ordersResponse?.totalPages ?? 1;
+  const totalOrders = ordersResponse?.total ?? rawOrders.length;
+  const error = ordersError?.message ?? null;
+
+  // Transform API response to match component's expected shape
+  const orders = rawOrders.map((order) => ({
+    _id: order._id,
+    id: order.orderNumber,
+    customerName: order.customer.name,
+    customerEmail: order.customer.email,
+    customerPhone: order.customer.phone,
+    orderDate: order.createdAt,
+    status: order.status,
+    totalAmount: order.pricing.total,
+    paymentMethod: order.payment.method,
+    paymentStatus: order.payment.status,
+    shippingAddress: {
+      street: order.shippingAddress.street,
+      city: order.shippingAddress.city,
+      state: order.shippingAddress.state,
+      pincode: order.shippingAddress.postalCode,
+      country: order.shippingAddress.country,
+    },
+    billingAddress: order.billingAddress || order.shippingAddress,
+    items: order.items.map((item) => ({
+      id: item._id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      size: item.size,
+      color: item.color,
+      image: item.image,
+    })),
+    trackingNumber: order.trackingNumber || "",
+    estimatedDelivery: order.estimatedDelivery || "",
+    notes: order.statusHistory?.[order.statusHistory.length - 1]?.note || "",
+  }));
+
+  // ── React Query mutation: update order status (auto-invalidates cache) ────
+  const { mutateAsync: updateOrderStatus } = useUpdateOrderStatus();
 
   // Handle Search and Filter changes (reset to page 1)
   const handleSearchChange = (value) => {
@@ -114,31 +98,14 @@ const OrderManager = () => {
         return;
       }
 
-      // Call API to update order status using MongoDB _id
-      const response = await patch(`/orders/${order._id}/status`, {
+      // useUpdateOrderStatus mutation auto-invalidates the ['orders'] cache
+      await updateOrderStatus({
+        id: order._id,
         status: newStatus,
         trackingNumber: trackingNumber || undefined,
         note: notes || `Status changed to ${newStatus}`,
         notes: notes || undefined,
       });
-
-      if (response.success) {
-        // Update local state optimistically
-        setOrders(
-          orders.map((o) =>
-            o.id === orderId
-              ? {
-                ...o,
-                status: newStatus,
-                trackingNumber: trackingNumber || o.trackingNumber,
-                notes: notes || o.notes,
-              }
-              : o,
-          ),
-        );
-        // Optionally refetch to ensure sync with server
-        // await fetchOrders();
-      }
     } catch (err) {
       console.error("Failed to update order status:", err);
       showAlert("Update Failed", "Failed to update order status. Please try again.");
