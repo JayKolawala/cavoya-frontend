@@ -6,7 +6,10 @@ import TableSkeleton from "../../components/TableSkeleton";
 import { isVideo } from "../../utils/mediaHelpers";
 import AlertModal from "../../components/admin/shared/AlertModal";
 import { useProducts } from "../../hooks/useProducts";
-import { useCollections, useCollectionPrints } from "../../hooks/useCollections";
+import {
+  useCollections,
+  useCollectionPrints,
+} from "../../hooks/useCollections";
 import { useQueryClient } from "@tanstack/react-query";
 
 const ProductManagement = () => {
@@ -26,7 +29,7 @@ const ProductManagement = () => {
   const adminError = adminErrorObj?.message ?? null;
 
   const refetchAdminProducts = () =>
-    queryClient.invalidateQueries({ queryKey: ['products'] });
+    queryClient.invalidateQueries({ queryKey: ["products"] });
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCollection, setFilterCollection] = useState("");
@@ -35,7 +38,12 @@ const ProductManagement = () => {
   const [showForm, setShowForm] = useState(false);
 
   // Alert / confirm modal state
-  const [alertModal, setAlertModal] = useState({ isOpen: false, title: "", message: "", type: "error" });
+  const [alertModal, setAlertModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "error",
+  });
   const showAlert = (title, message, type = "error") =>
     setAlertModal({ isOpen: true, title, message, type });
 
@@ -43,7 +51,10 @@ const ProductManagement = () => {
   const [selectedProducts, setSelectedProducts] = useState(new Set());
 
   // ── Single-delete confirm modal ──────────────────────────────────────────
-  const [confirmModal, setConfirmModal] = useState({ isOpen: false, productId: null });
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    productId: null,
+  });
   const openDeleteConfirm = (productId) =>
     setConfirmModal({ isOpen: true, productId });
   const handleDeleteConfirmed = async () => {
@@ -51,7 +62,11 @@ const ProductManagement = () => {
     setConfirmModal({ isOpen: false, productId: null });
     if (productId) {
       await deleteProduct(productId);
-      setSelectedProducts((prev) => { const n = new Set(prev); n.delete(productId); return n; });
+      setSelectedProducts((prev) => {
+        const n = new Set(prev);
+        n.delete(productId);
+        return n;
+      });
       refetchAdminProducts();
     }
   };
@@ -87,13 +102,16 @@ const ProductManagement = () => {
   });
 
   // ── React Query: collections & prints (all cached) ──────────────────────
-  const { data: collectionsData, isLoading: collectionsLoading } = useCollections();
+  const { data: collectionsData, isLoading: collectionsLoading } =
+    useCollections();
   const collections = Array.isArray(collectionsData)
     ? collectionsData
-    : collectionsData?.data ?? collectionsData?.collections ?? [];
+    : (collectionsData?.data ?? collectionsData?.collections ?? []);
 
   // Prints for the filter bar (keyed by filterCollection)
-  const { data: filterPrintsData } = useCollectionPrints(filterCollection || null);
+  const { data: filterPrintsData } = useCollectionPrints(
+    filterCollection || null,
+  );
   const filterPrints = filterPrintsData ?? [];
 
   // Sync filterPrint reset when collection changes
@@ -102,9 +120,8 @@ const ProductManagement = () => {
   }, [filterCollection]);
 
   // Prints for the form (keyed by formData.printCollectionId)
-  const { data: formPrintsData, isLoading: printsLoading } = useCollectionPrints(
-    formData.printCollectionId || null
-  );
+  const { data: formPrintsData, isLoading: printsLoading } =
+    useCollectionPrints(formData.printCollectionId || null);
   const prints = formPrintsData ?? [];
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
@@ -116,15 +133,18 @@ const ProductManagement = () => {
   const itemsPerPage = 10;
 
   const filteredProducts = adminProducts.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     // product list returns print.collectionId as a raw ID string
     const productCollectionId =
       product.print?.collectionId?._id || // populated object
-      product.print?.collectionId ||       // raw string
-      product.printCollectionId || "";
-    const productPrintId =
-      product.print?.printId || product.printId || "";
-    const matchesCollection = !filterCollection || productCollectionId === filterCollection;
+      product.print?.collectionId || // raw string
+      product.printCollectionId ||
+      "";
+    const productPrintId = product.print?.printId || product.printId || "";
+    const matchesCollection =
+      !filterCollection || productCollectionId === filterCollection;
     const matchesPrint = !filterPrint || productPrintId === filterPrint;
     return matchesSearch && matchesCollection && matchesPrint;
   });
@@ -248,7 +268,10 @@ const ProductManagement = () => {
         fullProduct = data.data;
       }
     } catch (e) {
-      console.warn("[handleEdit] Failed to fetch full product, using list data", e);
+      console.warn(
+        "[handleEdit] Failed to fetch full product, using list data",
+        e,
+      );
     }
 
     // Read printCollectionId: prefer populated nested object, then raw string, then flat field
@@ -258,10 +281,7 @@ const ProductManagement = () => {
       (typeof rawCollId === "object" ? rawCollId?._id : rawCollId) ||
       "";
 
-    const printId =
-      fullProduct.printId ||
-      fullProduct.print?.printId ||
-      "";
+    const printId = fullProduct.printId || fullProduct.print?.printId || "";
 
     const editFormData = {
       name: fullProduct.name,
@@ -338,7 +358,6 @@ const ProductManagement = () => {
       printCollectionId: "",
       printId: "",
     });
-    setPrints([]);
     setSelectedFiles([]);
     setImagePreviews([]);
     setEditingProduct(null);
@@ -396,8 +415,8 @@ const ProductManagement = () => {
         isOpen={bulkConfirmModal}
         onClose={() => setBulkConfirmModal(false)}
         onConfirm={handleBulkDeleteConfirmed}
-        title={`Delete ${selectedProducts.size} Product${selectedProducts.size !== 1 ? 's' : ''}`}
-        message={`Are you sure you want to delete ${selectedProducts.size} selected product${selectedProducts.size !== 1 ? 's' : ''}? This action cannot be undone.`}
+        title={`Delete ${selectedProducts.size} Product${selectedProducts.size !== 1 ? "s" : ""}`}
+        message={`Are you sure you want to delete ${selectedProducts.size} selected product${selectedProducts.size !== 1 ? "s" : ""}? This action cannot be undone.`}
         type="warning"
         mode="confirm"
         confirmLabel="Delete All"
@@ -439,7 +458,9 @@ const ProductManagement = () => {
         >
           <option value="">All Collections</option>
           {collections.map((col) => (
-            <option key={col._id} value={col._id}>{col.name}</option>
+            <option key={col._id} value={col._id}>
+              {col.name}
+            </option>
           ))}
         </select>
 
@@ -452,7 +473,9 @@ const ProductManagement = () => {
           >
             <option value="">All Prints</option>
             {filterPrints.map((p) => (
-              <option key={p._id} value={p._id}>{p.name}</option>
+              <option key={p._id} value={p._id}>
+                {p.name}
+              </option>
             ))}
           </select>
         )}
@@ -460,14 +483,17 @@ const ProductManagement = () => {
         {/* Clear Filters */}
         {(filterCollection || filterPrint || searchTerm) && (
           <button
-            onClick={() => { setFilterCollection(""); setFilterPrint(""); setSearchTerm(""); }}
+            onClick={() => {
+              setFilterCollection("");
+              setFilterPrint("");
+              setSearchTerm("");
+            }}
             className="flex items-center gap-1 px-3 py-2 text-sm text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all whitespace-nowrap"
           >
             <X className="h-4 w-4" /> Clear
           </button>
         )}
       </div>
-
 
       {/* Product Form Modal */}
       {showForm && (
@@ -478,7 +504,7 @@ const ProductManagement = () => {
                 {editingProduct ? "Edit Product" : "Add New Product"}
               </h2>
               <button
-                onClick={resetForm}
+                onClick={() => setShowForm(false)}
                 className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-lg transition-colors"
               >
                 <X className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -525,7 +551,11 @@ const ProductManagement = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Print Collection *
-                    {collectionsLoading && <span className="ml-2 text-xs text-gray-400">Loading…</span>}
+                    {collectionsLoading && (
+                      <span className="ml-2 text-xs text-gray-400">
+                        Loading…
+                      </span>
+                    )}
                   </label>
                   <select
                     required
@@ -553,7 +583,11 @@ const ProductManagement = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Print *
-                      {printsLoading && <span className="ml-2 text-xs text-gray-400">Loading…</span>}
+                      {printsLoading && (
+                        <span className="ml-2 text-xs text-gray-400">
+                          Loading…
+                        </span>
+                      )}
                     </label>
                     <select
                       required
@@ -571,16 +605,19 @@ const ProductManagement = () => {
                       ))}
                     </select>
                     {/* Preview selected print image */}
-                    {formData.printId && (() => {
-                      const found = prints.find((p) => p._id === formData.printId);
-                      return found?.image ? (
-                        <img
-                          src={found.image}
-                          alt={found.name}
-                          className="mt-2 h-16 w-16 rounded-lg object-cover border border-pink-200"
-                        />
-                      ) : null;
-                    })()}
+                    {formData.printId &&
+                      (() => {
+                        const found = prints.find(
+                          (p) => p._id === formData.printId,
+                        );
+                        return found?.image ? (
+                          <img
+                            src={found.image}
+                            alt={found.name}
+                            className="mt-2 h-16 w-16 rounded-lg object-cover border border-pink-200"
+                          />
+                        ) : null;
+                      })()}
                   </div>
                 )}
 
@@ -811,7 +848,10 @@ const ProductManagement = () => {
                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
                     value={formData.modelIsWearing}
                     onChange={(e) =>
-                      setFormData({ ...formData, modelIsWearing: e.target.value })
+                      setFormData({
+                        ...formData,
+                        modelIsWearing: e.target.value,
+                      })
                     }
                     placeholder="e.g., Size S"
                   />
@@ -840,8 +880,9 @@ const ProductManagement = () => {
                         onChange={(e) =>
                           handleColorChange(index, e.target.value)
                         }
-                        placeholder={`Color ${index + 1
-                          } (e.g., pink, white, black)`}
+                        placeholder={`Color ${
+                          index + 1
+                        } (e.g., pink, white, black)`}
                       />
                       <button
                         type="button"
@@ -867,10 +908,11 @@ const ProductManagement = () => {
                         key={size}
                         type="button"
                         onClick={() => handleSizeToggle(size)}
-                        className={`px-4 py-2 border rounded-md ${formData.sizes.includes(size)
-                          ? "bg-pink-500 text-white border-pink-500"
-                          : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
-                          }`}
+                        className={`px-4 py-2 border rounded-md ${
+                          formData.sizes.includes(size)
+                            ? "bg-pink-500 text-white border-pink-500"
+                            : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
+                        }`}
                       >
                         {size}
                       </button>
@@ -917,8 +959,6 @@ const ProductManagement = () => {
                     </span>
                   </label>
                 </div>
-
-
               </div>
 
               {/* Form Actions */}
@@ -929,7 +969,7 @@ const ProductManagement = () => {
                   className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors w-full sm:w-auto"
                   disabled={submitLoading}
                 >
-                  Cancel
+                  Reset
                 </button>
                 <button
                   type="submit"
@@ -950,12 +990,12 @@ const ProductManagement = () => {
 
       {/* Products Table */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-
         {/* Bulk Action Bar */}
         {selectedProducts.size > 0 && (
           <div className="flex items-center justify-between px-6 py-3 bg-pink-50 border-b border-pink-200">
             <span className="text-sm font-medium text-pink-800">
-              {selectedProducts.size} product{selectedProducts.size !== 1 ? 's' : ''} selected
+              {selectedProducts.size} product
+              {selectedProducts.size !== 1 ? "s" : ""} selected
             </span>
             <div className="flex items-center gap-3">
               <button
@@ -986,7 +1026,9 @@ const ProductManagement = () => {
                     checked={isAllSelected}
                     onChange={toggleSelectAll}
                     className="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer"
-                    title={isAllSelected ? 'Deselect all' : 'Select all on this page'}
+                    title={
+                      isAllSelected ? "Deselect all" : "Select all on this page"
+                    }
                   />
                 </th>
                 <th className="px-3 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
@@ -1019,8 +1061,9 @@ const ProductManagement = () => {
                 return (
                   <tr
                     key={product._id}
-                    className={`hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200 ${isChecked ? 'bg-pink-50/60' : ''
-                      }`}
+                    className={`hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200 ${
+                      isChecked ? "bg-pink-50/60" : ""
+                    }`}
                   >
                     {/* Row checkbox */}
                     <td className="px-3 py-4 whitespace-nowrap">
@@ -1076,7 +1119,7 @@ const ProductManagement = () => {
                         )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {product.material || '-'}
+                      {product.material || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {product.isFeatured && (
@@ -1177,10 +1220,11 @@ const ProductManagement = () => {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${currentPage === page
-                          ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
-                          : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
-                          }`}
+                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                          currentPage === page
+                            ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
+                            : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                        }`}
                       >
                         {page}
                       </button>

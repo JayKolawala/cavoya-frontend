@@ -77,7 +77,8 @@ const useCheckoutStore = create((set, get) => ({
         payment: {
           method: state.paymentMethod,
           status: paymentInfo ? "paid" : "pending",
-          ...(paymentInfo && { transactionId: paymentInfo.paymentId }),
+          ...(paymentInfo?.razorpayOrderId && { razorpayOrderId: paymentInfo.razorpayOrderId }),
+          ...(paymentInfo?.paymentId && { transactionId: paymentInfo.paymentId }),
         },
         pricing: {
           subtotal: parseFloat(subtotal.toFixed(2)),

@@ -6,9 +6,8 @@ import {
   processRazorpayPayment,
   calculateOrderPricing,
   createRazorpayOrder,
-  verifyPayment,
 } from "../utils/paymentService";
-import { Shield, Lock, AlertCircle } from "lucide-react";
+import { Lock, AlertCircle } from "lucide-react";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -22,10 +21,10 @@ const PaymentPage = () => {
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
-  const [status, setStatus] = useState("initializing"); // initializing, processing, verifying, success, error
+  const [status, setStatus] = useState("initializing");
   const hasInitiated = React.useRef(false);
+  const pendingOrderData = React.useRef(null);
 
-  // Redirect if no items or missing info
   useEffect(() => {
     if (hasInitiated.current) return;
 
@@ -34,7 +33,6 @@ const PaymentPage = () => {
     } else if (!shippingInfo.address1) {
       navigate("/checkout");
     } else {
-      // Auto-start payment process
       hasInitiated.current = true;
       initiatePayment();
     }
@@ -47,8 +45,6 @@ const PaymentPage = () => {
 
     try {
       const pricing = calculateOrderPricing(getTotalPrice());
-
-      // Convert to paise (Razorpay expects smallest currency unit)
       const amountInPaise = Math.round(pricing.total * 100);
 
       // Step 1: Create Razorpay order via backend API
@@ -58,20 +54,22 @@ const PaymentPage = () => {
         receipt: `receipt_${Date.now()}`,
       });
 
-      // Handle different response structures (direct ID, nested order.id, or nested data.id)
       const orderId =
         razorpayOrderData.id ||
         razorpayOrderData.order?.id ||
         razorpayOrderData.data?.id;
 
       if (!orderId) {
-        console.error("Invalid order data:", razorpayOrderData);
-        throw new Error(
-          "Failed to retrieve Razorpay order ID from backend response",
-        );
+        throw new Error("Failed to retrieve Razorpay order ID from backend response");
       }
 
-      // Step 2: Open Razorpay checkout with order ID from backend
+      // Step 2: Create order in database with razorpayOrderId BEFORE payment
+      const orderData = await createOrder({
+        razorpayOrderId: orderId,
+      });
+      pendingOrderData.current = orderData;
+
+      // Step 3: Open Razorpay checkout
       await processRazorpayPayment({
         orderId: orderId,
         amount: amountInPaise,
@@ -79,66 +77,27 @@ const PaymentPage = () => {
         customerName: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
         customerEmail: shippingInfo.email,
         customerPhone: shippingInfo.phone,
-        onSuccess: async (paymentResponse) => {
-          try {
-            setStatus("verifying");
+        onSuccess: (paymentResponse) => {
+          // Payment successful - NO API CALL NEEDED HERE
+          // Order will be confirmed automatically via webhook
+          setStatus("success");
+          confirmOrder(orderData.orderNumber);
 
-            // Step 3: Verify payment with backend
-            const verificationResult = await verifyPayment({
-              razorpay_order_id: paymentResponse.orderId,
-              razorpay_payment_id: paymentResponse.paymentId,
-              razorpay_signature: paymentResponse.signature,
-            });
-
-            if (!verificationResult || !verificationResult.success) {
-              throw new Error("Payment verification failed");
-            }
-
-            // Step 4: Create order in database
-
-            const orderData = await createOrder({
-              paymentId: paymentResponse.paymentId,
-              orderId: paymentResponse.orderId,
-            });
-
-            if (orderData && orderData.orderNumber) {
-              setStatus("success");
-              confirmOrder(orderData.orderNumber);
-
-              setTimeout(() => {
-                navigate("/");
-              }, 1500);
-            } else {
-              throw new Error("Failed to create order after payment");
-            }
-          } catch (err) {
-            setStatus("error");
-            setIsProcessing(false);
-            setError(
-              `Payment successful but verification/order creation failed: ${
-                err.message
-              }. Response: ${JSON.stringify(paymentResponse)}`,
-            );
-            console.error("Post-payment error:", err);
-          }
+          setTimeout(() => {
+            navigate("/order-success");
+          }, 1500);
         },
         onFailure: (err) => {
           setStatus("error");
           setIsProcessing(false);
           setError(err.message || "Payment failed. Please try again.");
-          console.error("Payment error:", err);
         },
       });
     } catch (err) {
       setStatus("error");
       setIsProcessing(false);
       setError(err.message || "An error occurred. Please try again.");
-      console.error("Payment initialization error:", err);
     }
-  };
-
-  const handleRetry = () => {
-    initiatePayment();
   };
 
   const handleCancel = () => {
@@ -159,16 +118,6 @@ const PaymentPage = () => {
               <Lock className="h-4 w-4 mr-1" />
               Secure Payment via Razorpay
             </div>
-          </div>
-        ) : status === "verifying" ? (
-          <div className="py-8">
-            <div className="animate-pulse rounded-full h-16 w-16 bg-gray-100 flex items-center justify-center mx-auto mb-6">
-              <Shield className="h-8 w-8 text-gray-700" />
-            </div>
-            <h2 className="text-2xl font-light mb-2 text-gray-900">
-              Verifying Payment
-            </h2>
-            <p className="text-gray-600">Confirming your transaction...</p>
           </div>
         ) : status === "success" ? (
           <div className="py-8">
@@ -205,12 +154,6 @@ const PaymentPage = () => {
             <p className="text-gray-600 mb-6">{error}</p>
 
             <div className="flex flex-col space-y-3">
-              {/* <button
-                onClick={handleRetry}
-                className="w-full px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-              >
-                Try Again
-              </button> */}
               <button
                 onClick={handleCancel}
                 className="w-full px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"

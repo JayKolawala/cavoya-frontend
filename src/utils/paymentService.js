@@ -180,13 +180,9 @@ export const processRazorpayPayment = async ({
                 color: '#000000', // Black to match site theme
             },
             handler: function (response) {
-                // Payment successful
+                // Payment successful - webhook will handle order confirmation
                 if (onSuccess) {
-                    onSuccess({
-                        paymentId: response.razorpay_payment_id,
-                        orderId: response.razorpay_order_id,
-                        signature: response.razorpay_signature,
-                    });
+                    onSuccess(response);
                 }
             },
             modal: {
