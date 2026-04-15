@@ -478,7 +478,7 @@ const ProductManagement = () => {
                 {editingProduct ? "Edit Product" : "Add New Product"}
               </h2>
               <button
-                onClick={resetForm}
+                onClick={() => setShowForm(false)}
                 className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-lg transition-colors"
               >
                 <X className="h-5 w-5 sm:h-6 sm:w-6" />
