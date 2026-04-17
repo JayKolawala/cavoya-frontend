@@ -4,7 +4,7 @@ import { Eye, Edit } from "lucide-react";
 import StatusBadge from "../shared/StatusBadge";
 import OrderDetailsModal from "./OrderDetailsModal";
 import StatusUpdateModal from "./StatusUpdateModal";
-import { formatDate, formatCurrency } from "../../../utils/formatters";
+import { formatDateTime, formatCurrency } from "../../../utils/formatters";
 
 const OrderTable = ({
   orders,
@@ -133,7 +133,7 @@ const OrderTable = ({
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    {formatDate(order.orderDate)}
+                    {formatDateTime(order.orderDate)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm font-bold text-pink-600">

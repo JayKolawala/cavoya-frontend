@@ -42,14 +42,7 @@ const OrderSuccessPage = () => {
         </div>
 
         <div className="flex flex-col space-y-3">
-          <button
-            onClick={() => navigate("/orders")}
-            className="w-full px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
-          >
-            View Orders
-            <ArrowRight className="h-4 w-4" />
-          </button>
-          
+
           <button
             onClick={() => {
               resetCheckout();
