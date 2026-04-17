@@ -6,9 +6,9 @@ import {
   processRazorpayPayment,
   calculateOrderPricing,
   createRazorpayOrder,
-  verifyPayment,
 } from "../utils/paymentService";
-import { Shield, Lock, AlertCircle } from "lucide-react";
+import { API_BASE_URL } from "../utils/apiHelpers";
+import { Lock, AlertCircle } from "lucide-react";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -22,10 +22,10 @@ const PaymentPage = () => {
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
-  const [status, setStatus] = useState("initializing"); // initializing, processing, verifying, success, error
+  const [status, setStatus] = useState("initializing");
   const hasInitiated = React.useRef(false);
+  const pendingOrderData = React.useRef(null);
 
-  // Redirect if no items or missing info
   useEffect(() => {
     if (hasInitiated.current) return;
 
@@ -34,7 +34,6 @@ const PaymentPage = () => {
     } else if (!shippingInfo.address1) {
       navigate("/checkout");
     } else {
-      // Auto-start payment process
       hasInitiated.current = true;
       initiatePayment();
     }
@@ -47,31 +46,65 @@ const PaymentPage = () => {
 
     try {
       const pricing = calculateOrderPricing(getTotalPrice());
-
-      // Convert to paise (Razorpay expects smallest currency unit)
       const amountInPaise = Math.round(pricing.total * 100);
 
-      // Step 1: Create Razorpay order via backend API
+      // Prepare order data (will be sent to webhook via notes)
+      const orderNotes = {
+        customer: {
+          name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
+          email: shippingInfo.email,
+          phone: shippingInfo.phone,
+        },
+        shippingAddress: {
+          street: shippingInfo.address2
+            ? `${shippingInfo.address1}, ${shippingInfo.address2}`
+            : shippingInfo.address1,
+          city: shippingInfo.city,
+          state: shippingInfo.state,
+          postalCode: shippingInfo.zipCode,
+          country: shippingInfo.country || "India",
+        },
+        items: cartItems.map((item) => ({
+          productId: item.productId,
+          name: item.name,
+          image: item.image,
+          price: item.price,
+          quantity: item.quantity,
+          color: item.color || "Default",
+          size: item.size || "Default",
+          subtotal: item.price * item.quantity,
+        })),
+        pricing: {
+          subtotal: parseFloat(pricing.subtotal.toFixed(2)),
+          shippingCost: parseFloat(pricing.shippingCost.toFixed(2)),
+          tax: parseFloat(pricing.tax.toFixed(2)),
+          discount: 0,
+          total: parseFloat(pricing.total.toFixed(2)),
+        },
+        paymentMethod: paymentMethod,
+      };
+
+      // Step 1: Create Razorpay order with order data in notes
       const razorpayOrderData = await createRazorpayOrder({
         amount: amountInPaise,
         currency: "INR",
         receipt: `receipt_${Date.now()}`,
+        notes: orderNotes,
       });
 
-      // Handle different response structures (direct ID, nested order.id, or nested data.id)
       const orderId =
         razorpayOrderData.id ||
         razorpayOrderData.order?.id ||
         razorpayOrderData.data?.id;
 
       if (!orderId) {
-        console.error("Invalid order data:", razorpayOrderData);
-        throw new Error(
-          "Failed to retrieve Razorpay order ID from backend response",
-        );
+        throw new Error("Failed to retrieve Razorpay order ID from backend response");
       }
 
-      // Step 2: Open Razorpay checkout with order ID from backend
+      // Store order data for fallback (if webhook doesn't work)
+      sessionStorage.setItem('pendingOrderData', JSON.stringify(orderNotes));
+
+      // Step 2: Open Razorpay checkout (order will be created via webhook after payment)
       await processRazorpayPayment({
         orderId: orderId,
         amount: amountInPaise,
@@ -80,65 +113,77 @@ const PaymentPage = () => {
         customerEmail: shippingInfo.email,
         customerPhone: shippingInfo.phone,
         onSuccess: async (paymentResponse) => {
-          try {
-            setStatus("verifying");
+          // Payment successful 
+          setStatus("success");
 
-            // Step 3: Verify payment with backend
-            const verificationResult = await verifyPayment({
-              razorpay_order_id: paymentResponse.orderId,
-              razorpay_payment_id: paymentResponse.paymentId,
-              razorpay_signature: paymentResponse.signature,
-            });
+          const razorpayOrderId = paymentResponse.razorpay_order_id;
+          const razorpayPaymentId = paymentResponse.razorpay_payment_id;
 
-            if (!verificationResult || !verificationResult.success) {
-              throw new Error("Payment verification failed");
-            }
-
-            // Step 4: Create order in database
-
-            const orderData = await createOrder({
-              paymentId: paymentResponse.paymentId,
-              orderId: paymentResponse.orderId,
-            });
-
-            if (orderData && orderData.orderNumber) {
-              setStatus("success");
-              confirmOrder(orderData.orderNumber);
-
-              setTimeout(() => {
-                navigate("/");
-              }, 1500);
-            } else {
-              throw new Error("Failed to create order after payment");
-            }
-          } catch (err) {
-            setStatus("error");
-            setIsProcessing(false);
-            setError(
-              `Payment successful but verification/order creation failed: ${
-                err.message
-              }. Response: ${JSON.stringify(paymentResponse)}`,
-            );
-            console.error("Post-payment error:", err);
+          // First, poll for existing order (max 5 seconds)
+          let orderCreated = false;
+          let orderConfirmData = null;
+          
+          for (let i = 0; i < 5; i++) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            try {
+              const res = await fetch(`${API_BASE_URL}/orders/check/${razorpayOrderId}`);
+              const data = await res.json();
+              if (data.success && data.data) {
+                orderCreated = true;
+                orderConfirmData = data.data;
+                break;
+              }
+            } catch (e) {}
           }
+
+          // If not found via polling, use fallback endpoint to create order
+          if (!orderCreated) {
+            try {
+              // Get stored order data from sessionStorage
+              const storedOrderData = sessionStorage.getItem('pendingOrderData');
+              const orderPayload = storedOrderData ? JSON.parse(storedOrderData) : null;
+
+              const response = await fetch(`${API_BASE_URL}/payment/confirm`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpayOrderId,
+                  razorpayPaymentId,
+                  customer: orderPayload?.customer,
+                  shippingAddress: orderPayload?.shippingAddress,
+                  items: orderPayload?.items,
+                  pricing: orderPayload?.pricing,
+                  paymentMethod: orderPayload?.paymentMethod,
+                }),
+              });
+              const confirmData = await response.json();
+              if (confirmData.success && confirmData.data) {
+                orderConfirmData = confirmData.data;
+              }
+            } catch (e) {
+              console.error('Failed to confirm order:', e);
+            }
+          }
+
+          // Clear cart and session, then navigate
+          useCartStore.getState().clearCart();
+          sessionStorage.removeItem('pendingOrderData');
+          useCheckoutStore.getState().confirmOrder(orderConfirmData?.orderNumber);
+          
+          navigate("/order-success");
         },
         onFailure: (err) => {
+          // Payment failed - just show error, no order created
           setStatus("error");
           setIsProcessing(false);
           setError(err.message || "Payment failed. Please try again.");
-          console.error("Payment error:", err);
         },
       });
     } catch (err) {
       setStatus("error");
       setIsProcessing(false);
       setError(err.message || "An error occurred. Please try again.");
-      console.error("Payment initialization error:", err);
     }
-  };
-
-  const handleRetry = () => {
-    initiatePayment();
   };
 
   const handleCancel = () => {
@@ -159,16 +204,6 @@ const PaymentPage = () => {
               <Lock className="h-4 w-4 mr-1" />
               Secure Payment via Razorpay
             </div>
-          </div>
-        ) : status === "verifying" ? (
-          <div className="py-8">
-            <div className="animate-pulse rounded-full h-16 w-16 bg-gray-100 flex items-center justify-center mx-auto mb-6">
-              <Shield className="h-8 w-8 text-gray-700" />
-            </div>
-            <h2 className="text-2xl font-light mb-2 text-gray-900">
-              Verifying Payment
-            </h2>
-            <p className="text-gray-600">Confirming your transaction...</p>
           </div>
         ) : status === "success" ? (
           <div className="py-8">
@@ -205,12 +240,6 @@ const PaymentPage = () => {
             <p className="text-gray-600 mb-6">{error}</p>
 
             <div className="flex flex-col space-y-3">
-              {/* <button
-                onClick={handleRetry}
-                className="w-full px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-              >
-                Try Again
-              </button> */}
               <button
                 onClick={handleCancel}
                 className="w-full px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"

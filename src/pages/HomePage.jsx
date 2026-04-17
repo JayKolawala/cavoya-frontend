@@ -115,24 +115,21 @@ const HomePage = () => {
 
       if (error) {
         setBestSellersError(error);
-        setBestSellersLoading(false);
-        return;
+      } else {
+        let sellers = (data?.data ?? []).map(transformProduct);
+
+        if (sellers.length === 0) {
+          const { data: fbData, error: fbError } = await fetchWithRetry(
+            `${API_BASE_URL}/products?limit=4`,
+            controller.signal
+          );
+          if (fbError === "aborted") return;
+          sellers = fbError ? [] : (fbData?.data ?? []).map(transformProduct);
+        }
+
+        setBestSellers(sellers);
+        setBestSellersError(null);
       }
-
-      let sellers = (data?.data ?? []).map(transformProduct);
-
-      // Fallback: if the bestSeller filter returned nothing, load generic products
-      if (sellers.length === 0) {
-        const { data: fbData, error: fbError } = await fetchWithRetry(
-          `${API_BASE_URL}/products?limit=4`,
-          controller.signal
-        );
-        if (fbError === "aborted") return;
-        sellers = fbError ? [] : (fbData?.data ?? []).map(transformProduct);
-      }
-
-      setBestSellers(sellers);
-      setBestSellersError(null);
       setBestSellersLoading(false);
     })();
 
@@ -147,7 +144,7 @@ const HomePage = () => {
       setNewInLoading(true);
 
       const { data, error } = await fetchWithRetry(
-        `${API_BASE_URL}/products?sort=newest&limit=6`,
+        `${API_BASE_URL}/products?limit=6`,
         controller.signal
       );
 
@@ -156,7 +153,8 @@ const HomePage = () => {
       if (error) {
         setNewInError(error);
       } else {
-        setNewInProducts((data?.data ?? []).map(transformProduct));
+        const arr = (data?.data ?? []).map(transformProduct);
+        setNewInProducts(arr);
         setNewInError(null);
       }
       setNewInLoading(false);

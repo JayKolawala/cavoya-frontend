@@ -76,8 +76,8 @@ const useCheckoutStore = create((set, get) => ({
         items,
         payment: {
           method: state.paymentMethod,
-          status: paymentInfo ? "paid" : "pending",
-          ...(paymentInfo && { transactionId: paymentInfo.paymentId }),
+          status: "pending", // Always pending initially, confirm after payment succeeds
+          ...(paymentInfo?.razorpayOrderId && { razorpayOrderId: paymentInfo.razorpayOrderId }),
         },
         pricing: {
           subtotal: parseFloat(subtotal.toFixed(2)),
@@ -110,6 +110,29 @@ const useCheckoutStore = create((set, get) => ({
     }));
     useCartStore.getState().clearCart();
     setTimeout(() => useUIStore.getState().showCustomAlert("Order confirmed successfully!"), 0);
+  },
+
+  updateOrderStatus: async (orderId, status, paymentInfo = null) => {
+    try {
+      const updateData = {
+        status,
+        ...(paymentInfo?.razorpayPaymentId && { razorpayPaymentId: paymentInfo.razorpayPaymentId }),
+        ...(paymentInfo?.razorpaySignature && { razorpaySignature: paymentInfo.razorpaySignature }),
+      };
+
+      const response = await apiRequest(`/orders/${orderId}`, {
+        method: "PUT",
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.success) {
+        throw new Error("Failed to update order status");
+      }
+      return response.data;
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      throw error;
+    }
   },
 
   resetCheckout: () => {

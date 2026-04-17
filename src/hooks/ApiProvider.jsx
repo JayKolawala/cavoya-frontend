@@ -46,8 +46,12 @@ export function ApiProvider({ children }) {
             ...options,
         };
 
-        if (options.body instanceof FormData) {
-            delete config.headers['Content-Type'];
+        if (options.body) {
+            if (options.body instanceof FormData) {
+                delete config.headers['Content-Type'];
+            } else if (typeof options.body === 'object') {
+                config.body = JSON.stringify(options.body);
+            }
         }
 
         try {

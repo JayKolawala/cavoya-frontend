@@ -46,6 +46,7 @@ const OrderManager = () => {
     totalAmount: order.pricing.total,
     paymentMethod: order.payment.method,
     paymentStatus: order.payment.status,
+    razorpayPaymentId: order.payment.razorpayPaymentId || order.payment.transactionId || "",
     shippingAddress: {
       street: order.shippingAddress.street,
       city: order.shippingAddress.city,
