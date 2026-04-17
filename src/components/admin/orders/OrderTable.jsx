@@ -99,6 +99,9 @@ const OrderTable = ({
                   Payment
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
+                  Payment ID
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-pink-900 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -149,6 +152,17 @@ const OrderTable = ({
                       type="payment"
                       size="xs"
                     />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-xs text-gray-500 font-mono">
+                      {order.razorpayPaymentId ? (
+                        <span className="text-xs text-gray-400" title={order.razorpayPaymentId}>
+                          {order.razorpayPaymentId.substring(0, 12)}...
+                        </span>
+                      ) : (
+                        <span className="text-gray-300">-</span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center space-x-2">

@@ -9,7 +9,6 @@ import {
   Outlet,
 } from "react-router-dom";
 
-
 import { AdminProvider } from "./contexts/AdminContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import useAuth from "./hooks/useAuth";
@@ -40,6 +39,7 @@ const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const RateOrderPage = lazy(() => import("./pages/RateOrderPage"));
+const OrderSuccessPage = lazy(() => import("./pages/OrderSuccessPage"));
 
 // --- Lazy-loaded Admin Pages ---
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
@@ -74,17 +74,17 @@ const PublicLayout = () => (
 const ProtectedAdminRoute = () => {
   const { isAdminAuthenticated, authLoading } = useAuth();
   if (authLoading) return null; // wait for /me check — prevents redirect flash on refresh
-  return isAdminAuthenticated
-    ? <Outlet />
-    : <Navigate to="/admin/login" replace />;
+  return isAdminAuthenticated ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/admin/login" replace />
+  );
 };
 
 /** Protects user-only routes. Redirects to /login if not authenticated. */
 const ProtectedUserRoute = () => {
   const { isUserAuthenticated } = useAuth();
-  return isUserAuthenticated
-    ? <Outlet />
-    : <Navigate to="/login" replace />;
+  return isUserAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 // ---------------------------------------------------------------------------
@@ -105,9 +105,14 @@ function App() {
               Suspense boundary wraps all lazy routes.
               Swap the fallback for a proper skeleton/spinner as needed.
             */}
-              <Suspense fallback={<div className="flex h-screen items-center justify-center"><LoadingSpinner /></div>}>
+              <Suspense
+                fallback={
+                  <div className="flex h-screen items-center justify-center">
+                    <LoadingSpinner />
+                  </div>
+                }
+              >
                 <Routes>
-
                   {/* ── Standalone pages (no Header / Footer) ── */}
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
@@ -119,7 +124,13 @@ function App() {
                     Layer 2: layout     (AdminLayout with <Outlet />)
                     Layer 3: pages
                 */}
-                  <Route element={<AdminProvider><ProtectedAdminRoute /></AdminProvider>}>
+                  <Route
+                    element={
+                      <AdminProvider>
+                        <ProtectedAdminRoute />
+                      </AdminProvider>
+                    }
+                  >
                     <Route path="/admin" element={<AdminLayout />}>
                       <Route path="dashboard" element={<AdminDashboard />} />
                       <Route path="products" element={<ProductManagement />} />
@@ -140,22 +151,37 @@ function App() {
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="/shipping" element={<ShippingPage />} />
                     <Route path="/returns" element={<ReturnsPage />} />
-                    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-                    <Route path="/terms-and-conditions" element={<TermsPage />} />
-                    <Route path="/refund-and-return-policy" element={<ReturnsPage />} />
-                    <Route path="/rate-order/:orderId" element={<RateOrderPage />} />
+                    <Route
+                      path="/privacy-policy"
+                      element={<PrivacyPolicyPage />}
+                    />
+                    <Route
+                      path="/terms-and-conditions"
+                      element={<TermsPage />}
+                    />
+                    <Route
+                      path="/refund-and-return-policy"
+                      element={<ReturnsPage />}
+                    />
+                    <Route
+                      path="/rate-order/:orderId"
+                      element={<RateOrderPage />}
+                    />
 
                     {/* Protected user routes — uncomment ProtectedUserRoute
                       wrapper once auth is fully wired */}
                     {/* <Route element={<ProtectedUserRoute />}> */}
                     <Route path="/checkout" element={<CheckoutPage />} />
                     <Route path="/payment" element={<PaymentPage />} />
+                    <Route
+                      path="/order-success"
+                      element={<OrderSuccessPage />}
+                    />
                     {/* </Route> */}
 
                     {/* 404 — keep LAST inside PublicLayout so it gets the shell */}
                     <Route path="*" element={<NotFoundPage />} />
                   </Route>
-
                 </Routes>
               </Suspense>
 

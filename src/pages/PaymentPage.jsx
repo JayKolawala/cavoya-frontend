@@ -7,6 +7,7 @@ import {
   calculateOrderPricing,
   createRazorpayOrder,
 } from "../utils/paymentService";
+import { API_BASE_URL } from "../utils/apiHelpers";
 import { Lock, AlertCircle } from "lucide-react";
 
 const PaymentPage = () => {
@@ -47,11 +48,48 @@ const PaymentPage = () => {
       const pricing = calculateOrderPricing(getTotalPrice());
       const amountInPaise = Math.round(pricing.total * 100);
 
-      // Step 1: Create Razorpay order via backend API
+      // Prepare order data (will be sent to webhook via notes)
+      const orderNotes = {
+        customer: {
+          name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
+          email: shippingInfo.email,
+          phone: shippingInfo.phone,
+        },
+        shippingAddress: {
+          street: shippingInfo.address2
+            ? `${shippingInfo.address1}, ${shippingInfo.address2}`
+            : shippingInfo.address1,
+          city: shippingInfo.city,
+          state: shippingInfo.state,
+          postalCode: shippingInfo.zipCode,
+          country: shippingInfo.country || "India",
+        },
+        items: cartItems.map((item) => ({
+          productId: item.productId,
+          name: item.name,
+          image: item.image,
+          price: item.price,
+          quantity: item.quantity,
+          color: item.color || "Default",
+          size: item.size || "Default",
+          subtotal: item.price * item.quantity,
+        })),
+        pricing: {
+          subtotal: parseFloat(pricing.subtotal.toFixed(2)),
+          shippingCost: parseFloat(pricing.shippingCost.toFixed(2)),
+          tax: parseFloat(pricing.tax.toFixed(2)),
+          discount: 0,
+          total: parseFloat(pricing.total.toFixed(2)),
+        },
+        paymentMethod: paymentMethod,
+      };
+
+      // Step 1: Create Razorpay order with order data in notes
       const razorpayOrderData = await createRazorpayOrder({
         amount: amountInPaise,
         currency: "INR",
         receipt: `receipt_${Date.now()}`,
+        notes: orderNotes,
       });
 
       const orderId =
@@ -63,13 +101,10 @@ const PaymentPage = () => {
         throw new Error("Failed to retrieve Razorpay order ID from backend response");
       }
 
-      // Step 2: Create order in database with razorpayOrderId BEFORE payment
-      const orderData = await createOrder({
-        razorpayOrderId: orderId,
-      });
-      pendingOrderData.current = orderData;
+      // Store order data for fallback (if webhook doesn't work)
+      sessionStorage.setItem('pendingOrderData', JSON.stringify(orderNotes));
 
-      // Step 3: Open Razorpay checkout
+      // Step 2: Open Razorpay checkout (order will be created via webhook after payment)
       await processRazorpayPayment({
         orderId: orderId,
         amount: amountInPaise,
@@ -77,17 +112,68 @@ const PaymentPage = () => {
         customerName: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
         customerEmail: shippingInfo.email,
         customerPhone: shippingInfo.phone,
-        onSuccess: (paymentResponse) => {
-          // Payment successful - NO API CALL NEEDED HERE
-          // Order will be confirmed automatically via webhook
+        onSuccess: async (paymentResponse) => {
+          // Payment successful 
           setStatus("success");
-          confirmOrder(orderData.orderNumber);
 
-          setTimeout(() => {
-            navigate("/order-success");
-          }, 1500);
+          const razorpayOrderId = paymentResponse.razorpay_order_id;
+          const razorpayPaymentId = paymentResponse.razorpay_payment_id;
+
+          // First, poll for existing order (max 5 seconds)
+          let orderCreated = false;
+          let orderConfirmData = null;
+          
+          for (let i = 0; i < 5; i++) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            try {
+              const res = await fetch(`${API_BASE_URL}/orders/check/${razorpayOrderId}`);
+              const data = await res.json();
+              if (data.success && data.data) {
+                orderCreated = true;
+                orderConfirmData = data.data;
+                break;
+              }
+            } catch (e) {}
+          }
+
+          // If not found via polling, use fallback endpoint to create order
+          if (!orderCreated) {
+            try {
+              // Get stored order data from sessionStorage
+              const storedOrderData = sessionStorage.getItem('pendingOrderData');
+              const orderPayload = storedOrderData ? JSON.parse(storedOrderData) : null;
+
+              const response = await fetch(`${API_BASE_URL}/payment/confirm`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpayOrderId,
+                  razorpayPaymentId,
+                  customer: orderPayload?.customer,
+                  shippingAddress: orderPayload?.shippingAddress,
+                  items: orderPayload?.items,
+                  pricing: orderPayload?.pricing,
+                  paymentMethod: orderPayload?.paymentMethod,
+                }),
+              });
+              const confirmData = await response.json();
+              if (confirmData.success && confirmData.data) {
+                orderConfirmData = confirmData.data;
+              }
+            } catch (e) {
+              console.error('Failed to confirm order:', e);
+            }
+          }
+
+          // Clear cart and session, then navigate
+          useCartStore.getState().clearCart();
+          sessionStorage.removeItem('pendingOrderData');
+          useCheckoutStore.getState().confirmOrder(orderConfirmData?.orderNumber);
+          
+          navigate("/order-success");
         },
         onFailure: (err) => {
+          // Payment failed - just show error, no order created
           setStatus("error");
           setIsProcessing(false);
           setError(err.message || "Payment failed. Please try again.");
