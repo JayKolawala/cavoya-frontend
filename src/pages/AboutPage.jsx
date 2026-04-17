@@ -63,7 +63,7 @@ const AboutPage = () => {
         name: "RIYA CHEVLI",
         role: "Founder",
         description:
-          "Riya chevli is the creative force behind the brand, bringing a sharp eye for design, colour, and contemporary styling. Her passion for textiles and aesthetics shapes collections that feel fresh, vibrant, and emotionally connected to the modern woman.",
+          "Riya chevli is the creative force behind the brand, bringing a sharp eye for design, colour and contemporary styling. Her passion for textiles and aesthetics shapes collections that feel fresh, vibrant, and emotionally connected to the modern woman.",
         image: "/riya_chevli.JPEG",
         whatsapp: "https://wa.me/917383096696",
         email: "support@cavoya.in",
