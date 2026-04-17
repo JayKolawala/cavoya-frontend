@@ -21,7 +21,7 @@ const getAuthToken = () => {
  * @param {string} orderData.receipt - Receipt ID
  * @returns {Promise<Object>} Razorpay order details
  */
-export const createRazorpayOrder = async ({ amount, currency = 'INR', receipt }) => {
+export const createRazorpayOrder = async ({ amount, currency = 'INR', receipt, notes }) => {
     try {
         const token = getAuthToken();
 
@@ -31,7 +31,7 @@ export const createRazorpayOrder = async ({ amount, currency = 'INR', receipt })
                 'Content-Type': 'application/json',
                 ...(token && { 'Authorization': `Bearer ${token}` }),
             },
-            body: JSON.stringify({ amount, currency, receipt }),
+            body: JSON.stringify({ amount, currency, receipt, notes }),
         });
 
         const data = await response.json();
