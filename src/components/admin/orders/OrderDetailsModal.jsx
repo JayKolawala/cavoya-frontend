@@ -7,6 +7,17 @@ import StatusBadge from "../shared/StatusBadge";
 import { formatDate, formatCurrency } from "../../../utils/formatters";
 import CavoyaLogo from "../../../assets/Cavoya_Logo_Pink.PNG";
 
+const formatPaymentMethod = (method) => {
+  switch(method) {
+    case 'card': return 'Card';
+    case 'upi': return 'UPI';
+    case 'netbanking': return 'Net Banking';
+    case 'wallet': return 'Wallet';
+    case 'cod': return 'Cash on Delivery';
+    default: return method || 'Unknown';
+  }
+};
+
 const loadScript = (src) =>
   new Promise((resolve, reject) => {
     if (document.querySelector(`script[src="${src}"]`)) return resolve();
@@ -238,7 +249,6 @@ const generateInvoicePDF = async (
   ]);
   curY += cardH + 4;
 
-  // Row 2
   const addr = order.shippingAddress;
   drawCard(ML, curY, "Shipping Address", [
     { label: "Street", value: addr.street },
@@ -246,7 +256,7 @@ const generateInvoicePDF = async (
     { label: "Country", value: addr.country },
   ]);
   drawCard(col2X, curY, "Payment", [
-    { label: "Method", value: order.paymentMethod },
+    { label: "Method", value: formatPaymentMethod(order.paymentMethod) },
     { label: "Status", value: order.paymentStatus, isBadge: true },
     { label: "Amount", value: pdfCurrency(order.totalAmount) },
   ]);
@@ -543,7 +553,7 @@ const OrderDetailsModal = ({ order, onClose }) => {
               </h3>
               <div className="space-y-2">
                 <p>
-                  <strong>Method:</strong> {order.paymentMethod}
+                  <strong>Method:</strong> {formatPaymentMethod(order.paymentMethod)}
                 </p>
                 <p>
                   <strong>Status:</strong>
@@ -557,6 +567,14 @@ const OrderDetailsModal = ({ order, onClose }) => {
                   <strong>Total Amount:</strong>{" "}
                   {formatCurrency(order.totalAmount)}
                 </p>
+                {order.razorpayPaymentId && (
+                  <p className="break-all">
+                    <strong>Payment ID:</strong>{" "}
+                    <span className="font-mono text-xs text-gray-500">
+                      {order.razorpayPaymentId}
+                    </span>
+                  </p>
+                )}
               </div>
             </div>
           </div>

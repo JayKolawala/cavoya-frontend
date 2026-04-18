@@ -94,12 +94,12 @@ const CartPage = () => {
             </p>
           </div>
 
-          <div className="mb-8">
+          {/* <div className="mb-8">
             <AlertMessage
               type="error"
               message="Warning: Our payment gateway is currently under development. We recommend not making real transactions at this time."
             />
-          </div>
+          </div> */}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}

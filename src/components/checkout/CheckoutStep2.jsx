@@ -90,9 +90,9 @@ const CheckoutStep2 = ({ onNext, onBack, total }) => {
           {shippingInfo.address1}
           <br />
           {shippingInfo.address2 && `${shippingInfo.address2}\n`}
-          {shippingInfo.city}, {shippingInfo.state} {shippingInfo.zipCode}
+          {shippingInfo.city}, {shippingInfo.state}, {shippingInfo.country}
           <br />
-          {shippingInfo.country}
+          {shippingInfo.zipCode}
           <br />
           Phone: {shippingInfo.phone}
           <br />
@@ -101,7 +101,7 @@ const CheckoutStep2 = ({ onNext, onBack, total }) => {
       </div>
 
       {/* Payment Method */}
-      <div className="bg-gray-50 rounded-lg p-6 mb-6">
+      {/* <div className="bg-gray-50 rounded-lg p-6 mb-6">
         <h3 className="text-lg font-medium mb-4 text-gray-900">
           Payment Method
         </h3>
@@ -113,7 +113,7 @@ const CheckoutStep2 = ({ onNext, onBack, total }) => {
         <p className="text-sm text-gray-500 mt-2">
           You will be redirected to a secure payment page
         </p>
-      </div>
+      </div> */}
 
       {/* Trust Badges */}
       <div className="grid grid-cols-3 gap-4 text-center text-sm text-gray-600 mb-6">

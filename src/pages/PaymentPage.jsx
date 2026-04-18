@@ -9,7 +9,6 @@ import {
 } from "../utils/paymentService";
 import { API_BASE_URL } from "../utils/apiHelpers";
 import { Lock, AlertCircle } from "lucide-react";
-import AlertMessage from "../components/AlertMessage";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -134,7 +133,7 @@ const PaymentPage = () => {
                 orderConfirmData = data.data;
                 break;
               }
-            } catch (e) {}
+            } catch (e) { }
           }
 
           // If not found via polling, use fallback endpoint to create order
@@ -197,71 +196,71 @@ const PaymentPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full mb-4">
-        <AlertMessage
-          type="error"
-          message="Warning: Our payment gateway is currently under development. We recommend not making real transactions at this time."
-        />
-      </div>
-      <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
-        {status === "processing" || status === "initializing" ? (
-          <div className="py-8">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-700 mx-auto mb-6"></div>
-            <h2 className="text-2xl font-light mb-2 text-gray-900">
-              Processing Payment
-            </h2>
-            <p className="text-gray-600">Please do not close this window...</p>
-            <div className="mt-6 flex items-center justify-center text-sm text-gray-500">
-              <Lock className="h-4 w-4 mr-1" />
-              Secure Payment via Razorpay
-            </div>
-          </div>
-        ) : status === "success" ? (
-          <div className="py-8">
-            <div className="rounded-full h-16 w-16 bg-gray-100 flex items-center justify-center mx-auto mb-6">
-              <svg
-                className="h-8 w-8 text-gray-700"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-light mb-2 text-gray-900">
-              Payment Successful!
-            </h2>
-            <p className="text-gray-600">
-              Redirecting to order confirmation...
-            </p>
-          </div>
-        ) : (
-          <div className="py-4">
-            <div className="rounded-full h-16 w-16 bg-gray-100 flex items-center justify-center mx-auto mb-6">
-              <AlertCircle className="h-8 w-8 text-gray-700" />
-            </div>
-            <h2 className="text-2xl font-light mb-2 text-gray-900">
-              Payment Failed
-            </h2>
-            <p className="text-gray-600 mb-6">{error}</p>
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-gray-50 to-white">
+      {/* Floating Background Elements */}
+      <div className="absolute top-20 right-10 w-96 h-96 bg-gray-200/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-40 left-10 w-80 h-80 bg-gray-300/20 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="flex flex-col space-y-3">
-              <button
-                onClick={handleCancel}
-                className="w-full px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Return to Checkout
-              </button>
+      <section className="relative container mx-auto px-4 pt-28 pb-20 flex flex-col items-center">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-8 max-w-md w-full text-center">
+          {status === "processing" || status === "initializing" ? (
+            <div className="py-8">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-700 mx-auto mb-6"></div>
+              <h2 className="text-2xl font-light mb-2 text-gray-900">
+                Processing Payment
+              </h2>
+              <p className="text-gray-600">Please do not close this window...</p>
+              <div className="mt-6 flex items-center justify-center text-sm text-gray-500">
+                <Lock className="h-4 w-4 mr-1" />
+                Secure Payment via Razorpay
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          ) : status === "success" ? (
+            <div className="py-8">
+              <div className="rounded-full h-16 w-16 bg-gray-100 flex items-center justify-center mx-auto mb-6">
+                <svg
+                  className="h-8 w-8 text-gray-700"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-light mb-2 text-gray-900">
+                Payment Successful!
+              </h2>
+              <p className="text-gray-600">
+                Redirecting to order confirmation...
+              </p>
+            </div>
+          ) : (
+            <div className="py-4">
+              <div className="rounded-full h-16 w-16 bg-gray-100 flex items-center justify-center mx-auto mb-6">
+                <AlertCircle className="h-8 w-8 text-gray-700" />
+              </div>
+              <h2 className="text-2xl font-light mb-2 text-gray-900">
+                Payment Failed
+              </h2>
+              <p className="text-gray-600 mb-6">{error}</p>
+
+              <div className="flex flex-col space-y-3">
+                <button
+                  onClick={handleCancel}
+                  className="w-full px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Return to Checkout
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 };

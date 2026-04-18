@@ -144,8 +144,13 @@ const OrderTable = ({
                     <StatusBadge status={order.status} type="order" />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-xs text-gray-600 mb-1">
-                      {order.paymentMethod}
+                    <div className="text-xs text-gray-600 mb-1 capitalize">
+                      {order.paymentMethod === 'card' ? 'Card' : 
+                       order.paymentMethod === 'upi' ? 'UPI' :
+                       order.paymentMethod === 'netbanking' ? 'Net Banking' :
+                       order.paymentMethod === 'wallet' ? 'Wallet' :
+                       order.paymentMethod === 'cod' ? 'COD' :
+                       order.paymentMethod}
                     </div>
                     <StatusBadge
                       status={order.paymentStatus}

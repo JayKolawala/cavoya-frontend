@@ -7,7 +7,6 @@ import CheckoutStep3 from "../components/checkout/CheckoutStep3";
 import CheckoutStep1 from "../components/checkout/CheckoutStep1";
 import ScrollToTop from "../components/ScrollToTop";
 import { ShoppingCart, Sparkles, ShoppingBag } from "lucide-react";
-import AlertMessage from "../components/AlertMessage";
 
 const CheckoutPage = () => {
   const { cartItems, getTotalPrice } = useCartStore();
@@ -94,12 +93,12 @@ const CheckoutPage = () => {
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto mb-8">
+          {/* <div className="max-w-4xl mx-auto mb-8">
             <AlertMessage
               type="error"
               message="Warning: Our payment gateway is currently under development. We recommend not making real transactions at this time."
             />
-          </div>
+          </div> */}
 
           {/* Progress Steps */}
           <div className="max-w-4xl mx-auto mb-12">
@@ -107,11 +106,10 @@ const CheckoutPage = () => {
               {[1, 2, 3].map((step) => (
                 <div key={step} className="flex flex-col items-center flex-1">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                      currentStep >= step
+                    className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${currentStep >= step
                         ? "bg-black border-transparent text-white shadow-lg"
                         : "border-gray-300 text-gray-400 bg-white"
-                    }`}
+                      }`}
                   >
                     <span className="font-semibold">{step}</span>
                   </div>
