@@ -7,6 +7,7 @@ import CheckoutStep3 from "../components/checkout/CheckoutStep3";
 import CheckoutStep1 from "../components/checkout/CheckoutStep1";
 import ScrollToTop from "../components/ScrollToTop";
 import { ShoppingCart, Sparkles, ShoppingBag } from "lucide-react";
+import AlertMessage from "../components/AlertMessage";
 
 const CheckoutPage = () => {
   const { cartItems, getTotalPrice } = useCartStore();
@@ -91,6 +92,13 @@ const CheckoutPage = () => {
             <p className="text-gray-600 text-lg">
               Just a few steps away from your purchase
             </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto mb-8">
+            <AlertMessage
+              type="error"
+              message="Warning: Our payment gateway is currently under development. We recommend not making real transactions at this time."
+            />
           </div>
 
           {/* Progress Steps */}

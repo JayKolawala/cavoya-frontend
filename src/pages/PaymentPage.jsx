@@ -9,16 +9,13 @@ import {
 } from "../utils/paymentService";
 import { API_BASE_URL } from "../utils/apiHelpers";
 import { Lock, AlertCircle } from "lucide-react";
+import AlertMessage from "../components/AlertMessage";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
   const { cartItems, getTotalPrice } = useCartStore();
-  const {
-    shippingInfo,
-    paymentMethod,
-    createOrder,
-    confirmOrder,
-  } = useCheckoutStore();
+  const { shippingInfo, paymentMethod, createOrder, confirmOrder } =
+    useCheckoutStore();
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
@@ -98,11 +95,13 @@ const PaymentPage = () => {
         razorpayOrderData.data?.id;
 
       if (!orderId) {
-        throw new Error("Failed to retrieve Razorpay order ID from backend response");
+        throw new Error(
+          "Failed to retrieve Razorpay order ID from backend response",
+        );
       }
 
       // Store order data for fallback (if webhook doesn't work)
-      sessionStorage.setItem('pendingOrderData', JSON.stringify(orderNotes));
+      sessionStorage.setItem("pendingOrderData", JSON.stringify(orderNotes));
 
       // Step 2: Open Razorpay checkout (order will be created via webhook after payment)
       await processRazorpayPayment({
@@ -113,7 +112,7 @@ const PaymentPage = () => {
         customerEmail: shippingInfo.email,
         customerPhone: shippingInfo.phone,
         onSuccess: async (paymentResponse) => {
-          // Payment successful 
+          // Payment successful
           setStatus("success");
 
           const razorpayOrderId = paymentResponse.razorpay_order_id;
@@ -122,11 +121,13 @@ const PaymentPage = () => {
           // First, poll for existing order (max 5 seconds)
           let orderCreated = false;
           let orderConfirmData = null;
-          
+
           for (let i = 0; i < 5; i++) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             try {
-              const res = await fetch(`${API_BASE_URL}/orders/check/${razorpayOrderId}`);
+              const res = await fetch(
+                `${API_BASE_URL}/orders/check/${razorpayOrderId}`,
+              );
               const data = await res.json();
               if (data.success && data.data) {
                 orderCreated = true;
@@ -140,12 +141,15 @@ const PaymentPage = () => {
           if (!orderCreated) {
             try {
               // Get stored order data from sessionStorage
-              const storedOrderData = sessionStorage.getItem('pendingOrderData');
-              const orderPayload = storedOrderData ? JSON.parse(storedOrderData) : null;
+              const storedOrderData =
+                sessionStorage.getItem("pendingOrderData");
+              const orderPayload = storedOrderData
+                ? JSON.parse(storedOrderData)
+                : null;
 
               const response = await fetch(`${API_BASE_URL}/payment/confirm`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   razorpayOrderId,
                   razorpayPaymentId,
@@ -161,15 +165,17 @@ const PaymentPage = () => {
                 orderConfirmData = confirmData.data;
               }
             } catch (e) {
-              console.error('Failed to confirm order:', e);
+              console.error("Failed to confirm order:", e);
             }
           }
 
           // Clear cart and session, then navigate
           useCartStore.getState().clearCart();
-          sessionStorage.removeItem('pendingOrderData');
-          useCheckoutStore.getState().confirmOrder(orderConfirmData?.orderNumber);
-          
+          sessionStorage.removeItem("pendingOrderData");
+          useCheckoutStore
+            .getState()
+            .confirmOrder(orderConfirmData?.orderNumber);
+
           navigate("/order-success");
         },
         onFailure: (err) => {
@@ -192,6 +198,12 @@ const PaymentPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+      <div className="max-w-md w-full mb-4">
+        <AlertMessage
+          type="error"
+          message="Warning: Our payment gateway is currently under development. We recommend not making real transactions at this time."
+        />
+      </div>
       <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
         {status === "processing" || status === "initializing" ? (
           <div className="py-8">
