@@ -3,7 +3,7 @@ import { AlertTriangle, Info, CheckCircle, XCircle } from "lucide-react";
 
 /**
  * A reusable component to display inline alerts/messages.
- * 
+ *
  * @param {string} type - "warning", "error", "success", or "info"
  * @param {string} message - The message to display
  * @param {string} className - Optional additional CSS classes
@@ -41,7 +41,7 @@ const AlertMessage = ({ type = "info", message, className = "" }) => {
       className={`flex items-start gap-3 p-4 border rounded-xl shadow-sm ${containerClass} ${className}`}
     >
       <Icon className={`w-6 h-6 flex-shrink-0 ${iconClass}`} />
-      <div className="flex-1 text-sm font-medium leading-tight">
+      <div className="flex-1 text-sm font-medium leading-tight mt-1">
         {message}
       </div>
     </div>
