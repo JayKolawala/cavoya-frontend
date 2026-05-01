@@ -159,10 +159,7 @@ function App() {
                       path="/terms-and-conditions"
                       element={<TermsPage />}
                     />
-                    <Route
-                      path="/refund-and-return-policy"
-                      element={<ReturnsPage />}
-                    />
+
                     <Route
                       path="/rate-order/:orderId"
                       element={<RateOrderPage />}

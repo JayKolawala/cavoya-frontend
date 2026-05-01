@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { isVideo } from "../utils/mediaHelpers";
-import AlertMessage from "../components/AlertMessage";
 
 const CartPage = () => {
   const { cartItems, updateCartQuantity, removeFromCart, getTotalPrice } =
@@ -93,13 +92,6 @@ const CartPage = () => {
               ready for checkout
             </p>
           </div>
-
-          {/* <div className="mb-8">
-            <AlertMessage
-              type="error"
-              message="Warning: Our payment gateway is currently under development. We recommend not making real transactions at this time."
-            />
-          </div> */}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}

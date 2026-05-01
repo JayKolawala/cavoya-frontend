@@ -355,7 +355,7 @@ const HomePage = () => {
       </section>
 
       {/* ── Video break ── */}
-      <section className="w-full bg-black">
+      {/* <section className="w-full bg-black">
         <div className="relative w-full min-h-[70vh] md:min-h-[80vh] overflow-hidden bg-gradient-to-br from-black via-gray-900 to-gray-800">
           {!videoError && (
             <video
@@ -381,7 +381,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ── SHOP BY PRINTS ── */}
       <section className="relative py-16 bg-gray-50">

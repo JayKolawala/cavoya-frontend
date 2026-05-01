@@ -134,12 +134,7 @@ const Footer = () => {
             >
               Terms & Conditions
             </button>
-            <button
-              onClick={() => navigate("/refund")}
-              className="text-gray-400 hover:text-white transition-colors text-sm"
-            >
-              Refund Policy
-            </button>
+
           </div>
         </div>
         <div className="text-center mt-4 pt-4 border-t border-gray-800">
