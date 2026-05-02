@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { X, Ruler, Play, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, Ruler, Play, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 
 // ─── Size Chart Data ───────────────────────────────────────────────────────────
 const SIZE_CHART = {
@@ -76,6 +76,180 @@ const SizeChartModal = ({ onClose }) => {
   );
 };
 
+// ─── Image Zoom Modal ─────────────────────────────────────────────────────────
+const ImageZoomModal = ({ media, onClose }) => {
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef(null);
+  const containerRef = useRef(null);
+  const imageRef = useRef(null);
+
+  const MIN_SCALE = 1;
+  const MAX_SCALE = 5;
+
+  const clampPosition = (pos, currentScale) => {
+    const container = containerRef.current;
+    if (!container) return pos;
+    const maxX = Math.max(0, (container.clientWidth * (currentScale - 1)) / 2);
+    const maxY = Math.max(0, (container.clientHeight * (currentScale - 1)) / 2);
+    return {
+      x: Math.min(maxX, Math.max(-maxX, pos.x)),
+      y: Math.min(maxY, Math.max(-maxY, pos.y)),
+    };
+  };
+
+  const handleWheel = (e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.2 : 0.2;
+    setScale((prev) => {
+      const next = Math.min(MAX_SCALE, Math.max(MIN_SCALE, prev + delta));
+      if (next === MIN_SCALE) setPosition({ x: 0, y: 0 });
+      return next;
+    });
+  };
+
+  const handleMouseDown = (e) => {
+    if (scale <= 1) return;
+    e.preventDefault();
+    setIsDragging(true);
+    dragStart.current = { x: e.clientX - position.x, y: e.clientY - position.y };
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging || !dragStart.current) return;
+    const newPos = { x: e.clientX - dragStart.current.x, y: e.clientY - dragStart.current.y };
+    setPosition(clampPosition(newPos, scale));
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    dragStart.current = null;
+  };
+
+  const zoom = (dir) => {
+    setScale((prev) => {
+      const next = Math.min(MAX_SCALE, Math.max(MIN_SCALE, prev + (dir === "in" ? 0.5 : -0.5)));
+      if (next === MIN_SCALE) setPosition({ x: 0, y: 0 });
+      return next;
+    });
+  };
+
+  const handleBackdrop = (e) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
+  // Lock body scroll while modal is open
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  // Close on Escape key
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  // Attach wheel listener as { passive: false } so preventDefault() works
+  useEffect(() => {
+    const el = imageRef.current;
+    if (!el) return;
+    const onWheel = (e) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.2 : 0.2;
+      setScale((prev) => {
+        const next = Math.min(MAX_SCALE, Math.max(MIN_SCALE, prev + delta));
+        if (next === MIN_SCALE) setPosition({ x: 0, y: 0 });
+        return next;
+      });
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+      onClick={handleBackdrop}
+    >
+      {/* Close button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all"
+        aria-label="Close"
+      >
+        <X className="h-6 w-6" />
+      </button>
+
+      {/* Zoom controls */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-full px-5 py-2.5 shadow-lg">
+        <button
+          onClick={() => zoom("out")}
+          disabled={scale <= MIN_SCALE}
+          className="p-1.5 rounded-full text-white hover:bg-white/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          aria-label="Zoom out"
+        >
+          <ZoomOut className="h-5 w-5" />
+        </button>
+        <span className="text-white text-sm font-medium min-w-[3rem] text-center">
+          {Math.round(scale * 100)}%
+        </span>
+        <button
+          onClick={() => zoom("in")}
+          disabled={scale >= MAX_SCALE}
+          className="p-1.5 rounded-full text-white hover:bg-white/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          aria-label="Zoom in"
+        >
+          <ZoomIn className="h-5 w-5" />
+        </button>
+        {scale > 1 && (
+          <button
+            onClick={() => { setScale(1); setPosition({ x: 0, y: 0 }); }}
+            className="text-white/70 hover:text-white text-xs underline ml-1 transition-colors"
+          >
+            Reset
+          </button>
+        )}
+      </div>
+
+      {/* Image container */}
+      <div
+        ref={containerRef}
+        className="w-full h-full flex items-center justify-center overflow-hidden"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+        style={{ cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-in" }}
+      >
+        <img
+          ref={imageRef}
+          src={media.url}
+          alt={media.alt}
+          draggable={false}
+          style={{
+            transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
+            transition: isDragging ? "none" : "transform 0.2s ease",
+            maxWidth: "90vw",
+            maxHeight: "90vh",
+            objectFit: "contain",
+            userSelect: "none",
+          }}
+        />
+      </div>
+
+      {/* Hint */}
+      <p className="absolute top-4 left-1/2 -translate-x-1/2 text-white/50 text-xs pointer-events-none">
+        Scroll to zoom · Drag to pan · Press Esc to close
+      </p>
+    </div>
+  );
+};
+
 import useCartStore from "../store/useCartStore";
 import useProductStore from "../store/useProductStore";
 import useUIStore from "../store/useUIStore";
@@ -102,6 +276,7 @@ const ProductPage = () => {
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showSizeChart, setShowSizeChart] = useState(false);
+  const [showImageZoom, setShowImageZoom] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const thumbRef = useRef(null);
@@ -254,6 +429,13 @@ const ProductPage = () => {
         <SizeChartModal onClose={() => setShowSizeChart(false)} />
       )}
 
+      {showImageZoom && productMedia[activeMediaIndex]?.type !== "video" && (
+        <ImageZoomModal
+          media={productMedia[activeMediaIndex]}
+          onClose={() => setShowImageZoom(false)}
+        />
+      )}
+
       <section className="container mx-auto px-4 pt-24 pb-16">
         {/* ── Two-column layout ── */}
         <div className="flex flex-col lg:flex-row gap-12">
@@ -278,7 +460,7 @@ const ProductPage = () => {
                 />
               )}
             </div> */}
-            <div className="w-full h-[80vh] lg:h-screen rounded-2xl overflow-hidden mb-4 shadow-lg">
+            <div className="w-full h-[80vh] lg:h-screen rounded-2xl overflow-hidden mb-4 shadow-lg relative group">
               {productMedia[activeMediaIndex].type === "video" ? (
                 <video
                   src={productMedia[activeMediaIndex].url}
@@ -289,11 +471,22 @@ const ProductPage = () => {
                   loop
                 />
               ) : (
-                <img
-                  src={productMedia[activeMediaIndex].url}
-                  alt={productMedia[activeMediaIndex].alt}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                />
+                <>
+                  <img
+                    src={productMedia[activeMediaIndex].url}
+                    alt={productMedia[activeMediaIndex].alt}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-zoom-in"
+                    onClick={() => setShowImageZoom(true)}
+                  />
+                  {/* Zoom hint overlay */}
+                  <div
+                    onClick={() => setShowImageZoom(true)}
+                    className="absolute bottom-3 right-3 bg-black/40 backdrop-blur-sm text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+                    aria-label="Zoom image"
+                  >
+                    <Maximize2 className="h-4 w-4" />
+                  </div>
+                </>
               )}
             </div>
             {/* Horizontal thumbnail strip with scroll arrows */}
