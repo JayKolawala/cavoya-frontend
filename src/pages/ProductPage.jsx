@@ -727,24 +727,50 @@ const ProductPage = () => {
               )}
             </div>
 
-            {/* Shipping & Returns — always visible */}
+            {/* Additional Information — always visible */}
             <hr className="border-gray-200 my-6" />
-            <div className="space-y-2 text-sm">
+            <div className="space-y-4 text-sm">
               <h3 className="text-lg font-semibold text-gray-900">Additional Information</h3>
+
+              {/* Print & Placement Disclaimer */}
               <div>
-                <p className="font-semibold text-gray-900">Notes :</p>
-                <p className="text-gray-600">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">Delivery  :</p>
-                <p className="text-gray-600">made to order takes 2 weeks / 10-12 days , excluding the weekend and festival holidays
-                  .</p>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">Care :</p>
-                <p className="text-gray-600">Dry clean only .</p>
+                <p className="font-semibold text-gray-900">Print &amp; Print Placement Disclaimer</p>
+                <p className="text-gray-600">Print &amp; Print Texture place might vary, ensuring each piece has it's own unique look.</p>
               </div>
 
+              {/* Colour Disclaimer */}
+              <div>
+                <p className="font-semibold text-gray-900">Colour Disclaimer</p>
+                <p className="text-gray-600">Please note that there may also be slight differences between the colours shown in photos and the actual product.</p>
+              </div>
+
+              {/* Customisation Disclaimer */}
+              <div>
+                <p className="font-semibold text-gray-900">Customisation Disclaimer</p>
+                <p className="text-gray-600">We do not offer customizations in sizes or styles, nor do we provide alterations in measurements or lengths. Our pieces are designed to maintain their original fit and silhouette as intended.</p>
+              </div>
+
+              {/* Composition */}
+              <div>
+                <p className="font-semibold text-gray-900">Composition</p>
+                <p className="text-gray-600">100% Polyester</p>
+              </div>
+
+              {/* Delivery */}
+              <div>
+                <p className="font-semibold text-gray-900">Delivery</p>
+                <p className="text-gray-600">Made to order. Takes 2–3 weeks, excluding the weekend and festival holidays.</p>
+              </div>
+
+              {/* Description / Material Guide */}
+              <div>
+                <p className="font-semibold text-gray-900">Description</p>
+                <ul className="text-gray-600 space-y-1 list-none mt-1">
+                  <li><span className="font-medium text-gray-800">Material (Lycra)</span> — Stretchable body-contouring fabric</li>
+                  <li><span className="font-medium text-gray-800">Linen</span> — Breathable linen-look fabric</li>
+                  <li><span className="font-medium text-gray-800">Satin</span> — Soft satin-feel fabric</li>
+                </ul>
+              </div>
             </div>
 
           </div>
