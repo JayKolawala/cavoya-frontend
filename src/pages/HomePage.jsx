@@ -171,7 +171,15 @@ const HomePage = () => {
 
   const handleNavigateToProducts = () => navigate("/products");
 
-  const handlePrintClick = (printId) => navigate(`/products?printId=${printId}`);
+  const handlePrintClick = (print) => {
+    const printId = print._id || print.id;
+    const collectionId = print.collection?._id || print.collection;
+    if (collectionId) {
+      navigate(`/products?collectionId=${collectionId}&printId=${printId}`);
+    } else {
+      navigate(`/products?printId=${printId}`);
+    }
+  };
 
   const handleQuickAdd = (e, product) => {
     e.stopPropagation();
@@ -400,7 +408,7 @@ const HomePage = () => {
                 <div
                   key={print._id || print.id}
                   className="group cursor-pointer"
-                  onClick={() => handlePrintClick(print._id || print.id)}
+                  onClick={() => handlePrintClick(print)}
                 >
                   <div className="aspect-square bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 mb-3 overflow-hidden">
                     <img

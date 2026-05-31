@@ -131,6 +131,12 @@ const ProductsPage = () => {
       setSelectedCategory("all");
       setSelectedNewArrivals(false);
       resetAndFetchProducts({ collection: resolvedCollectionId, printId: printId || printName });
+    } else if (printId || printName) {
+      setSelectedCollection(null);
+      setSelectedPrint(printId || printName);
+      setSelectedCategory("all");
+      setSelectedNewArrivals(false);
+      resetAndFetchProducts({ collection: null, printId: printId || printName });
     } else if (resolvedCollectionId) {
       setSelectedCollection(resolvedCollectionId);
       setSelectedPrint(null);
