@@ -78,25 +78,17 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Header Section */}
-      <div className="relative bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white pb-20 pt-32 px-4 overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-80 h-80 bg-gray-400/10 rounded-full blur-3xl animate-pulse delay-700"></div>
-
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/30"></div>
-
+      <div className="relative text-gray-900 pb-20 pt-32 px-4 text-center bg-gray-50 border-b border-gray-200">
         {/* Header Content */}
         <div
           className="relative z-10 container mx-auto text-center"
           data-aos="fade-down"
         >
-
-          <h1 className="text-4xl md:text-6xl font-extralight tracking-wide mb-4">
+          <h1 className="text-4xl md:text-6xl font-extralight tracking-wide mb-4 text-gray-900">
             {aboutData.header.title}
           </h1>
 
-          <p className="text-lg md:text-xl font-light text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl font-light text-gray-600 max-w-2xl mx-auto">
             {aboutData.header.tagline}
           </p>
         </div>
@@ -205,7 +197,8 @@ const AboutPage = () => {
                       href={founder.whatsapp}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center gap-2 px-6 py-3 bg-[#25D366] text-white rounded-xl hover:bg-[#1ebe5d] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                      role="button"
+                      className="group flex items-center gap-2 px-6 py-3 bg-[#25D366] text-white rounded-none hover:bg-[#1ebe5d] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                     >
                       {/* WhatsApp icon */}
                       <svg
@@ -221,7 +214,8 @@ const AboutPage = () => {
                     </a>
                     <a
                       href={`mailto:${founder.email}`}
-                      className="group flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                      role="button"
+                      className="group flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-none hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                     >
                       <Mail className="w-5 h-5" />
                       <span className="font-medium">Email</span>

@@ -106,7 +106,7 @@ const RegisterPage = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-3 bg-pink-500 text-white rounded-md font-bold hover:bg-pink-600 transition-colors"
+              className="w-full py-3 bg-pink-500 text-white rounded-none font-bold hover:bg-pink-600 transition-colors"
             >
               Create Account
             </button>

@@ -61,7 +61,7 @@ const CustomAlert = () => {
           <p className="text-sm text-gray-600 mb-6">{alertMessage}</p>
           <button
             onClick={() => setShowAlert(false)}
-            className={`w-full px-4 py-2 text-white rounded-md transition-colors font-medium ${
+            className={`w-full px-4 py-2 text-white rounded-none transition-colors font-medium ${
               isError
                 ? "bg-red-600 hover:bg-red-700"
                 : "bg-black hover:bg-gray-800"

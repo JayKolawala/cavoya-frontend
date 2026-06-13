@@ -98,6 +98,7 @@ export const transformProduct = (product) => ({
   fit: product.fit || '',
   modelHeight: product.modelHeight || '',
   modelIsWearing: product.modelIsWearing || '',
+  lengthOfGarment: product.lengthOfGarment || '',
   isFeatured: product.isFeatured || false,
   bestSeller: product.bestSeller || false,
   collectionName: product.collectionName || product.print?.collectionId || null,

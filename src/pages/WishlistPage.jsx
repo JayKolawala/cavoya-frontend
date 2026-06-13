@@ -22,34 +22,24 @@ const WishlistPage = () => {
 
   if (wishlistProducts.length === 0) {
     return (
-      <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-black via-gray-900 to-gray-800">
-        {/* Animated Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-gray-500/10 to-white/5 animate-pulse"></div>
-
-        {/* Floating Decorative Elements */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gray-400/5 rounded-full blur-3xl animate-pulse delay-700"></div>
-
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/40"></div>
-
+      <div className="relative min-h-screen flex items-center justify-center bg-gray-50 text-gray-900 pt-24">
         {/* Empty Wishlist Content */}
         <div className={`relative z-10 text-center px-4 max-w-lg transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="mb-8 inline-flex items-center justify-center w-32 h-32 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-            <Heart className="h-16 w-16 text-gray-300" />
+          <div className="mb-8 inline-flex items-center justify-center w-32 h-32 bg-white rounded-full border border-gray-200 shadow-sm">
+            <Heart className="h-16 w-16 text-gray-400" />
           </div>
 
-          <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
+          <h2 className="text-4xl md:text-5xl font-light mb-6 text-gray-900">
             Your Wishlist is Empty
           </h2>
 
-          <p className="text-xl text-gray-300 mb-10 font-light">
+          <p className="text-xl text-gray-600 mb-10 font-light">
             Save items you love and keep track of your favorites!
           </p>
 
           <button
             onClick={() => navigate("/products")}
-            className="group px-10 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-100 hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
+            className="group px-10 py-4 bg-black text-white font-semibold rounded-none hover:bg-gray-100 hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
           >
             <span className="flex items-center gap-2">
               Start Shopping
@@ -107,7 +97,7 @@ const WishlistPage = () => {
                   {/* Wishlist Button */}
                   <button
                     onClick={() => toggleWishlist(product.id)}
-                    className="absolute top-4 right-4 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all duration-200"
+                    className="absolute top-4 right-4 p-3 bg-white/90 backdrop-blur-sm rounded-none shadow-lg hover:bg-white hover:scale-110 transition-all duration-200"
                     title="Remove from wishlist"
                   >
                     <Heart className="h-5 w-5 fill-gray-900 text-gray-900" />
@@ -123,7 +113,7 @@ const WishlistPage = () => {
                   {/* Quick View on Hover */}
                   <button
                     onClick={() => navigate(`/product/${product.id}`)}
-                    className="absolute bottom-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-white text-gray-800 font-semibold rounded-full opacity-0 group-hover:opacity-100 transform group-hover:translate-y-0 translate-y-2 transition-all duration-300 shadow-lg hover:bg-gray-50"
+                    className="absolute bottom-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-white text-gray-800 font-semibold rounded-none opacity-0 group-hover:opacity-100 transform group-hover:translate-y-0 translate-y-2 transition-all duration-300 shadow-lg hover:bg-gray-50"
                   >
                     Quick View
                   </button>
@@ -177,7 +167,7 @@ const WishlistPage = () => {
                       addToCart(product);
                       // Optionally show a toast notification here
                     }}
-                    className="w-full py-3 bg-black text-white font-semibold rounded-xl hover:bg-gray-800 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="w-full py-3 bg-black text-white font-semibold rounded-none hover:bg-gray-800 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                   >
                     <span className="flex items-center justify-center gap-2">
                       <ShoppingBag className="w-4 h-4" />

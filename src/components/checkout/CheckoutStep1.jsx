@@ -113,7 +113,7 @@ const CheckoutStep1 = ({ onNext }) => {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+              className="px-8 py-3 bg-black text-white rounded-none hover:bg-gray-800 transition-colors"
             >
               Continue to Payment
             </button>

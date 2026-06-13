@@ -52,7 +52,7 @@ class ErrorBoundary extends Component {
             <div className="space-y-4">
               <button
                 onClick={this.handleRetry}
-                className="w-full flex items-center justify-center px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
+                className="w-full flex items-center justify-center px-4 py-2 bg-black text-white rounded-none hover:bg-gray-800 transition-colors"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Try Again
@@ -60,7 +60,7 @@ class ErrorBoundary extends Component {
 
               <button
                 onClick={() => window.location.reload()}
-                className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-none hover:bg-gray-50 transition-colors"
               >
                 Refresh Page
               </button>

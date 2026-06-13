@@ -89,6 +89,7 @@ const ProductManagement = () => {
     fit: "",
     modelHeight: "",
     modelIsWearing: "",
+    lengthOfGarment: "",
     price: "",
     originalPrice: "",
     image: "",
@@ -290,6 +291,7 @@ const ProductManagement = () => {
       fit: fullProduct.fit || "",
       modelHeight: fullProduct.modelHeight || "",
       modelIsWearing: fullProduct.modelIsWearing || "",
+      lengthOfGarment: fullProduct.lengthOfGarment || "",
       price: fullProduct.price,
       originalPrice: fullProduct.originalPrice || "",
       image: fullProduct.image,
@@ -346,6 +348,7 @@ const ProductManagement = () => {
       fit: "",
       modelHeight: "",
       modelIsWearing: "",
+      lengthOfGarment: "",
       price: "",
       originalPrice: "",
       image: "",
@@ -857,6 +860,25 @@ const ProductManagement = () => {
                   />
                 </div>
 
+                {/* Length of Garment */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Length of Garment
+                  </label>
+                  <textarea
+                    rows="3"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                    value={formData.lengthOfGarment}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        lengthOfGarment: e.target.value,
+                      })
+                    }
+                    placeholder="e.g.,&#10;top: 22 inches&#10;Bottom: 43 inches"
+                  />
+                </div>
+
                 {/* Colors */}
                 <div>
                   <div className="flex justify-between items-center mb-2">
@@ -880,9 +902,8 @@ const ProductManagement = () => {
                         onChange={(e) =>
                           handleColorChange(index, e.target.value)
                         }
-                        placeholder={`Color ${
-                          index + 1
-                        } (e.g., pink, white, black)`}
+                        placeholder={`Color ${index + 1
+                          } (e.g., pink, white, black)`}
                       />
                       <button
                         type="button"
@@ -908,11 +929,10 @@ const ProductManagement = () => {
                         key={size}
                         type="button"
                         onClick={() => handleSizeToggle(size)}
-                        className={`px-4 py-2 border rounded-md ${
-                          formData.sizes.includes(size)
-                            ? "bg-pink-500 text-white border-pink-500"
-                            : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
-                        }`}
+                        className={`px-4 py-2 border rounded-md ${formData.sizes.includes(size)
+                          ? "bg-pink-500 text-white border-pink-500"
+                          : "bg-white text-gray-700 border-gray-300 hover:border-pink-500"
+                          }`}
                       >
                         {size}
                       </button>
@@ -1061,9 +1081,8 @@ const ProductManagement = () => {
                 return (
                   <tr
                     key={product._id}
-                    className={`hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200 ${
-                      isChecked ? "bg-pink-50/60" : ""
-                    }`}
+                    className={`hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-transparent transition-all duration-200 ${isChecked ? "bg-pink-50/60" : ""
+                      }`}
                   >
                     {/* Row checkbox */}
                     <td className="px-3 py-4 whitespace-nowrap">
@@ -1220,11 +1239,10 @@ const ProductManagement = () => {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                          currentPage === page
-                            ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
-                            : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
-                        }`}
+                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${currentPage === page
+                          ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md"
+                          : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                          }`}
                       >
                         {page}
                       </button>

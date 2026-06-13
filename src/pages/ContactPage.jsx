@@ -42,24 +42,17 @@ const ContactPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Hero Section - Synced with HomePage */}
-      <div className="relative pt-32 pb-20 flex items-center justify-center overflow-hidden bg-gradient-to-br from-black via-gray-900 to-gray-800">
-        {/* Animated Background Pulse Elements */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-gray-400/5 rounded-full blur-3xl animate-pulse delay-700"></div>
-
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/40"></div>
-
+      <div className="relative pt-32 pb-20 flex items-center justify-center text-center bg-gray-50 border-b border-gray-200 text-gray-900">
         {/* Hero Content */}
         <div
           className="relative z-10 text-center px-4"
           data-aos="fade-down"
         >
-          <h1 className="text-4xl md:text-6xl font-extralight tracking-wide mb-6 text-white">
+          <h1 className="text-4xl md:text-6xl font-extralight tracking-wide mb-6 text-gray-900">
             Get in Touch
           </h1>
 
-          <p className="text-lg md:text-xl font-light text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl font-light text-gray-600 max-w-2xl mx-auto">
             Have questions? We'd love to hear from you. Send us a message and
             we'll respond as soon as possible.
           </p>
@@ -193,7 +186,7 @@ const ContactPage = () => {
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-black text-white font-semibold py-4 rounded-lg hover:bg-gray-800 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                  className="w-full bg-black text-white font-semibold py-4 rounded-none hover:bg-gray-800 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2"
                 >
                   <Send className="h-5 w-5" />
                   Send Message

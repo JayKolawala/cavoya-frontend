@@ -184,7 +184,7 @@ const ProductFilters = () => {
       <div className="lg:hidden mb-6">
         <button
           onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
-          className="w-full flex items-center justify-between px-5 py-4 bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow"
+          className="w-full flex items-center justify-between px-5 py-4 bg-white rounded-none shadow-md border border-gray-200 hover:shadow-lg transition-shadow"
         >
           <div className="flex items-center gap-3">
             <Filter className="w-5 h-5 text-gray-700" />
@@ -244,7 +244,7 @@ const ProductFilters = () => {
                   <button
                     key={category.id}
                     onClick={() => handleCategorySelect(category.id)}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${(isMobile() ? tempCategory : selectedCategory) === category.id
+                    className={`w-full text-left px-4 py-3 rounded-none transition-all duration-200 ${(isMobile() ? tempCategory : selectedCategory) === category.id
                       ? "bg-black text-white shadow-md"
                       : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                       }`}
@@ -287,7 +287,7 @@ const ProductFilters = () => {
                   <button
                     key={col._id}
                     onClick={() => handleCollectionSelect(col._id)}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${activeCollection === col._id
+                    className={`w-full text-left px-4 py-3 rounded-none transition-all duration-200 ${activeCollection === col._id
                       ? "bg-black text-white shadow-md"
                       : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                       }`}
@@ -333,7 +333,7 @@ const ProductFilters = () => {
                       <button
                         key={p._id}
                         onClick={() => handlePrintSelect(p._id)}
-                        className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${activePrint === p._id
+                        className={`w-full text-left px-4 py-3 rounded-none transition-all duration-200 ${activePrint === p._id
                           ? "bg-black text-white shadow-md"
                           : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                           }`}
@@ -386,7 +386,7 @@ const ProductFilters = () => {
                   <button
                     key={option.id}
                     onClick={() => handleSortSelect(option.id)}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${(isMobile() ? tempSort : sortBy) === option.id
+                    className={`w-full text-left px-4 py-3 rounded-none transition-all duration-200 ${(isMobile() ? tempSort : sortBy) === option.id
                       ? "bg-gray-100 text-gray-900 border-2 border-gray-400"
                       : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent"
                       }`}
@@ -407,7 +407,7 @@ const ProductFilters = () => {
           <div className="lg:hidden">
             <button
               onClick={handleApplyFilters}
-              className="w-full py-3 bg-black text-white font-semibold rounded-xl shadow-lg hover:bg-gray-800 hover:shadow-xl transition-all"
+              className="w-full py-3 bg-black text-white font-semibold rounded-none shadow-lg hover:bg-gray-800 hover:shadow-xl transition-all"
             >
               Apply Filters
             </button>

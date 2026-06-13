@@ -168,23 +168,14 @@ const ProductsPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Header Section */}
-      <div className="relative bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white pb-20 pt-32 px-4 overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-80 h-80 bg-gray-400/5 rounded-full blur-3xl animate-pulse delay-700"></div>
-
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/30"></div>
-
+      <div className="relative text-gray-900 pb-20 pt-32 px-4 text-center bg-gray-50 border-b border-gray-200">
         {/* Header Content */}
         <div className="relative z-10 container mx-auto text-center" data-aos="fade-down">
-
-
-          <h1 className="text-4xl md:text-6xl font-extralight tracking-wide mb-4">
+          <h1 className="text-4xl md:text-6xl font-extralight tracking-wide mb-4 text-gray-900">
             {pageTitle}
           </h1>
 
-          <p className="text-lg md:text-xl font-light text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl font-light text-gray-600 max-w-2xl mx-auto">
             {pageSubtitle}
           </p>
         </div>
@@ -238,7 +229,7 @@ const ProductsPage = () => {
                     <button
                       onClick={loadMoreProducts}
                       disabled={productsLoading}
-                      className="px-8 py-3 bg-black text-white font-semibold rounded-full hover:bg-gray-800 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="px-8 py-3 bg-black text-white font-semibold rounded-none hover:bg-gray-800 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       {productsLoading ? (
                         <>
@@ -276,7 +267,7 @@ const ProductsPage = () => {
                 </p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-8 py-3 bg-black text-white font-semibold rounded-full hover:bg-gray-800 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  className="px-8 py-3 bg-black text-white font-semibold rounded-none hover:bg-gray-800 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
                   Reset Filters
                 </button>

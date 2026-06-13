@@ -82,7 +82,7 @@ const RatingModal = ({
             </div>
             <button
               onClick={handleSkip}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-none transition-colors"
               aria-label="Close"
             >
               <X className="h-6 w-6 text-gray-500" />
@@ -223,14 +223,14 @@ const RatingModal = ({
                 {!allRated && (
                   <button
                     onClick={handleSkip}
-                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-none hover:bg-gray-100 transition-colors"
                   >
                     Skip for Now
                   </button>
                 )}
                 <button
                   onClick={handleDone}
-                  className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+                  className="px-6 py-2 bg-black text-white rounded-none hover:bg-gray-800 transition-colors"
                 >
                   {allRated ? "Continue Shopping" : "Done"}
                 </button>

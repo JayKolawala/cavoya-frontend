@@ -270,7 +270,7 @@ const RatingForm = ({ productId, orderId: propOrderId, defaultEmail, onSubmit, o
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-black text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="w-full bg-black text-white py-3 px-6 rounded-none font-semibold hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {isSubmitting ? "Submitting..." : "Submit Rating"}
         </button>

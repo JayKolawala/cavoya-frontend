@@ -48,7 +48,7 @@ const OrderSuccessPage = () => {
               resetCheckout();
               navigate("/");
             }}
-            className="w-full px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+            className="w-full px-6 py-3 border border-gray-300 text-gray-700 rounded-none hover:bg-gray-50 transition-colors"
           >
             Continue Shopping
           </button>

@@ -145,6 +145,7 @@ const useProductStore = create((set, get) => ({
       formData.append("fit", productData.fit || "");
       formData.append("modelHeight", productData.modelHeight || "");
       formData.append("modelIsWearing", productData.modelIsWearing || "");
+      formData.append("lengthOfGarment", productData.lengthOfGarment || "");
       formData.append("price", Number(productData.price));
       formData.append("category", productData.category || "Uncategorized");
       formData.append("colors", JSON.stringify(productData.colors || []));
@@ -186,6 +187,7 @@ const useProductStore = create((set, get) => ({
       formData.append("fit", productData.fit || "");
       formData.append("modelHeight", productData.modelHeight || "");
       formData.append("modelIsWearing", productData.modelIsWearing || "");
+      formData.append("lengthOfGarment", productData.lengthOfGarment || "");
       formData.append("price", Number(productData.price));
       formData.append("category", productData.category || "Uncategorized");
       formData.append("colors", JSON.stringify(productData.colors || []));

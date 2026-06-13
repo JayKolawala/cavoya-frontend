@@ -98,7 +98,7 @@ const RateOrderPage = () => {
         <p className="text-gray-500 mb-6 max-w-md">{error}</p>
         <button
           onClick={() => navigate("/")}
-          className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+          className="px-6 py-3 bg-black text-white rounded-none hover:bg-gray-800 transition-colors"
         >
           Return to Home
         </button>
@@ -276,7 +276,7 @@ const RateOrderPage = () => {
           <div className="border-t border-gray-100 bg-gray-50 p-6 flex justify-center">
              <button
                 onClick={() => navigate("/products")}
-                className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium shadow-sm hover:shadow-md"
+                className="px-8 py-3 bg-black text-white rounded-none hover:bg-gray-800 transition-colors font-medium shadow-sm hover:shadow-md"
               >
                 Continue Shopping
               </button>

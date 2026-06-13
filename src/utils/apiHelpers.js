@@ -69,6 +69,7 @@ export const transformProduct = (product) => ({
     description: product.description,
     inventory: product.inventory,
     isFeatured: product.isFeatured || false,
+    lengthOfGarment: product.lengthOfGarment || '',
 });
 
 /**

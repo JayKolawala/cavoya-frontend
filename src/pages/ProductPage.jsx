@@ -31,7 +31,7 @@ const SizeChartModal = ({ onClose }) => {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden">
         <div className="flex items-center justify-between px-6 pt-6 pb-2 border-b border-gray-100">
           <h2 className="text-lg font-bold tracking-widest uppercase text-gray-900">Body Measurement</h2>
-          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 transition-colors" aria-label="Close">
+          <button onClick={onClose} className="p-1.5 rounded-none hover:bg-gray-100 transition-colors" aria-label="Close">
             <X className="h-5 w-5 text-gray-600" />
           </button>
         </div>
@@ -178,7 +178,7 @@ const ImageZoomModal = ({ media, onClose }) => {
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all"
+        className="absolute top-4 right-4 z-10 p-2 rounded-none bg-white/10 hover:bg-white/20 text-white transition-all"
         aria-label="Close"
       >
         <X className="h-6 w-6" />
@@ -189,7 +189,7 @@ const ImageZoomModal = ({ media, onClose }) => {
         <button
           onClick={() => zoom("out")}
           disabled={scale <= MIN_SCALE}
-          className="p-1.5 rounded-full text-white hover:bg-white/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          className="p-1.5 rounded-none text-white hover:bg-white/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Zoom out"
         >
           <ZoomOut className="h-5 w-5" />
@@ -200,7 +200,7 @@ const ImageZoomModal = ({ media, onClose }) => {
         <button
           onClick={() => zoom("in")}
           disabled={scale >= MAX_SCALE}
-          className="p-1.5 rounded-full text-white hover:bg-white/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          className="p-1.5 rounded-none text-white hover:bg-white/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Zoom in"
         >
           <ZoomIn className="h-5 w-5" />
@@ -384,7 +384,7 @@ const ProductPage = () => {
         <p className="text-gray-600 mb-8">The product you're looking for doesn't exist.</p>
         <button
           onClick={() => window.history.back()}
-          className="px-6 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
+          className="px-6 py-2 bg-black text-white rounded-none hover:bg-gray-800 transition-colors"
         >
           Go Back
         </button>
@@ -496,7 +496,7 @@ const ProductPage = () => {
                 {canScrollLeft && (
                   <button
                     onClick={() => scrollThumbs("left")}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-md rounded-full p-1.5 transition-all"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-md rounded-none p-1.5 transition-all"
                     aria-label="Scroll thumbnails left"
                   >
                     <ChevronLeft className="h-4 w-4 text-gray-700" />
@@ -513,7 +513,7 @@ const ProductPage = () => {
                     <button
                       key={index}
                       onClick={() => { setActiveMediaIndex(index); updateThumbArrows(); }}
-                      className={`relative flex-shrink-0 w-20 h-24 rounded-xl overflow-hidden border-2 transition-all duration-200 ${activeMediaIndex === index
+                      className={`relative flex-shrink-0 w-20 h-24 rounded-none overflow-hidden border-2 transition-all duration-200 ${activeMediaIndex === index
                         ? "border-gray-900 shadow-md"
                         : "border-transparent hover:border-gray-300"
                         }`}
@@ -536,7 +536,7 @@ const ProductPage = () => {
                 {canScrollRight && (
                   <button
                     onClick={() => scrollThumbs("right")}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-md rounded-full p-1.5 transition-all"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-md rounded-none p-1.5 transition-all"
                     aria-label="Scroll thumbnails right"
                   >
                     <ChevronRight className="h-4 w-4 text-gray-700" />
@@ -602,7 +602,7 @@ const ProductPage = () => {
                         <button
                           key={size}
                           onClick={() => setSelectedTopSize(size)}
-                          className={`px-4 py-2 border rounded-md text-sm font-medium transition-colors ${selectedTopSize === size
+                          className={`px-4 py-2 border rounded-none text-sm font-medium transition-colors ${selectedTopSize === size
                             ? "border-gray-900 bg-gray-100 text-gray-900"
                             : "border-gray-300 hover:border-gray-500"
                             }`}
@@ -621,7 +621,7 @@ const ProductPage = () => {
                         <button
                           key={size}
                           onClick={() => setSelectedBottomSize(size)}
-                          className={`px-4 py-2 border rounded-md text-sm font-medium transition-colors ${selectedBottomSize === size
+                          className={`px-4 py-2 border rounded-none text-sm font-medium transition-colors ${selectedBottomSize === size
                             ? "border-gray-900 bg-gray-100 text-gray-900"
                             : "border-gray-300 hover:border-gray-500"
                             }`}
@@ -646,19 +646,20 @@ const ProductPage = () => {
                       if (idxB === -1) return -1;
                       return idxA - idxB;
                     });
-                    
+
                     return sortedSizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`px-4 py-2 border rounded-md text-sm font-medium transition-colors ${selectedSize === size
-                        ? "border-gray-900 bg-gray-100 text-gray-900"
-                        : "border-gray-300 hover:border-gray-500"
-                        }`}
-                    >
-                      {size}
-                    </button>
-                  ))})()}
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`px-4 py-2 border rounded-none text-sm font-medium transition-colors ${selectedSize === size
+                          ? "border-gray-900 bg-gray-100 text-gray-900"
+                          : "border-gray-300 hover:border-gray-500"
+                          }`}
+                      >
+                        {size}
+                      </button>
+                    ))
+                  })()}
                 </div>
               </div>
             )}
@@ -675,7 +676,7 @@ const ProductPage = () => {
             {/* Add to Cart */}
             <button
               onClick={() => addToCart(selectedProduct, selectedColor, selectedSize)}
-              className="w-full py-4 rounded-lg font-bold transition-transform transform my-2 bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
+              className="w-full py-4 rounded-none font-bold transition-transform transform my-2 bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
             >
               Add to Cart
             </button>
@@ -716,6 +717,13 @@ const ProductPage = () => {
                 <div>
                   <p className="font-semibold text-gray-900">Model is Wearing:</p>
                   <p className="text-gray-600">{selectedProduct.modelIsWearing}</p>
+                </div>
+              )}
+
+              {selectedProduct.lengthOfGarment && (
+                <div>
+                  <p className="font-semibold text-gray-900">Length of Garment:</p>
+                  <p className="text-gray-600 whitespace-pre-line">{selectedProduct.lengthOfGarment}</p>
                 </div>
               )}
 
@@ -763,14 +771,14 @@ const ProductPage = () => {
               </div>
 
               {/* Description / Material Guide */}
-              <div>
+              {/* <div>
                 <p className="font-semibold text-gray-900">Description</p>
                 <ul className="text-gray-600 space-y-1 list-none mt-1">
                   <li><span className="font-medium text-gray-800">Material (Lycra)</span> — Stretchable body-contouring fabric</li>
                   <li><span className="font-medium text-gray-800">Linen</span> — Breathable linen-look fabric</li>
                   <li><span className="font-medium text-gray-800">Satin</span> — Soft satin-feel fabric</li>
                 </ul>
-              </div>
+              </div> */}
             </div>
 
           </div>
