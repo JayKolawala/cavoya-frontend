@@ -274,6 +274,10 @@ const ProductPage = () => {
   const [selectedTopSize, setSelectedTopSize] = useState("");
   const [selectedBottomSize, setSelectedBottomSize] = useState("");
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+  const [dragStartX, setDragStartX] = useState(null);
+  const [dragOffsetX, setDragOffsetX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const hasDragged = useRef(false);
   const [loading, setLoading] = useState(true);
   const [showSizeChart, setShowSizeChart] = useState(false);
   const [showImageZoom, setShowImageZoom] = useState(false);
@@ -410,6 +414,79 @@ const ProductPage = () => {
     productMedia.push({ url: "https://placehold.co/800x1200/E8D2C5/543C42?text=No+Image", type: "image", alt: "No image available" });
   }
 
+  // Pointer event handlers for swipe/drag on main product media
+  const handlePointerDown = (e) => {
+    if (productMedia.length <= 1) return;
+
+    // Skip if clicking interactive elements (like buttons, links, inputs)
+    if (e.target.closest("button") || e.target.closest("a") || e.target.closest("input")) return;
+
+    // For mouse, only left click
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+
+    // If clicking in the bottom area of a video (controls area), do not initiate swipe/drag
+    if (productMedia[activeMediaIndex].type === "video") {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickY = e.clientY - rect.top;
+      if (clickY > rect.height - 80) {
+        return;
+      }
+    }
+
+    setDragStartX(e.clientX);
+    setDragOffsetX(0);
+    setIsDragging(true);
+    hasDragged.current = false;
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch (err) {
+      // Ignored
+    }
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isDragging || dragStartX === null) return;
+    const currentX = e.clientX;
+    const diff = currentX - dragStartX;
+    if (Math.abs(diff) > 5) {
+      hasDragged.current = true;
+      setDragOffsetX(diff);
+    }
+  };
+
+  const handlePointerUp = (e) => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    setDragStartX(null);
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch (err) {
+      // Ignored
+    }
+
+    const threshold = 60;
+    if (dragOffsetX > threshold) {
+      // Swipe right -> Previous image
+      setActiveMediaIndex((prev) => (prev - 1 + productMedia.length) % productMedia.length);
+    } else if (dragOffsetX < -threshold) {
+      // Swipe left -> Next image
+      setActiveMediaIndex((prev) => (prev + 1) % productMedia.length);
+    }
+    setDragOffsetX(0);
+  };
+
+  const handlePointerCancel = (e) => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    setDragStartX(null);
+    setDragOffsetX(0);
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch (err) {
+      // Ignored
+    }
+  };
+
   const hasTopBottomSizes = selectedProduct.topSizes || selectedProduct.bottomSizes;
 
   return (
@@ -460,32 +537,95 @@ const ProductPage = () => {
                 />
               )}
             </div> */}
-            <div className="w-full h-[80vh] lg:h-screen rounded-2xl overflow-hidden mb-4 shadow-lg relative group">
-              {productMedia[activeMediaIndex].type === "video" ? (
-                <video
-                  src={productMedia[activeMediaIndex].url}
-                  className="w-full h-full object-cover"
-                  controls
-                  autoPlay
-                  muted
-                  loop
-                />
-              ) : (
-                <>
-                  <img
+            <div
+              className="w-full h-[80vh] lg:h-screen rounded-2xl overflow-hidden mb-4 shadow-lg relative group select-none cursor-zoom-in"
+              style={{ touchAction: "pan-y" }}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerCancel}
+              onClick={(e) => {
+                if (hasDragged.current) return;
+                if (productMedia[activeMediaIndex].type === "video") return;
+                setShowImageZoom(true);
+              }}
+            >
+              <div
+                className="w-full h-full select-none"
+                style={{
+                  transform: `translateX(${dragOffsetX}px)`,
+                  transition: isDragging ? "none" : "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                }}
+              >
+                {productMedia[activeMediaIndex].type === "video" ? (
+                  <video
                     src={productMedia[activeMediaIndex].url}
-                    alt={productMedia[activeMediaIndex].alt}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-zoom-in"
-                    onClick={() => setShowImageZoom(true)}
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                    controls
+                    autoPlay
+                    muted
+                    loop
                   />
-                  {/* Zoom hint overlay */}
-                  <div
-                    onClick={() => setShowImageZoom(true)}
-                    className="absolute bottom-3 right-3 bg-black/40 backdrop-blur-sm text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
-                    aria-label="Zoom image"
+                ) : (
+                  <>
+                    <img
+                      src={productMedia[activeMediaIndex].url}
+                      alt={productMedia[activeMediaIndex].alt}
+                      draggable={false}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 pointer-events-none"
+                    />
+                    {/* Zoom hint overlay */}
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowImageZoom(true);
+                      }}
+                      className="absolute bottom-3 right-3 bg-black/40 backdrop-blur-sm text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer pointer-events-auto"
+                      aria-label="Zoom image"
+                    >
+                      <Maximize2 className="h-4 w-4" />
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Slide Indicator Dots (Visible on mobile/tablet or all screens, only if multiple media) */}
+              {productMedia.length > 1 && (
+                <div className="absolute bottom-4 left-0 right-0 z-10 flex justify-center gap-2 lg:hidden pointer-events-none">
+                  {productMedia.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`h-2 rounded-full transition-all duration-300 ${index === activeMediaIndex ? "w-6 bg-white shadow" : "w-2 bg-white/50"
+                        }`}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Left/Right chevrons for desktop hover navigation */}
+              {productMedia.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveMediaIndex((prev) => (prev - 1 + productMedia.length) % productMedia.length);
+                    }}
+                    className="hidden lg:flex absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2.5 bg-white/80 backdrop-blur-sm text-gray-900 rounded-full hover:bg-white hover:shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 items-center justify-center cursor-pointer"
+                    aria-label="Previous image"
                   >
-                    <Maximize2 className="h-4 w-4" />
-                  </div>
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveMediaIndex((prev) => (prev + 1) % productMedia.length);
+                    }}
+                    className="hidden lg:flex absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2.5 bg-white/80 backdrop-blur-sm text-gray-900 rounded-full hover:bg-white hover:shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 items-center justify-center cursor-pointer"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
                 </>
               )}
             </div>

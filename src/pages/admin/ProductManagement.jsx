@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Search, X } from "lucide-react";
+import { Plus, Edit, Trash2, Search, X, Check } from "lucide-react";
 import useProductStore from "../../store/useProductStore";
 import { PRODUCT_CATEGORIES } from "../../utils/constants";
 import TableSkeleton from "../../components/TableSkeleton";
@@ -13,7 +13,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 
 const ProductManagement = () => {
-  const { addProduct, updateProduct, deleteProduct } = useProductStore();
+  const { addProduct, updateProduct, deleteProduct, deleteProductImage } = useProductStore();
   const queryClient = useQueryClient();
   const API_BASE_URL =
     import.meta.env.VITE_API_BASE_URL ||
@@ -81,6 +81,93 @@ const ProductManagement = () => {
     }
     setSelectedProducts(new Set());
     refetchAdminProducts();
+  };
+
+  const buildExistingPreviews = (product) => {
+    const existingPreviews = [];
+    if (product.image) {
+      existingPreviews.push({
+        url: product.image,
+        type: product.image.match(/\.(mp4|webm|ogg)$/i) ? "video" : "image",
+        name: "Main Image",
+        isExisting: true,
+        isMain: true,
+      });
+    }
+    if (product.images && Array.isArray(product.images)) {
+      product.images.forEach((img, index) => {
+        const mediaUrl = img.url || img;
+        const imgId = img._id || (typeof img === "object" ? img._id : null);
+        existingPreviews.push({
+          _id: imgId,
+          url: mediaUrl,
+          type: mediaUrl.match(/\.(mp4|webm|ogg)$/i) ? "video" : "image",
+          name: img.alt || `Image ${index + 2}`,
+          isExisting: true,
+          isMain: false,
+        });
+      });
+    }
+    return existingPreviews;
+  };
+
+  // ── Image Management states & handlers ────────────────────────────────────
+  const [selectedImages, setSelectedImages] = useState(new Set());
+  const [imageDeleteConfirm, setImageDeleteConfirm] = useState({
+    isOpen: false,
+    imageId: null,
+    imageIds: [],
+    imageUrls: [],
+    imageUrl: null,
+  });
+
+  const handleDeleteImageConfirmed = async () => {
+    const { imageId, imageIds, imageUrl, imageUrls } = imageDeleteConfirm;
+    setImageDeleteConfirm({ isOpen: false, imageId: null, imageIds: [], imageUrls: [], imageUrl: null });
+
+    if (!editingProduct) return;
+
+    try {
+      setSubmitLoading(true);
+      let res;
+      if (imageId || imageUrl) {
+        // Single image deletion
+        const payload = imageId ? { imageId } : { imageUrl };
+        res = await deleteProductImage(editingProduct._id, payload);
+      } else if ((imageIds && imageIds.length > 0) || (imageUrls && imageUrls.length > 0)) {
+        // Bulk image deletion
+        const payload = {
+          imageIds: imageIds || [],
+          imageUrls: imageUrls || [],
+        };
+        res = await deleteProductImage(editingProduct._id, payload);
+      }
+
+      if (res && res.success && res.data) {
+        const updatedProduct = res.data;
+        
+        // Re-sync previews and form data with updated product from backend
+        setImagePreviews((prev) => {
+          const serverPreviews = buildExistingPreviews(updatedProduct);
+          const localPreviews = prev.filter((p) => !p.isExisting);
+          return [...serverPreviews, ...localPreviews];
+        });
+        
+        setFormData((prev) => ({
+          ...prev,
+          image: updatedProduct.image,
+          existingImages: updatedProduct.images || [],
+        }));
+        
+        // Reset selected images
+        setSelectedImages(new Set());
+      }
+      refetchAdminProducts();
+    } catch (err) {
+      console.error("Failed to delete image(s):", err);
+    } finally {
+      setSubmitLoading(false);
+    }
   };
   const [formData, setFormData] = useState({
     name: "",
@@ -192,22 +279,44 @@ const ProductManagement = () => {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length > 0) {
-      setSelectedFiles(files);
+    const MAX_SIZE = 2 * 1024 * 1024; // 2MB in bytes
 
-      // Generate previews for all selected files
-      const previews = [];
-      files.forEach((file) => {
+    const validFiles = files.filter((file) => file.size <= MAX_SIZE);
+    const oversizedFiles = files.filter((file) => file.size > MAX_SIZE);
+
+    if (oversizedFiles.length > 0) {
+      const fileNames = oversizedFiles.map((f) => f.name).join(", ");
+      showAlert(
+        "File Too Large",
+        `The following file(s) exceed the 2MB limit and were not added: ${fileNames}`,
+        "warning",
+      );
+      // Reset target value if no valid files were selected
+      if (validFiles.length === 0) {
+        e.target.value = null;
+        return;
+      }
+    }
+
+    if (validFiles.length > 0) {
+      setSelectedFiles(validFiles);
+
+      // Generate previews preserving the selected order
+      const previews = new Array(validFiles.length);
+      let loadedCount = 0;
+
+      validFiles.forEach((file, index) => {
         const reader = new FileReader();
-        reader.onload = (e) => {
-          previews.push({
-            url: e.target.result,
+        reader.onload = (event) => {
+          previews[index] = {
+            url: event.target.result,
             type: file.type.startsWith("video/") ? "video" : "image",
             name: file.name,
-          });
+          };
+          loadedCount++;
 
           // Update state when all previews are loaded
-          if (previews.length === files.length) {
+          if (loadedCount === validFiles.length) {
             setImagePreviews(previews);
           }
         };
@@ -307,35 +416,7 @@ const ProductManagement = () => {
 
     setFormData(editFormData);
 
-    // Build preview array with all existing images
-    const existingPreviews = [];
-
-    // Add main image first
-    if (product.image) {
-      existingPreviews.push({
-        url: product.image,
-        type: product.image.match(/\.(mp4|webm|ogg)$/i) ? "video" : "image",
-        name: "Main Image",
-        isExisting: true,
-        isMain: true,
-      });
-    }
-
-    // Add additional images/videos
-    if (product.images && Array.isArray(product.images)) {
-      product.images.forEach((img, index) => {
-        const mediaUrl = img.url || img;
-        existingPreviews.push({
-          url: mediaUrl,
-          type: mediaUrl.match(/\.(mp4|webm|ogg)$/i) ? "video" : "image",
-          name: img.alt || `Image ${index + 2}`,
-          isExisting: true,
-          isMain: false,
-        });
-      });
-    }
-
-    setImagePreviews(existingPreviews);
+    setImagePreviews(buildExistingPreviews(fullProduct));
     setSelectedFiles([]);
     setShowForm(true);
   };
@@ -363,6 +444,7 @@ const ProductManagement = () => {
     });
     setSelectedFiles([]);
     setImagePreviews([]);
+    setSelectedImages(new Set());
     setEditingProduct(null);
     setShowForm(false);
     setValidationAttempted(false);
@@ -423,6 +505,22 @@ const ProductManagement = () => {
         type="warning"
         mode="confirm"
         confirmLabel="Delete All"
+      />
+
+      {/* Image Delete Confirm Modal */}
+      <AlertModal
+        isOpen={imageDeleteConfirm.isOpen}
+        onClose={() => setImageDeleteConfirm({ isOpen: false, imageId: null, imageIds: [] })}
+        onConfirm={handleDeleteImageConfirmed}
+        title={imageDeleteConfirm.imageIds.length > 0 ? "Delete Multiple Images" : "Delete Image"}
+        message={
+          imageDeleteConfirm.imageIds.length > 0
+            ? `Are you sure you want to permanently delete the ${imageDeleteConfirm.imageIds.length} selected images from this product? This will delete the files from the server and cannot be undone.`
+            : "Are you sure you want to permanently delete this image from the product? This will delete the file from the server and cannot be undone."
+        }
+        type="warning"
+        mode="confirm"
+        confirmLabel="Delete Permanently"
       />
 
       {/* Header */}
@@ -507,7 +605,7 @@ const ProductManagement = () => {
                 {editingProduct ? "Edit Product" : "Add New Product"}
               </h2>
               <button
-                onClick={() => setShowForm(false)}
+                onClick={resetForm}
                 className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-lg transition-colors"
               >
                 <X className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -667,77 +765,221 @@ const ProductManagement = () => {
 
                     {/* Preview Section */}
                     {imagePreviews.length > 0 && (
-                      <div className="mt-4">
-                        <p className="text-sm font-medium text-gray-700 mb-2">
-                          {editingProduct
-                            ? "Current & New Images"
-                            : "Selected Files"}{" "}
-                          ( ):
-                        </p>
-                        <div className="grid grid-cols-4 gap-4 px-4">
-                          {imagePreviews.map((preview, index) => (
-                            <div key={index} className="relative group">
-                              {preview.type === "video" ? (
-                                <video
-                                  src={preview.url}
-                                  className="h-24 w-full object-cover rounded-lg border border-gray-300"
-                                  muted
-                                />
-                              ) : (
-                                <img
-                                  src={preview.url}
-                                  alt={`Preview ${index + 1}`}
-                                  className="h-24 w-full object-cover rounded-lg border border-gray-300"
-                                />
-                              )}
+                      <div className="mt-4 border border-gray-100 bg-gray-50/50 rounded-xl p-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                          <p className="text-sm font-semibold text-gray-700">
+                            {editingProduct
+                              ? "Current & New Product Media"
+                              : "Selected Media Files"}{" "}
+                            ({imagePreviews.length})
+                          </p>
 
-                              {/* Badges */}
-                              <div className="absolute top-1 right-1 flex gap-1">
-                                {preview.isMain && (
-                                  <div className="bg-pink-500 text-white text-xs px-2 py-1 rounded">
-                                    Main
-                                  </div>
-                                )}
-                                {preview.isExisting && (
-                                  <div className="bg-blue-500 text-white text-xs px-2 py-1 rounded">
-                                    Current
-                                  </div>
-                                )}
-                              </div>
-
-                              {/* Index badge */}
-                              {!preview.isMain && (
-                                <div className="absolute top-1 left-1 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                                  #{index + 1}
-                                </div>
-                              )}
-
-                              {/* Delete button */}
+                          {/* Image Selection helpers */}
+                          {editingProduct && imagePreviews.some((p) => p.isExisting && !(p.isMain && imagePreviews.filter((x) => x.isExisting).length <= 1)) && (
+                            <div className="flex items-center gap-2">
                               <button
                                 type="button"
                                 onClick={() => {
-                                  const newPreviews = imagePreviews.filter(
-                                    (_, i) => i !== index,
-                                  );
-                                  setImagePreviews(newPreviews);
-
-                                  // If it's a newly uploaded file, also remove from selectedFiles
-                                  if (!preview.isExisting) {
-                                    const newFileIndex = imagePreviews
-                                      .slice(0, index)
-                                      .filter((p) => !p.isExisting).length;
-                                    const newFiles = selectedFiles.filter(
-                                      (_, i) => i !== newFileIndex,
-                                    );
-                                    setSelectedFiles(newFiles);
+                                  const deletableImages = imagePreviews.filter((p) => p.isExisting && !(p.isMain && imagePreviews.filter((x) => x.isExisting).length <= 1));
+                                  const allDeletableSelected = deletableImages.every((p) => selectedImages.has(p.url));
+                                  if (allDeletableSelected) {
+                                    setSelectedImages(new Set());
+                                  } else {
+                                    const next = new Set();
+                                    deletableImages.forEach((p) => next.add(p.url));
+                                    setSelectedImages(next);
                                   }
                                 }}
-                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="text-xs text-pink-600 hover:text-pink-700 font-medium transition-colors cursor-pointer"
                               >
-                                ×
+                                {imagePreviews.filter((p) => p.isExisting && !(p.isMain && imagePreviews.filter((x) => x.isExisting).length <= 1)).every((p) => selectedImages.has(p.url))
+                                  ? "Deselect All"
+                                  : "Select All Existing"}
                               </button>
                             </div>
-                          ))}
+                          )}
+                        </div>
+
+                        {/* Image Batch Action Bar */}
+                        {editingProduct && selectedImages.size > 0 && (
+                          <div className="flex items-center justify-between p-3 mb-3 bg-red-50 border border-red-100 rounded-lg animate-fade-in shadow-sm">
+                            <span className="text-xs font-semibold text-red-700 flex items-center gap-1.5">
+                              <span className="inline-block w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                              {selectedImages.size} {selectedImages.size === 1 ? "image" : "images"} selected for deletion
+                            </span>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedImages(new Set())}
+                                className="px-2.5 py-1 text-xs font-medium text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
+                              >
+                                Clear
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const ids = [];
+                                  const urls = [];
+                                  selectedImages.forEach((url) => {
+                                    const p = imagePreviews.find((x) => x.url === url);
+                                    if (p) {
+                                      if (p._id) ids.push(p._id);
+                                      else urls.push(p.url);
+                                    }
+                                  });
+                                  setImageDeleteConfirm({
+                                    isOpen: true,
+                                    imageId: null,
+                                    imageUrl: null,
+                                    imageIds: ids,
+                                    imageUrls: urls,
+                                  });
+                                }}
+                                className="flex items-center gap-1 px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm cursor-pointer"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                Delete Selected
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                          {imagePreviews.map((preview, index) => {
+                            const isDeletable = preview.isExisting && !(preview.isMain && imagePreviews.filter((x) => x.isExisting).length <= 1);
+                            const isSelected = isDeletable && selectedImages.has(preview.url);
+
+                            return (
+                              <div
+                                key={index}
+                                className={`relative group aspect-square rounded-xl overflow-hidden border bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 ${
+                                  preview.isMain
+                                    ? "ring-2 ring-pink-500 border-pink-500 shadow-pink-100"
+                                    : isSelected
+                                    ? "ring-2 ring-red-500 border-red-500 shadow-red-100"
+                                    : "border-gray-200 hover:border-pink-300 hover:shadow-md"
+                                }`}
+                              >
+                                {preview.type === "video" ? (
+                                  <video
+                                    src={preview.url}
+                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    muted
+                                  />
+                                ) : (
+                                  <img
+                                    src={preview.url}
+                                    alt={preview.name || `Preview ${index + 1}`}
+                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                  />
+                                )}
+
+                                {/* Glassmorphism Hover Overlay */}
+                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 pointer-events-none" />
+
+                                {/* Red glass overlay for checked items */}
+                                {isSelected && (
+                                  <div className="absolute inset-0 bg-red-950/20 backdrop-blur-[1px] transition-all duration-300 pointer-events-none" />
+                                )}
+
+                                {/* Checkbox Select Indicator (Only for deletable existing images) */}
+                                {isDeletable && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setSelectedImages((prev) => {
+                                        const next = new Set(prev);
+                                        if (next.has(preview.url)) {
+                                          next.delete(preview.url);
+                                        } else {
+                                          next.add(preview.url);
+                                        }
+                                        return next;
+                                      });
+                                    }}
+                                    className={`absolute top-2 left-2 z-10 w-5 h-5 flex items-center justify-center rounded-full border transition-all duration-200 cursor-pointer ${
+                                      isSelected
+                                        ? "bg-red-500 border-red-500 text-white shadow-md scale-110"
+                                        : "bg-white/95 border-gray-300 opacity-0 group-hover:opacity-100 hover:border-pink-500 hover:scale-105"
+                                    }`}
+                                  >
+                                    {isSelected && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+                                  </button>
+                                )}
+
+                                {/* Top-right Action Buttons */}
+                                <div className="absolute top-2 right-2 z-10 flex gap-1.5 font-sans">
+                                  {/* Delete (server-side) */}
+                                  {isDeletable && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setImageDeleteConfirm({
+                                          isOpen: true,
+                                          imageId: preview._id || null,
+                                          imageUrl: !preview._id ? preview.url : null,
+                                          imageIds: [],
+                                          imageUrls: [],
+                                        });
+                                      }}
+                                      className="bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:scale-110 transition-all duration-200 shadow-md cursor-pointer"
+                                      title={preview.isMain ? "Delete main image & promote next image" : "Permanently delete from server"}
+                                    >
+                                      <Trash2 className="h-3 w-3" />
+                                    </button>
+                                  )}
+
+                                  {/* Remove (client-side) */}
+                                  {!preview.isExisting && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const newPreviews = imagePreviews.filter((_, i) => i !== index);
+                                        setImagePreviews(newPreviews);
+
+                                        // Remove from selectedFiles
+                                        const newFileIndex = imagePreviews
+                                          .slice(0, index)
+                                          .filter((p) => !p.isExisting).length;
+                                        const newFiles = selectedFiles.filter((_, i) => i !== newFileIndex);
+                                        setSelectedFiles(newFiles);
+                                      }}
+                                      className="bg-gray-800 hover:bg-gray-900 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:scale-110 transition-all duration-200 shadow-md cursor-pointer"
+                                      title="Remove local file"
+                                    >
+                                      <X className="h-3.5 w-3.5" />
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Status Badges */}
+                                <div className="absolute bottom-2 right-2 flex gap-1 pointer-events-none">
+                                  {preview.isMain && (
+                                    <div className="bg-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
+                                      Main
+                                    </div>
+                                  )}
+                                  {preview.isExisting && !preview.isMain && (
+                                    <div className="bg-blue-550 bg-blue-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded shadow-sm">
+                                      Saved
+                                    </div>
+                                  )}
+                                  {!preview.isExisting && (
+                                    <div className="bg-emerald-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded shadow-sm">
+                                      New
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Order Index Label */}
+                                {!preview.isMain && (
+                                  <div className="absolute bottom-2 left-2 bg-black/50 text-white text-[10px] font-medium px-1.5 py-0.5 rounded pointer-events-none">
+                                    #{index + 1}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     )}

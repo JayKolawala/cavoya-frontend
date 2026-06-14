@@ -6,7 +6,7 @@ const SLIDES = [
     {
         id: "1",
         type: "image",
-        url: "/MidnightDress.png",
+        url: "/ScarletDress-bg.JPEG",
         title: "The Cavoya Collection",
         subtitle: "Elegance in every stitch. Discover timeless fashion.",
         buttonText: "Explore Collections",
@@ -115,11 +115,7 @@ const HeroCarousel = () => {
                                 className={`relative z-20 text-center px-4 max-w-4xl mx-auto transform transition-all duration-1000 delay-300 ${isActive ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
                                     }`}
                             >
-                                <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-                                    <span className="text-gray-200 text-sm font-light tracking-wider uppercase">
-                                        New Collection 2026
-                                    </span>
-                                </div>
+
 
                                 <h1 className="text-4xl sm:text-5xl md:text-7xl font-extralight tracking-wide mb-6 text-white leading-tight font-serif">
                                     {slide.title}

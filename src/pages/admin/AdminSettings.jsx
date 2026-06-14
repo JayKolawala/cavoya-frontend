@@ -181,6 +181,12 @@ const PrintModal = ({ collectionId, initial, onSave, onClose }) => {
     const handleFile = (e) => {
         const f = e.target.files[0];
         if (!f) return;
+        const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+        if (f.size > MAX_SIZE) {
+            setError("Image size must not exceed 2MB.");
+            e.target.value = null;
+            return;
+        }
         setFile(f);
         setPreview(URL.createObjectURL(f));
     };

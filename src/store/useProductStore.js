@@ -236,6 +236,26 @@ const useProductStore = create((set, get) => ({
     }
   },
 
+  deleteProductImage: async (productId, payload) => {
+    try {
+      const response = await apiRequest(`/products/${productId}/images`, {
+        method: "DELETE",
+        body: JSON.stringify(payload),
+      });
+      if (response.success && response.data) {
+        const updatedProduct = transformProduct(response.data);
+        set((state) => ({
+          products: state.products.map((p) => (p._id === updatedProduct._id ? updatedProduct : p)),
+        }));
+      }
+      setTimeout(() => useUIStore.getState().showCustomAlert("Image(s) deleted successfully!"), 0);
+      return response;
+    } catch (error) {
+      setTimeout(() => useUIStore.getState().showCustomAlert(`Error deleting image(s): ${error.message}`, "error"), 0);
+      throw error;
+    }
+  },
+
   fetchCollections: async () => {
     try {
       const response = await apiRequest("/collections");
