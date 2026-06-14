@@ -7,11 +7,12 @@ import useCartStore from "../store/useCartStore";
 import useUIStore from "../store/useUIStore";
 import { useNavigate } from "react-router-dom";
 import ProductSkeleton from "../components/ProductSkeleton";
-import bgVideo2 from "../assets/bg-video2.mp4";
+import bgVideo2 from "../assets/MidnightBloom.MP4";
 import { isVideo, getOptimizedImageUrl } from "../utils/mediaHelpers";
 import { API_BASE_URL, API_ENDPOINTS } from "../utils/apiHelpers";
 import { transformProduct } from "../utils/api";
 import heroBg from "/hero-bg.PNG";
+import HeroCarousel from "../components/HeroCarousel";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const MAX_RETRIES = 3;          // stop retrying after this many attempts
@@ -208,48 +209,7 @@ const HomePage = () => {
   return (
     <div className="animate-fade-in overflow-hidden">
       {/* ── Hero ── */}
-      <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
-        {/* <video
-          className="absolute inset-0 w-full h-full object-cover"
-          autoPlay
-          loop
-          muted
-          playsInline
-        >
-          <source src="/hero_bg.mp4" type="video/mp4" />
-        </video> */}
-        <img className="absolute inset-0 w-full h-full object-cover" src={heroBg} alt="hero-bg" />
-
-        <div className="absolute inset-0 bg-black/40" />
-
-        <div className="relative z-10 text-center px-4 animate-fade-in">
-          <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-
-            <span className="text-gray-200 text-sm font-light tracking-wider">
-              New Collection 2026
-            </span>
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-extralight tracking-wide mb-6 text-white">
-            The Cavoya Collection
-          </h1>
-
-          <p className="text-xl md:text-2xl font-light mb-12 text-gray-300 max-w-2xl mx-auto">
-            Elegance in every stitch. Discover timeless fashion.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button
-              onClick={handleNavigateToProducts}
-              className="group px-10 py-4 bg-white text-black font-semibold rounded-none hover:bg-gray-100 hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
-            >
-              <span className="flex items-center gap-2">
-                Explore Collections
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <HeroCarousel />
 
       {/* ── NEW IN ── */}
       <section className="relative py-16 bg-gray-50">
@@ -363,8 +323,8 @@ const HomePage = () => {
       </section>
 
       {/* ── Video break ── */}
-      {/* <section className="w-full bg-black">
-        <div className="relative w-full min-h-[70vh] md:min-h-[80vh] overflow-hidden bg-gradient-to-br from-black via-gray-900 to-gray-800">
+      <section className="w-full bg-black">
+        <div className="relative w-full min-h-[70vh] md:min-h-[100vh] overflow-hidden bg-gradient-to-br from-black via-gray-900 to-gray-800">
           {!videoError && (
             <video
               className="absolute inset-0 w-full h-full object-cover"
@@ -389,7 +349,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      </section> */}
+      </section>
 
       {/* ── SHOP BY PRINTS ── */}
       <section className="relative py-16 bg-gray-50">
@@ -504,7 +464,6 @@ const HomePage = () => {
                     onClick={(e) => handleQuickAdd(e, product)}
                     className="w-full bg-black text-white py-2 px-4 rounded-none font-medium flex items-center justify-center gap-2 hover:bg-gray-800 hover:shadow-lg transition-all duration-300"
                   >
-                    <ShoppingCart className="h-4 w-4" />
                     {quickAddLabel(product)}
                   </button>
                 </div>

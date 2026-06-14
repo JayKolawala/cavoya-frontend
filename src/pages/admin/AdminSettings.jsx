@@ -282,7 +282,7 @@ const PrintModal = ({ collectionId, initial, onSave, onClose }) => {
                         <button
                             type="submit"
                             disabled={saving}
-                            className="px-5 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg text-sm font-semibold hover:from-pink-600 hover:to-rose-600 transition-all shadow-md disabled:opacity-50"
+                            className="px-5 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-sm font-semibold hover:from-pink-600 hover:to-rose-600 transition-all shadow-md disabled:opacity-50"
                         >
                             {saving ? "Saving…" : "Save"}
                         </button>
@@ -379,7 +379,7 @@ const PrintsPanel = ({ collection }) => {
                 </span>
                 <button
                     onClick={() => setShowModal(true)}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-pink-500 text-white text-xs font-semibold rounded-lg hover:bg-pink-600 transition-colors shadow-sm"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-pink-500 text-white text-xs font-semibold rounded-lg hover:bg-pink-600 transition-colors shadow-sm"
                 >
                     <Plus className="h-3.5 w-3.5" /> Add Print
                 </button>
