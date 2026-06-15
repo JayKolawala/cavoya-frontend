@@ -4,6 +4,7 @@
  */
 
 import { API_BASE_URL } from './apiHelpers';
+import { getShippingCost } from './constants';
 
 /**
  * Get authentication token from localStorage
@@ -116,7 +117,7 @@ export const loadRazorpayScript = () => {
  */
 export const calculateOrderPricing = (subtotal) => {
     const subtotalNum = parseFloat(subtotal);
-    const shippingCost = 0; // Free shipping
+    const shippingCost = getShippingCost(subtotalNum);
     const tax = 0;
     const total = subtotalNum + shippingCost + tax;
 

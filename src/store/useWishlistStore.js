@@ -10,10 +10,11 @@ const useWishlistStore = create((set, get) => ({
         ? state.wishlist.filter((id) => id !== productId)
         : [...state.wishlist, productId];
       
-      // Update UI alert outside set loop to avoid strict mode issues
+      // Update UI toast outside set loop to avoid strict mode issues
       setTimeout(() => {
-        useUIStore.getState().showCustomAlert(
-          isInWishlist ? "Removed from wishlist" : "Added to wishlist"
+        useUIStore.getState().showWishlistToast(
+          isInWishlist ? "Removed from wishlist" : "Added to wishlist",
+          !isInWishlist
         );
       }, 0);
       

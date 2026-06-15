@@ -6,7 +6,7 @@ const SLIDES = [
     {
         id: "1",
         type: "image",
-        url: "/ScarletDress-bg.JPEG",
+        url: "/ScarletDress-bg.webp",
         title: "The Cavoya Collection",
         subtitle: "Elegance in every stitch. Discover timeless fashion.",
         buttonText: "Explore Collections",
@@ -15,7 +15,7 @@ const SLIDES = [
     {
         id: "2",
         type: "image",
-        url: "/LilyDress.PNG",
+        url: "/LilyDress.webp",
         title: "Pure Elegance",
         subtitle: "Designed for movement. Crafted for elegance.",
         buttonText: "Shop New Arrivals",
@@ -24,7 +24,7 @@ const SLIDES = [
     {
         id: "3",
         type: "image",
-        url: "/Riviera-set.png",
+        url: "/Riviera-set.webp",
         title: "The Riviera Set",
         subtitle: "Sophisticated resort wear for your next getaway.",
         buttonText: "Explore More",
@@ -165,15 +165,22 @@ const HeroCarousel = () => {
 
             {/* Slide Indicator Dots */}
             {SLIDES.length > 1 && (
-                <div className="absolute bottom-10 left-0 right-0 z-30 flex justify-center gap-3">
+                <div className="absolute bottom-10 left-0 right-0 z-30 flex justify-center gap-1.5">
                     {SLIDES.map((_, index) => (
                         <button
                             key={index}
                             onClick={(e) => handleDotClick(index, e)}
                             aria-label={`Go to slide ${index + 1}`}
-                            className={`h-2.5 rounded-full transition-all duration-300 ${index === currentIndex ? "w-8 bg-white" : "w-2.5 bg-white/40 hover:bg-white/70"
+                            className="w-12 h-12 flex items-center justify-center transition-all duration-300 relative group/dot focus:outline-none"
+                        >
+                            <span
+                                className={`h-2.5 rounded-full transition-all duration-300 ${
+                                    index === currentIndex 
+                                        ? "w-8 bg-white" 
+                                        : "w-2.5 bg-white/40 group-hover/dot:bg-white/70"
                                 }`}
-                        />
+                            />
+                        </button>
                     ))}
                 </div>
             )}

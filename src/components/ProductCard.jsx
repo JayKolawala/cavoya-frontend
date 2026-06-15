@@ -3,7 +3,7 @@ import { Heart, ShoppingCart } from "lucide-react";
 import useCartStore from "../store/useCartStore";
 import useWishlistStore from "../store/useWishlistStore";
 import useUIStore from "../store/useUIStore";
-import { isVideo } from "../utils/mediaHelpers";
+import { isVideo, getOptimizedImageUrl } from "../utils/mediaHelpers";
 
 const ProductCard = memo(({ product, onProductClick }) => {
   const { toggleWishlist, wishlist } = useWishlistStore();
@@ -49,7 +49,7 @@ const ProductCard = memo(({ product, onProductClick }) => {
             />
           ) : (
             <img
-              src={product.image}
+              src={getOptimizedImageUrl(product.image, 400)}
               alt={product.name}
               loading="lazy"
               className="w-full h-full object-cover"
@@ -65,7 +65,7 @@ const ProductCard = memo(({ product, onProductClick }) => {
         >
           <Heart
             className={`h-4 w-4 ${isInWishlist
-              ? "fill-gray-900 text-gray-900"
+              ? "fill-red-500 text-red-500"
               : "text-gray-600 hover:text-gray-900"
               } transition-colors`}
           />

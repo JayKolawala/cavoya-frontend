@@ -9,7 +9,8 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { isVideo } from "../utils/mediaHelpers";
+import { isVideo, getOptimizedImageUrl } from "../utils/mediaHelpers";
+import { getShippingCost, FREE_SHIPPING_THRESHOLD, SHIPPING_CHARGE } from "../utils/constants";
 
 const CartPage = () => {
   const { cartItems, updateCartQuantity, removeFromCart, getTotalPrice } =
@@ -113,7 +114,7 @@ const CartPage = () => {
                           />
                         ) : (
                           <img
-                            src={item.image}
+                            src={getOptimizedImageUrl(item.image, 150)}
                             alt={item.name}
                             className="w-24 h-32 rounded-xl object-cover shadow-lg transform group-hover:scale-105 transition-transform duration-300"
                           />
@@ -186,7 +187,7 @@ const CartPage = () => {
               </div>
             </div>
 
-            {/* Order Summary */}
+                   {/* Order Summary */}
             <div className="lg:col-span-1">
               <div className="sticky top-28">
                 <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8 overflow-hidden">
@@ -197,29 +198,45 @@ const CartPage = () => {
                     Order Summary
                   </h2>
 
-                  <div className="relative space-y-4 mb-6">
-                    <div className="flex justify-between text-gray-700">
-                      <span className="font-light">Subtotal:</span>
-                      <span className="font-semibold">₹{getTotalPrice()}</span>
-                    </div>
-                    <div className="flex justify-between text-gray-700">
-                      <span className="font-light">Shipping:</span>
-                      <span className="font-semibold text-gray-600 flex items-center gap-1">
-                        <Sparkles className="w-3 h-3" />
-                        Free
-                      </span>
-                    </div>
-                    <div className="border-t-2 border-gray-200 pt-4 mt-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-xl font-light text-gray-900">
-                          Total:
-                        </span>
-                        <span className="text-2xl font-bold text-gray-900">
-                          ₹{parseFloat(getTotalPrice()).toFixed(2)}
-                        </span>
+                  {(() => {
+                    const subtotal = parseFloat(getTotalPrice());
+                    const shipping = getShippingCost(subtotal);
+                    const total = subtotal + shipping;
+                    return (
+                      <div className="relative space-y-4 mb-6">
+                        <div className="flex justify-between text-gray-700">
+                          <span className="font-light">Subtotal:</span>
+                          <span className="font-semibold">₹{subtotal.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between text-gray-700">
+                          <span className="font-light">Shipping:</span>
+                          {shipping === 0 ? (
+                            <span className="font-semibold text-green-600 flex items-center gap-1">
+                              <Sparkles className="w-3 h-3" />
+                              Free
+                            </span>
+                          ) : (
+                            <span className="font-semibold text-gray-800">₹{shipping}</span>
+                          )}
+                        </div>
+                        {shipping > 0 && (
+                          <p className="text-xs text-gray-400">
+                            Add items worth ₹{(FREE_SHIPPING_THRESHOLD - subtotal).toFixed(0)} more for free shipping
+                          </p>
+                        )}
+                        <div className="border-t-2 border-gray-200 pt-4 mt-4">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xl font-light text-gray-900">
+                              Total:
+                            </span>
+                            <span className="text-2xl font-bold text-gray-900">
+                              ₹{total.toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    );
+                  })()}
 
                   <button
                     onClick={() => navigate("/checkout")}

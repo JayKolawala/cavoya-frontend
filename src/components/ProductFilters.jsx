@@ -12,6 +12,7 @@ import {
   Palette,
 } from "lucide-react";
 import { API_BASE_URL } from "../utils/apiHelpers";
+import { getOptimizedImageUrl } from "../utils/mediaHelpers";
 
 const ProductFilters = () => {
   const {
@@ -341,7 +342,7 @@ const ProductFilters = () => {
                         <div className="flex items-center gap-3">
                           {p.image && (
                             <img
-                              src={p.image}
+                              src={getOptimizedImageUrl(p.image, 80)}
                               alt={p.name}
                               className="w-8 h-8 rounded-md object-cover flex-shrink-0"
                             />

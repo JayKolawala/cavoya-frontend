@@ -2,13 +2,15 @@
 import React, { useEffect, useState } from "react";
 import { ShoppingCart, Search, Heart, Menu, ChevronDown } from "lucide-react";
 import useCartStore from "../store/useCartStore";
+import useWishlistStore from "../store/useWishlistStore";
 import useProductStore from "../store/useProductStore";
 import useUIStore from "../store/useUIStore";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import { getCategoryMap } from "../utils/categoryHelpers";
-import logoBlack from "../../src/assets/cavoya_black.PNG";
-import logoWhite from "../../src/assets/cavoya_white.PNG";
+import { getOptimizedImageUrl } from "../utils/mediaHelpers";
+import logoBlack from "../../src/assets/cavoya_black.webp";
+import logoWhite from "../../src/assets/cavoya_white.webp";
 
 // ─── Nav configuration objects ──────────────────────────────────────────────
 
@@ -81,6 +83,7 @@ const MobileAccordion = ({ label, children }) => {
 
 const Header = () => {
   const { getCartItemsCount } = useCartStore();
+  const { wishlist } = useWishlistStore();
   const {
     searchQuery,
     setSearchQuery,
@@ -345,7 +348,7 @@ const Header = () => {
                                 >
                                   {print.image && (
                                     <img
-                                      src={print.image}
+                                      src={getOptimizedImageUrl(print.image, 80)}
                                       alt={print.name}
                                       className="h-5 w-5 rounded object-cover flex-shrink-0 border border-gray-200"
                                     />
@@ -383,6 +386,11 @@ const Header = () => {
                 aria-label="Wishlist"
               >
                 <Heart className="h-6 w-6" />
+                {wishlist.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {wishlist.length}
+                  </span>
+                )}
               </button>
               <button
                 onClick={() => navigate("/cart")}
@@ -501,7 +509,7 @@ const Header = () => {
                           >
                             {print.image && (
                               <img
-                                src={print.image}
+                                src={getOptimizedImageUrl(print.image, 80)}
                                 alt={print.name}
                                 className="h-5 w-5 rounded object-cover flex-shrink-0 border border-gray-100"
                               />

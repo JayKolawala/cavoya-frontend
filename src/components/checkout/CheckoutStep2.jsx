@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Truck, Shield, RefreshCw } from "lucide-react";
 import { isVideo } from "../../utils/mediaHelpers";
+import { getShippingCost, FREE_SHIPPING_THRESHOLD } from "../../utils/constants";
 
 const CheckoutStep2 = ({ onNext, onBack, total }) => {
   const navigate = useNavigate();
@@ -67,10 +68,26 @@ const CheckoutStep2 = ({ onNext, onBack, total }) => {
             <span>Subtotal:</span>
             <span>₹{getTotalPrice()}</span>
           </div>
-          <div className="flex justify-between text-gray-700">
-            <span>Shipping:</span>
-            <span className="text-gray-600">Free</span>
-          </div>
+          {(() => {
+            const shipping = getShippingCost(parseFloat(getTotalPrice()));
+            return (
+              <>
+                <div className="flex justify-between text-gray-700">
+                  <span>Shipping:</span>
+                  {shipping === 0 ? (
+                    <span className="text-green-600 font-medium">Free</span>
+                  ) : (
+                    <span className="font-medium text-gray-800">₹{shipping}</span>
+                  )}
+                </div>
+                {shipping > 0 && (
+                  <p className="text-xs text-gray-400">
+                    Spend ₹{(FREE_SHIPPING_THRESHOLD - parseFloat(getTotalPrice())).toFixed(0)} more for free shipping
+                  </p>
+                )}
+              </>
+            );
+          })()}
 
           <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200 text-gray-900">
             <span>Total:</span>
@@ -119,7 +136,7 @@ const CheckoutStep2 = ({ onNext, onBack, total }) => {
       <div className="grid grid-cols-3 gap-4 text-center text-sm text-gray-600 mb-6">
         <div className="flex flex-col items-center">
           <Truck className="h-5 w-5 mb-1 text-gray-700" />
-          <span>Free Shipping</span>
+          <span>Free over ₹{FREE_SHIPPING_THRESHOLD}</span>
         </div>
         <div className="flex flex-col items-center">
           <RefreshCw className="h-5 w-5 mb-1 text-gray-700" />

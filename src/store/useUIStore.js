@@ -7,6 +7,16 @@ const useUIStore = create((set) => ({
   alertType: "success", // 'success' | 'error'
   showMobileMenu: false,
 
+  // ── Wishlist toast (non-blocking corner notification) ──────────────────────
+  wishlistToast: null, // null | { message: string; added: boolean }
+
+  showWishlistToast: (message, added = true) => {
+    set({ wishlistToast: { message, added } });
+    setTimeout(() => set({ wishlistToast: null }), 3000);
+  },
+  hideWishlistToast: () => set({ wishlistToast: null }),
+  // ──────────────────────────────────────────────────────────────────────────
+
   setPage: (page) => set({ currentPage: page, showMobileMenu: false }),
   setShowMobileMenu: (show) => set({ showMobileMenu: show }),
   toggleMobileMenu: () =>

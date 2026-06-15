@@ -4,6 +4,7 @@ import useCartStore from "../store/useCartStore";
 import useProductStore from "../store/useProductStore";
 import { Heart, Star, Sparkles, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { getOptimizedImageUrl } from "../utils/mediaHelpers";
 
 const WishlistPage = () => {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ const WishlistPage = () => {
 
           <button
             onClick={() => navigate("/products")}
-            className="group px-10 py-4 bg-black text-white font-semibold rounded-none hover:bg-gray-100 hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
+            className="group px-10 py-4 bg-black text-white font-semibold rounded-none hover:bg-gray-600 hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
           >
             <span className="flex items-center gap-2">
               Start Shopping
@@ -86,7 +87,7 @@ const WishlistPage = () => {
                 {/* Product Image */}
                 <div className="relative overflow-hidden">
                   <img
-                    src={product.image}
+                    src={getOptimizedImageUrl(product.image, 400)}
                     alt={product.name}
                     className="w-full h-80 object-cover transform group-hover:scale-110 transition-transform duration-500"
                   />
@@ -100,7 +101,7 @@ const WishlistPage = () => {
                     className="absolute top-4 right-4 p-3 bg-white/90 backdrop-blur-sm rounded-none shadow-lg hover:bg-white hover:scale-110 transition-all duration-200"
                     title="Remove from wishlist"
                   >
-                    <Heart className="h-5 w-5 fill-gray-900 text-gray-900" />
+                    <Heart className="h-5 w-5 fill-red-500 text-red-500" />
                   </button>
 
                   {/* Sale Badge */}

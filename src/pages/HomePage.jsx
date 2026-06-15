@@ -270,7 +270,7 @@ const HomePage = () => {
                       >
                         <Heart
                           className={`h-4 w-4 ${isInWishlist
-                            ? "fill-gray-900 text-gray-900"
+                            ? "fill-red-500 text-red-500"
                             : "text-gray-600 hover:text-gray-900"
                             } transition-colors`}
                         />
@@ -454,6 +454,22 @@ const HomePage = () => {
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleWishlist(product.id);
+                        }}
+                        aria-label={wishlist.includes(product.id) ? "Remove from wishlist" : "Add to wishlist"}
+                        title={wishlist.includes(product.id) ? "Remove from wishlist" : "Add to wishlist"}
+                        className="absolute top-4 right-4 p-2 bg-white rounded-none shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Heart
+                          className={`h-4 w-4 ${wishlist.includes(product.id)
+                            ? "fill-red-500 text-red-500"
+                            : "text-gray-600 hover:text-gray-900"
+                            } transition-colors`}
+                        />
+                      </button>
                     </div>
                     <h3 className="text-sm font-medium text-gray-900 mb-1">
                       {product.name}

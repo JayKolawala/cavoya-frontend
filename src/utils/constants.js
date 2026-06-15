@@ -1,5 +1,19 @@
 // src/utils/constants.js
 
+// ─── Shipping Configuration ───────────────────────────────────────────────────
+/** Orders below this subtotal (₹) will be charged a shipping fee */
+export const FREE_SHIPPING_THRESHOLD = 2000;
+/** Flat shipping charge (₹) applied when subtotal < FREE_SHIPPING_THRESHOLD */
+export const SHIPPING_CHARGE = 90;
+
+/**
+ * Calculate shipping cost based on order subtotal.
+ * @param {number} subtotal - Cart subtotal in ₹
+ * @returns {number} Shipping cost in ₹ (0 if free shipping applies)
+ */
+export const getShippingCost = (subtotal) =>
+  parseFloat(subtotal) >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_CHARGE;
+
 // Customer Status Configurations
 export const CUSTOMER_STATUSES = [
     {

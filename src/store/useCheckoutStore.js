@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { apiRequest } from "../utils/api";
 import useUIStore from "./useUIStore";
 import useCartStore from "./useCartStore";
+import { getShippingCost } from "../utils/constants";
 
 const useCheckoutStore = create((set, get) => ({
   shippingInfo: {
@@ -54,7 +55,7 @@ const useCheckoutStore = create((set, get) => ({
       }
 
       const subtotal = parseFloat(cartStore.getTotalPrice());
-      const shippingCost = 0;
+      const shippingCost = getShippingCost(subtotal);
       const tax = 0;
       const total = subtotal + shippingCost + tax;
 

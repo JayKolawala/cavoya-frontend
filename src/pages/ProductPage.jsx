@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { X, Ruler, Play, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { X, Ruler, Play, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2, Heart } from "lucide-react";
+import { isVideo, getOptimizedImageUrl } from "../utils/mediaHelpers";
 
 // ─── Size Chart Data ───────────────────────────────────────────────────────────
 const SIZE_CHART = {
@@ -228,7 +229,7 @@ const ImageZoomModal = ({ media, onClose }) => {
       >
         <img
           ref={imageRef}
-          src={media.url}
+          src={getOptimizedImageUrl(media.url, 1200)}
           alt={media.alt}
           draggable={false}
           style={{
@@ -253,11 +254,11 @@ const ImageZoomModal = ({ media, onClose }) => {
 import useCartStore from "../store/useCartStore";
 import useProductStore from "../store/useProductStore";
 import useUIStore from "../store/useUIStore";
+import useWishlistStore from "../store/useWishlistStore";
 import ProductCard from "../components/ProductCard";
 import SingleProductSkeleton from "../components/SingleProductSkeleton";
 import StarDisplay from "../components/StarDisplay";
 import ReviewsDisplay from "../components/ReviewsDisplay";
-import { isVideo } from "../utils/mediaHelpers";
 import { API_BASE_URL } from "../utils/apiHelpers";
 
 const ProductPage = () => {
@@ -267,6 +268,7 @@ const ProductPage = () => {
   const { addToCart } = useCartStore();
   const { products, fetchProductById } = useProductStore();
   const { showCustomAlert } = useUIStore();
+  const { wishlist, toggleWishlist } = useWishlistStore();
 
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState("");
@@ -570,7 +572,7 @@ const ProductPage = () => {
                 ) : (
                   <>
                     <img
-                      src={productMedia[activeMediaIndex].url}
+                      src={getOptimizedImageUrl(productMedia[activeMediaIndex].url, 1000)}
                       alt={productMedia[activeMediaIndex].alt}
                       draggable={false}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 pointer-events-none"
@@ -666,7 +668,7 @@ const ProductPage = () => {
                           </div>
                         </>
                       ) : (
-                        <img src={media.url} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover" />
+                        <img src={getOptimizedImageUrl(media.url, 150)} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover" />
                       )}
                     </button>
                   ))}
@@ -813,13 +815,29 @@ const ProductPage = () => {
               Size Chart
             </button>
 
-            {/* Add to Cart */}
-            <button
-              onClick={() => addToCart(selectedProduct, selectedColor, selectedSize)}
-              className="w-full py-4 rounded-none font-bold transition-transform transform my-2 bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
-            >
-              Add to Cart
-            </button>
+            {/* Add to Cart & Wishlist */}
+            <div className="flex gap-4 my-2">
+
+              <button
+                onClick={() => toggleWishlist(selectedProduct.id || selectedProduct._id)}
+                className=" hover:border-gray-900 transition-colors flex items-center justify-center bg-white"
+                aria-label={wishlist.includes(selectedProduct.id || selectedProduct._id) ? "Remove from wishlist" : "Add to wishlist"}
+                title={wishlist.includes(selectedProduct.id || selectedProduct._id) ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <Heart
+                  className={`h-9 w-9 ${wishlist.includes(selectedProduct.id || selectedProduct._id)
+                    ? "fill-red-500 text-red-500"
+                    : "text-gray-600"
+                    } transition-colors`}
+                />
+              </button>
+              <button
+                onClick={() => addToCart(selectedProduct, selectedColor, selectedSize)}
+                className="flex-grow py-4 rounded-none font-bold transition-transform transform bg-black text-white hover:scale-[1.01] hover:bg-gray-800"
+              >
+                Add to Cart
+              </button>
+            </div>
 
             <hr className="border-gray-200 my-6" />
 

@@ -5,7 +5,7 @@ import Modal from "../shared/Modal";
 import AlertModal from "../shared/AlertModal";
 import StatusBadge from "../shared/StatusBadge";
 import { formatDate, formatCurrency } from "../../../utils/formatters";
-import CavoyaLogo from "../../../assets/Cavoya_Logo_Pink.PNG";
+import CavoyaLogo from "../../../assets/cavoya_black.webp";
 
 const formatPaymentMethod = (method) => {
   switch(method) {

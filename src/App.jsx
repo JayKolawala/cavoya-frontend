@@ -17,6 +17,7 @@ import useAuth from "./hooks/useAuth";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import CustomAlert from "./components/CustomAlert";
+import WishlistToast from "./components/WishlistToast";
 import ScrollToTop from "./components/ScrollToTop";
 import AppLoader from "./components/AppLoader";
 import LoadingSpinner from "./components/LoadingSpinner";
@@ -183,6 +184,7 @@ function App() {
               </Suspense>
 
               <CustomAlert />
+              <WishlistToast />
             </div>
           </ScrollToTop>
         </Router>

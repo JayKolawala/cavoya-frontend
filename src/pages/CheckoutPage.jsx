@@ -7,6 +7,7 @@ import CheckoutStep3 from "../components/checkout/CheckoutStep3";
 import CheckoutStep1 from "../components/checkout/CheckoutStep1";
 import ScrollToTop from "../components/ScrollToTop";
 import { ShoppingCart, Sparkles, ShoppingBag } from "lucide-react";
+import { getShippingCost } from "../utils/constants";
 
 const CheckoutPage = () => {
   const { cartItems, getTotalPrice } = useCartStore();
@@ -55,7 +56,9 @@ const CheckoutPage = () => {
     );
   }
 
-  const total = parseFloat(getTotalPrice()).toFixed(2);
+  const subtotal = parseFloat(getTotalPrice());
+  const shipping = getShippingCost(subtotal);
+  const total = (subtotal + shipping).toFixed(2);
 
   return (
     <>
