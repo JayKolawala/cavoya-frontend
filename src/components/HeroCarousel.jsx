@@ -2,6 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+// The first slide's title becomes the page H1 for SEO.
+// The SEO title is hidden visually but present for screen readers & crawlers.
+// The displayed title (slide.title) is rendered as a styled <p> for each slide.
+const SEO_H1 = "Cavoya - Premium Women's Fashion Brand in India";
+
 const SLIDES = [
     {
         id: "1",
@@ -30,7 +35,6 @@ const SLIDES = [
         buttonText: "Explore More",
         buttonLink: "/products"
     },
-
 ];
 
 const HeroCarousel = () => {
@@ -116,10 +120,15 @@ const HeroCarousel = () => {
                                     }`}
                             >
 
+                                {/* ── SEO H1: Rendered once (first slide only) — visually hidden, crawlable ── */}
+                                {index === 0 && (
+                                    <h1 className="sr-only">{SEO_H1}</h1>
+                                )}
 
-                                <h1 className="text-4xl sm:text-5xl md:text-7xl font-extralight tracking-wide mb-6 text-white leading-tight font-serif">
+                                {/* ── Visible display title (styled like the original h1, but a <p>) ── */}
+                                <p className="text-4xl sm:text-5xl md:text-7xl font-extralight tracking-wide mb-6 text-white leading-tight font-serif" aria-hidden={index === 0}>
                                     {slide.title}
-                                </h1>
+                                </p>
 
                                 <p className="text-lg sm:text-xl md:text-2xl font-light mb-12 text-gray-300 max-w-2xl mx-auto leading-relaxed">
                                     {slide.subtitle}

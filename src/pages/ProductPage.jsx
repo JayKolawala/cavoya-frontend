@@ -3,6 +3,8 @@ import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { X, Ruler, Play, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2, Heart } from "lucide-react";
 import { isVideo, getOptimizedImageUrl } from "../utils/mediaHelpers";
+import SEO from "../components/SEO";
+import Breadcrumb from "../components/Breadcrumb";
 
 // ─── Size Chart Data ───────────────────────────────────────────────────────────
 const SIZE_CHART = {
@@ -491,18 +493,66 @@ const ProductPage = () => {
 
   const hasTopBottomSizes = selectedProduct.topSizes || selectedProduct.bottomSizes;
 
+  // Build Product JSON-LD schema
+  const productSchema = [{
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: selectedProduct.name,
+    description: selectedProduct.description || `Shop ${selectedProduct.name} at Cavoya — premium women's fashion brand in India.`,
+    image: selectedProduct.images?.length > 0
+      ? [selectedProduct.image, ...selectedProduct.images.map(i => i.url || i)].filter(Boolean)
+      : [selectedProduct.image].filter(Boolean),
+    brand: {
+      '@type': 'Brand',
+      name: 'Cavoya',
+    },
+    url: `https://cavoya.in/product/${selectedProduct.id || selectedProduct._id}`,
+    sku: selectedProduct.id || selectedProduct._id,
+    category: selectedProduct.category || 'Women\'s Fashion',
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'INR',
+      price: String(selectedProduct.price || 0),
+      priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+      availability: 'https://schema.org/InStock',
+      url: `https://cavoya.in/product/${selectedProduct.id || selectedProduct._id}`,
+      seller: {
+        '@type': 'Organization',
+        name: 'Cavoya',
+        url: 'https://cavoya.in',
+      },
+    },
+    ...(selectedProduct.avgRating && selectedProduct.totalRatings > 0 ? {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: String(selectedProduct.avgRating),
+        reviewCount: String(selectedProduct.totalRatings),
+        bestRating: '5',
+        worstRating: '1',
+      },
+    } : {}),
+  }];
+
+  const productDescription =
+    (selectedProduct.description?.substring(0, 155)) ||
+    `Shop ${selectedProduct.name} at Cavoya — premium women's fashion brand in India. Quality fabrics, bold prints, elegant style.`;
+
   return (
     <>
-      <Helmet>
-        <title>{selectedProduct.name} - Cavoya</title>
-        <meta name="description" content={selectedProduct.description?.substring(0, 150) || `Shop ${selectedProduct.name} at Cavoya`} />
-        <meta property="og:title" content={`${selectedProduct.name} - Cavoya`} />
-        <meta property="og:description" content={selectedProduct.description?.substring(0, 150) || `Shop ${selectedProduct.name} at Cavoya`} />
-        <meta property="og:image" content={selectedProduct.image} />
-        <meta property="og:type" content="product" />
-        <meta property="product:price:amount" content={selectedProduct.price} />
-        <meta property="product:price:currency" content="INR" />
-      </Helmet>
+      <SEO
+        fullTitle={`${selectedProduct.name} | Cavoya`}
+        description={productDescription}
+        image={selectedProduct.image || 'https://cavoya.in/cavoya_logo.PNG'}
+        imageAlt={`${selectedProduct.name} - Cavoya Premium Women's Fashion`}
+        type="product"
+        structuredData={productSchema}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Shop', url: '/products' },
+          { name: selectedProduct.category || 'Products', url: `/products${selectedProduct.category ? `?category=${selectedProduct.category.toLowerCase().replace(/ /g, '-')}` : ''}` },
+          { name: selectedProduct.name, url: `/product/${selectedProduct.id || selectedProduct._id}` },
+        ]}
+      />
 
       {showSizeChart && (
         <SizeChartModal onClose={() => setShowSizeChart(false)} />
@@ -516,6 +566,18 @@ const ProductPage = () => {
       )}
 
       <section className="container mx-auto px-4 pt-24 pb-16">
+        {/* ── Breadcrumb navigation ── */}
+        <div className="mb-6">
+          <Breadcrumb
+            items={[
+              { name: 'Home', href: '/' },
+              { name: 'Shop', href: '/products' },
+              { name: selectedProduct.category || 'Products', href: `/products${selectedProduct.category ? `?category=${selectedProduct.category.toLowerCase().replace(/ /g, '-')}` : ''}` },
+              { name: selectedProduct.name, href: `/product/${selectedProduct.id || selectedProduct._id}` },
+            ]}
+          />
+        </div>
+
         {/* ── Two-column layout ── */}
         <div className="flex flex-col lg:flex-row gap-12">
 

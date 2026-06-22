@@ -11,8 +11,9 @@ import bgVideo2 from "../assets/MidnightBloom.MP4";
 import { isVideo, getOptimizedImageUrl } from "../utils/mediaHelpers";
 import { API_BASE_URL, API_ENDPOINTS } from "../utils/apiHelpers";
 import { transformProduct } from "../utils/api";
-import heroBg from "/hero-bg.PNG";
 import HeroCarousel from "../components/HeroCarousel";
+import SEO from "../components/SEO";
+import BrandAuthoritySection from "../components/BrandAuthoritySection";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const MAX_RETRIES = 3;          // stop retrying after this many attempts
@@ -206,8 +207,37 @@ const HomePage = () => {
       : "Quick Add";
 
   // ── Render ──────────────────────────────────────────────────────────────────
+  // ── Homepage structured data (WebSite + Organization combined) ──
+  const homepageSchema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Cavoya',
+      alternateName: 'Cavoya Fashion',
+      url: 'https://cavoya.in',
+      description: "India's premium women's fashion brand — shop dresses, co-ord sets, ethnic wear, and more.",
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: 'https://cavoya.in/products?q={search_term_string}',
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ];
+
   return (
     <div className="animate-fade-in overflow-hidden">
+      {/* ── Per-page SEO (overrides index.html defaults) ── */}
+      <SEO
+        fullTitle="Cavoya | Premium Women's Fashion Brand in India"
+        description="Shop premium women's fashion at Cavoya. Discover elegant dresses, co-ord sets, ethnic wear, western wear, sarees, and modern styles crafted for today's women."
+        image="https://cavoya.in/cavoya_logo.PNG"
+        imageAlt="Cavoya - Premium Women's Fashion Brand in India"
+        structuredData={homepageSchema}
+      />
+
       {/* ── Hero ── */}
       <HeroCarousel />
 
@@ -488,6 +518,9 @@ const HomePage = () => {
           )}
         </div>
       </section>
+
+      {/* ── Brand Authority SEO Section ── */}
+      <BrandAuthoritySection />
     </div>
   );
 };

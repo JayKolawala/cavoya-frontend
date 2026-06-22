@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import AOS from "aos";
+import SEO from "../components/SEO";
 
 const WHATSAPP_NUMBER = "917383096696"; // Replace with actual number (country code + number)
 
@@ -39,8 +40,84 @@ const ContactPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const contactSchemas = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      '@id': 'https://cavoya.in/#business',
+      name: 'Cavoya',
+      description: 'Premium women\'s fashion brand based in Surat, Gujarat, India.',
+      url: 'https://cavoya.in',
+      email: 'support@cavoya.in',
+      image: 'https://cavoya.in/cavoya_logo.PNG',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: '142, Puna Kumbhariya Road, Bhagyoday Industrial Estate, Parvat Patiya',
+        addressLocality: 'Surat',
+        addressRegion: 'Gujarat',
+        postalCode: '395010',
+        addressCountry: 'IN',
+      },
+      openingHoursSpecification: [
+        {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+          opens: '10:00',
+          closes: '19:00',
+        },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How can I contact Cavoya?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'You can contact Cavoya via email at support@cavoya.in or by sending a WhatsApp message to +91 73830 96696. Our team responds Monday to Saturday, 10AM to 7PM IST.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Where is Cavoya located?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Cavoya is located at 142, Puna Kumbhariya Road, Bhagyoday Industrial Estate, Parvat Patiya, Surat, Gujarat 395010, India.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What is Cavoya\'s return policy?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Cavoya offers returns and refunds as per our return policy. Please visit our Returns page or contact us directly for assistance.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does Cavoya ship across India?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes, Cavoya ships premium women\'s fashion across India. Shipping details and timelines are provided at checkout.',
+          },
+        },
+      ],
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <SEO
+        title="Contact Cavoya | Reach Us in Surat, India"
+        description="Get in touch with Cavoya — India's premium women's fashion brand. Email us at support@cavoya.in, WhatsApp us, or visit our Surat, Gujarat showroom. We're here Monday to Saturday, 10AM–7PM IST."
+        structuredData={contactSchemas}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Contact Us', url: '/contact' },
+        ]}
+      />
       {/* Hero Section - Synced with HomePage */}
       <div className="relative pt-32 pb-20 flex items-center justify-center text-center bg-gray-50 border-b border-gray-200 text-gray-900">
         {/* Hero Content */}
