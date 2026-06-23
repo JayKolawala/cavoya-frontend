@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Heart, RefreshCw, Star, Sparkles, Mail } from "lucide-react";
 import AOS from "aos";
-import SEO from "../components/SEO";
 
 const AboutPage = () => {
   // Data array for dynamic rendering
@@ -76,42 +75,8 @@ const AboutPage = () => {
     AOS.init({ duration: 800, once: true });
   }, []);
 
-  const aboutSchema = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'Organization',
-      name: 'Cavoya',
-      alternateName: 'Cavoya Fashion',
-      url: 'https://cavoya.in',
-      logo: 'https://cavoya.in/cavoya_logo.PNG',
-      description: 'Cavoya is a premium women\'s fashion brand from Surat, Gujarat, India, offering elegant dresses, co-ord sets, ethnic wear, and western styles.',
-      foundingDate: '2026',
-      founder: [
-        { '@type': 'Person', name: 'Zeel Jariwala', jobTitle: 'Founder' },
-        { '@type': 'Person', name: 'Riya Chevli', jobTitle: 'Founder' },
-      ],
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: '142, Puna Kumbhariya Road, Bhagyoday Industrial Estate, Parvat Patiya',
-        addressLocality: 'Surat',
-        addressRegion: 'Gujarat',
-        postalCode: '395010',
-        addressCountry: 'IN',
-      },
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <SEO
-        title="About Cavoya | Our Story & Premium Women's Fashion Brand"
-        description="Discover the story behind Cavoya — a premium women's fashion brand founded in Surat, Gujarat, India. Meet our founders Zeel Jariwala and Riya Chevli, and learn about our mission to redefine contemporary women's clothing."
-        structuredData={aboutSchema}
-        breadcrumbs={[
-          { name: 'Home', url: '/' },
-          { name: 'About Cavoya', url: '/about' },
-        ]}
-      />
       {/* Hero Header Section */}
       <div className="relative text-gray-900 pb-20 pt-32 px-4 text-center bg-gray-50 border-b border-gray-200">
         {/* Header Content */}

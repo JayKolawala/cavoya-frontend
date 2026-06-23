@@ -8,7 +8,6 @@ import ProductSkeleton from "../components/ProductSkeleton";
 import { Sparkles, Package } from "lucide-react";
 import { getCategoryMap } from "../utils/categoryHelpers";
 import AOS from "aos";
-import SEO from "../components/SEO";
 
 const ProductsPage = () => {
   const {
@@ -166,47 +165,8 @@ const ProductsPage = () => {
     navigate(`/product/${product.id}`);
   };
 
-  // Build dynamic SEO meta per filter state
-  const seoTitle = useMemo(() => {
-    if (newArrivals === 'true') return 'New Arrivals | Shop Latest Women\'s Fashion';
-    if (collectionDisplayName) return `${collectionDisplayName} Collection | Cavoya Fashion`;
-    if (category && category !== 'all') {
-      const titleMap = {
-        dresses: "Women's Dresses",
-        'coord-sets': "Women's Co-ord Sets",
-        tops: "Women's Tops",
-        bottomwear: 'Bottomwear',
-        jumpsuits: 'Jumpsuits',
-        'ethnic-wear': 'Ethnic Wear',
-        'western-wear': 'Western Wear',
-      };
-      const label = titleMap[category] || category.charAt(0).toUpperCase() + category.slice(1);
-      return `Shop ${label} | Cavoya Fashion`;
-    }
-    return "Shop All Women's Fashion | Cavoya";
-  }, [category, collectionDisplayName, newArrivals]);
-
-  const seoDescription = useMemo(() => {
-    if (newArrivals === 'true')
-      return 'Explore the latest new arrivals at Cavoya — premium women\'s fashion brand in India. Fresh styles, bold prints, and elegant silhouettes updated daily.';
-    if (collectionDisplayName)
-      return `Shop the ${collectionDisplayName} collection at Cavoya. Premium women\'s clothing crafted with quality fabrics and distinctive prints, made in India.`;
-    if (category && category !== 'all') {
-      return `Shop premium ${category.replace('-', ' ')} at Cavoya — India's premier women's fashion brand. Distinctive prints, quality fabrics, and styles designed for the modern woman.`;
-    }
-    return "Shop premium women's fashion at Cavoya. Browse our complete collection of dresses, co-ord sets, ethnic wear, western styles, tops, and more. Free shipping available.";
-  }, [category, collectionDisplayName, newArrivals]);
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <SEO
-        title={seoTitle}
-        description={seoDescription}
-        breadcrumbs={[
-          { name: 'Home', url: '/' },
-          { name: pageTitle, url: '/products' },
-        ]}
-      />
       {/* Hero Header Section */}
       <div className="relative text-gray-900 pb-20 pt-32 px-4 text-center bg-gray-50 border-b border-gray-200">
         {/* Header Content */}

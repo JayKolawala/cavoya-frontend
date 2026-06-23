@@ -1,15 +1,5 @@
 User-agent: *
 Allow: /
-
-# Block admin, checkout, and private user pages from indexing
-Disallow: /admin/
-Disallow: /admin/login
-Disallow: /cart
-Disallow: /checkout
-Disallow: /payment
-Disallow: /order-success
-Disallow: /login
-Disallow: /register
-
-# Sitemap location
 Sitemap: https://cavoya.in/sitemap.xml
+
+Disallow: /sitemap.xml
